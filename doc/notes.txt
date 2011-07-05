@@ -1,0 +1,182 @@
+feste zuteilung einer location zu einem computer: wie? (mit standard-inet technologien?)
+  custom header per computer? http-request zugänglich in scala/vaadin?
+  überhaupt nötig? ist es ok, wenn zb. ein user rechte auf daten der wache x & y hat, egal wo er sich physikalisch befindet?
+
+db last-test, zb. 3 mio. records
+db pagination/lazy-loading/wie table arbeitet mit large datasets?
+testen mit 50 mvp-triaden (ram, performance)
+
+was wird gleichzeitig von mehreren usern bearbeitet? wie damit umgehen?
+wie fkt vaadin url fragment? site-location (was sollen browser back/fwd/reload buttons bewirken?)
+was passiert wenn user sich einloggt und
+  innerhalb eines browsers mehrere tabs mit der selben url
+  2te browser-instanz/anderer browser (anderer cookie-cache) mit selber url
+  von zweitem rechner
+
+user authentication: wie?
+verschiedene gui's für verschiedene user: wie?
+user/gruppen/rollen - rechteverteilung wie?
+
+batch-run:
+  entweder mit ausschuss-nachbearbeitung
+  oder mit pessimistic lock
+
+states: 
+  per datensatz: hierarchische stati oder ein "sammel-statusfeld" (was sonst)?
+  ist session ein state? (session with stateful behaviour)
+  ist user recht ein state?
+
+inter-user data-change notification?
+trigger notify
+  essentiell oder nice2have?
+  wie fkt das technisch? (kann das jede datenbank?)
+    threads nötig? wie sicher gestalten? actors?
+      wo ist die mainloop in einer webapp? kann man aus einem anderen thread/prozess messages hinscicken?
+    wie kann man trigger abschalten/ignorieren (für batchprocessing)?
+  kann/muß db-abstraction layer das tun? 
+
+versionieren
+db scala- oder mybatis migrations?
+logging
+source dokumentation: event-sender und receiver müssen gut erkennbar sein 
+  (scaladoc @see fkt nicht, yui-doc macht das nicht)
+development als tdd mit unit testing? (junit)
+
+umgang mit/ops auf großen datenmengen/tabellenzeilen
+  nötig für was? nur für admin-mässige user? wie bequem?
+  reicht es, daß user lediglich filter auswählt u. die anzahl angezeigt bekommt?
+  und daß er dann eine bequeme "fadenkreuz" fkt. hat?
+  
+alle "proto"'s werden zu log-ausgaben
+  manche davon sind für user relevant und sollten als verarbeitungs-rückmeldung angezeigt werden
+
+filter-ketten
+  fahrtbericht: user.location->user->tag
+  immer true, immer false, einstellbar (vom user zb. per dialog oder benutzer-einstellung)
+
+tag-bedeutungen/kategorien:
+  progress/fortschritt innerhalb einer verarbeitung
+  attribut
+  welche sind fachlich notwendige tags und welche technisch notwendige tags
+  nach möglichkeit 1 zu 1 übernahme der (nur relevanten) stati als tag
+
+      filter
+cols
+rows
+
+i18n
+  was englisch, was deutsch?
+
+db modeling
+  history
+
+eyecatcher info's beim einloggen um den user zu motivieren ausstehende aufgaben zu erledigen (zb. offene rendevouzfälle)
+  broadcast infosystem zur verteilung interner neuigkeiten
+  p2p chat-fkt (zb. "hey, gib mal den datensatz frei")
+
+ok negativ formulierte permission (also restriction) nötig? explizit?
+  vlt für filter?
+  allgemeiner begriff: etwas einschaltet oder etwas standardmässig eingeschaltetes ausser kraft setzt
+    allow/deny, recht/pflicht
+    -> action/deed aktion/tat ?!
+
+ok  datenhaltung: welche db? framework: orm/no orm? anbindung table-datasource? id-generation?
+
+ok  sicherheit: wie?
+
+ok  vaadin: anbindung form data
+
+ok  events: enums in scala?
+ok  events: kein explizites wire-up, sondern jeder hört alles?
+
+model: wie interagieren services untereinander und innerhalb einer transaction?
+
+welche scopes gibt es? session management?
+
+dependency injection?
+
+fahrtbericht anlegen aus leitstellen-system
+divi daten vom tablet-pc zum server incl' fahrtbericht-zuweisung
+drucken aus dem browser
+wysiwyg text-editieren nötig? textblock templates nötig?
+
+mvp: wieso events zu pres' aber method-calls auf view & model?
+alles async mit command-pattern. zu übertrieben?
+wäre undo/redo irgendwo gut?
+vaadin: welche daten werden wann hin- und her geschickt?
+scaffolding für table/edit triaden?
+
+ok  bequemes orm (n:m), sql direkt, stored-proc, oracle&postgresql, lizenz
+
+gute ide für refactoring & sbt support?
+
+sbt oder maven? (sbt hat afaik incremetal build)
+
+(ok) app architektur pattern: mvc? mvp?
+(ok) sprache: scala?
+
+mvp, scala, vaadin, mybatis, sbt, (intellij, guice)
+
+ide? Eclipse, IntelliJ Idea, Netbeans, Emacs, TextMate, vim, Crystal ball
+
+drk kw: 1/83-2
+ufo (serie)
+immer wenn er pillen nahm
+auf der flucht (serie)
+
+
+eleventech_prototype_app1 epa:
+table mit liste von name,telnr; 3 buttons edit,new,delete
+bei doppelclick geht edit-fenster auf
+in dem fenster kann man felder editieren und es hat save, cancel button.
+
+eleventech_prototype_app2 epa2:
+handling large datasets
+
+
+notes:
+stackoverflow scala class with publisher and sub traits
+stacyprowell watched properties scala
+jim mcbeath simple publish/subscriber example in scala
+scala actors 101 debasish ghosh
+scalamulticastactors
+code examples for programming in scala 30 actors anc conc
+stackover scala model-view-presenter traits
+programming-scala.labs.oreilly.com
+stacko scala listener/observer
+
+pro ejb3 apress (michael keith, merrick schincariol)
+pro jpa2 apress
+hibernate in action manning bauer
+yangdaoqi.info/jpa.html
+
+statefull vs stateless for database developers michael rosenblum dulcian
+common data access issues
+using postgresql to decouple applications or oo meets sql marc balmer
+using pg_notify in postgresql trigger function
+agiledata.org/essays/concurrencyControl.html
+wiki: javabean und enterprise jababean
+torsten-horn.de/techdocs/java-hibernate.htm
+dealing with active and stateful services in the soa (springer verlag, haldor samset, rolv braek)
+business process driven soa using bpmn and bpel
+beginning database-driven application development in java ee (isohunt)
+
+
+optimistic lock
+  beim speichern prüfen und ggf' user informieren
+  und/oder bei änderung durch user B user A informieren
+  entweder muß user A neuladen (verliert all ihre änderungen)
+  oder es kann automatisch gemerged werden (kein verlust)
+    und/oder sie muß mergen (verliert teil ihrer änderungen)
+  -impl'aufwand höher als bei p.l.
+
+pessimistic lock
+  beim editieren wird gesperrt. nach speichern oder abbrechen entsperrt.
+  user B kann nur lesen
+  nice2have: user B bekommt die info, wer den satz gerade editiert.
+  -wann wird locking aufgehoben und was passiert bei benutzer A dann?
+
+overly optimistic lock
+  annahme, es gibt kein konkurrierenden schreibzugriffe.
+  könnte abgedeckt werden durch rechtesystem
+

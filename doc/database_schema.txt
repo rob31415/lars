@@ -1,0 +1,25 @@
+user (id*, firstname, lastname, role_id)
+role (id*, description)
+role2action (role_id*, permission_id[text]*)
+action (id[text]*, description, done[bool])
+user2location (user_id*, location_id*)
+location (id[text]*)
+
+drive (id*, user_id, location_id[text])
+drive2tag (drive_id*, tag_id*)
+tag (id*, description)
+booking (id*, drive_id)
+
+
+  action  filter        filter
+role    \ user.location user.id
+wache     1             1
+kv        1             1
+rds admin 0             0
+rds fakt  
+rds mahn
+rds stat
+
+
+usr role
+

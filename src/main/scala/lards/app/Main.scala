@@ -13,7 +13,7 @@ import presenter._
 class Main extends Application { 
 
     private val main_window = new Window("eleventech prototype application")
-    private val model_service = new lards.model.service.Service
+//    private val model_service = new lards.model.service.Service
 
 
 
@@ -21,7 +21,7 @@ class Main extends Application {
       println("main init")
       create_layout
       wire_up
-      model_service.init
+//      model_service.init
       println("main init ok")
     }
 
@@ -35,9 +35,10 @@ class Main extends Application {
 
 
     def wire_up {
-      new lards.presenter.Main(new view.Main(main_window))
+/*      new lards.presenter.Main(new view.Main(main_window))
       new lards.presenter.Table(new view.Table(main_window), model_service)
       new lards.presenter.Edit(new view.Edit(main_window), model_service)
+*/
     }
 
 }

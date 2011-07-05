@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="Usermapper">
+
+  <resultMap id="UserResult" type="lards.model.dto.User">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long"/>
+      <arg column="firstname" javaType="String"/>
+      <arg column="lastname" javaType="String"/>
+    </constructor>
+  </resultMap>
+
+  <select id="getUser" parameterType="String" resultMap="UserResult">
+    SELECT id, firstname, lastname FROM user WHERE ID = #{value}
+  </select>
+
+  <select id="getUsers" resultMap="UserResult">
+    SELECT id, firstname, lastname FROM person
+  </select>
+
+	<update id="updateUser" parameterType="lards.model.dto.User"> 
+    UPDATE person SET
+		firstname = #{firstname}, 
+		lastname = #{lastname},
+    WHERE id = #{id}
+	</update>	
+
+  <insert id="insertUser" parameterType="lards.model.dto.User">
+	    INSERT INTO user (firstname, lastname) 
+	    values (#{firstname},#{lastname})
+  </insert>
+
+	<delete id="deleteUser" parameterType="Long"> 
+			DELETE FROM user WHERE id = #{value}
+	</delete>
+
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="Rolemapper">
+
+  <resultMap id="RoleResult" type="lards.model.dto.Role">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long"/>
+      <arg column="description" javaType="String"/>
+    </constructor>
+    <collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" />
+  </resultMap>
+
+
+  <resultMap id="resultPosts" type="Post">
+    <id property="id" column="idPost" />
+    <!-- result property="title" column="title" / -->
+  <collection property="tags" column="idPost" javaType="ArrayList" ofType="Tag" resultMap="resultTag" />
+  </resultMap>
+
+
+  <select id="getRole" parameterType="String" resultMap="RoleResult">
+    SELECT id, description FROM user WHERE ID = #{value}
+  </select>
+
+  <select id="getRoles" resultMap="RoleResult">
+    SELECT id, description FROM person
+  </select>
+
+	<update id="updateRole" parameterType="lards.model.dto.Role"> 
+    UPDATE person SET
+		description = #{description}, 
+    WHERE id = #{id}
+	</update>	
+
+  <insert id="insertRole" parameterType="lards.model.dto.Role">
+	    INSERT INTO user (description) 
+	    values (#{description})
+  </insert>
+
+	<delete id="deleteRole" parameterType="Long"> 
+			DELETE FROM user WHERE id = #{value}
+	</delete>
+
+</mapper>
