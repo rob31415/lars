@@ -1,13 +1,16 @@
+/**
+application menu, status lines and background-picture
+*/
+
 package lards.view
 
 import event._
 import com.vaadin.ui._
-//import lards.global.Broadcaster
 import event.Main
 import lards.global.Applocal
 
 
-class Main extends Panel with View {
+class Main(var window: Window) extends Panel with View {
 
   class Menu_Command(val meaning: Symbol) extends MenuBar.Command {
     def menuSelected(selectedItem: MenuBar#MenuItem) {
@@ -18,12 +21,9 @@ class Main extends Panel with View {
   
   val user_info: Label = new Label("unknown user")
 
-
   init
-  
 
   override def init {
-    //setContent(new VerticalLayout());
     addComponent(user_info)
     addComponent(create_menu())
     setSizeFull()
@@ -33,45 +33,40 @@ class Main extends Panel with View {
 
 
   def create_menu(): MenuBar = {
-
-    var default_command = new MenuBar.Command() {
-      def menuSelected(selectedItem: MenuBar#MenuItem) {
-        Applocal.broadcaster.publish(new lards.view.event.Main('todo))
-      }
-    }
-
     val menu_bar = new MenuBar()
-
     create_menu1(menu_bar)
     create_menu2(menu_bar)
   }
 
 
   def create_menu1(menu_bar: MenuBar): MenuBar = {
-    var menu: MenuBar#MenuItem = menu_bar.addItem("Datei", null, null)
+    var menu: MenuBar#MenuItem = menu_bar.addItem("Programm", null, null)
 
-    menu.addItem("Logout", new Menu_Command('logout))
+    menu.addItem("Abmelden", new Menu_Command('logout))
+    menu.addItem("Über Lars", new Menu_Command('about))
 
     menu_bar
   }
 
 
   def create_menu2(menu_bar: MenuBar): MenuBar = {
-    var menu: MenuBar#MenuItem = menu_bar.addItem("Personen", null, null)
+    var menu: MenuBar#MenuItem = menu_bar.addItem("Einstellungen", null, null)
 
-    menu.addItem("anzeigen", new Menu_Command('show))
-    menu.addItem("leeren", new Menu_Command('clear))
-    menu.addItem("test_fill", new Menu_Command('testfill))
+    menu.addItem("Rollen", new Menu_Command('roles))
+    menu.addItem("Benutzer", new Menu_Command('user))
+    menu.addItem("Locations", new Menu_Command('locations))
 
     menu_bar
   }
 
 
   override def on_show = {
+    window.setContent(this)
   }
 
 
   override def on_hide = {
+    window.setContent(null)
   }
 
 }

@@ -1,3 +1,7 @@
+/**
+Simple Login Dialog
+*/
+
 package lards.presenter
 
 import lards.global.Applocal
@@ -15,6 +19,7 @@ class Login(view: lards.view.Login, model: lards.model.Login) {
     event match {
       case event: lards.view.event.Login => {
         println("username=" + event.username + ", password=" + event.password)        
+        view.hide
         model.authenticate(event.username.get, event.password.get)
       }
       

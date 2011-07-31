@@ -1,30 +1,28 @@
-feste zuteilung einer location zu einem computer: wie? (mit standard-inet technologien?)
-  custom header per computer? http-request zugänglich in scala/vaadin?
-  überhaupt nötig? ist es ok, wenn zb. ein user rechte auf daten der wache x & y hat, egal wo er sich physikalisch befindet?
+gui design
+  abstraktion für
+    multiple auswählen
+    löschen
+    editieren
+    neuanlagen
+
+wie fkt' form-validierung in vaadin?
+    
+rollen syncen mit active-directory via ldap
 
 db last-test, zb. 3 mio. records
 db pagination/lazy-loading/wie table arbeitet mit large datasets?
-testen mit 50 mvp-triaden (ram, performance)
+testen mit 50 mvp-triaden & 50 usern (ram, performance)
 
 was wird gleichzeitig von mehreren usern bearbeitet? wie damit umgehen?
 wie fkt vaadin url fragment? site-location (was sollen browser back/fwd/reload buttons bewirken?)
-was passiert wenn user sich einloggt und
-  innerhalb eines browsers mehrere tabs mit der selben url
-  2te browser-instanz/anderer browser (anderer cookie-cache) mit selber url
-  von zweitem rechner
 
-user authentication: wie?
 verschiedene gui's für verschiedene user: wie?
 user/gruppen/rollen - rechteverteilung wie?
 
-batch-run:
+concurrent-change while batch-run problematik:
   entweder mit ausschuss-nachbearbeitung
   oder mit pessimistic lock
 
-states: 
-  per datensatz: hierarchische stati oder ein "sammel-statusfeld" (was sonst)?
-  ist session ein state? (session with stateful behaviour)
-  ist user recht ein state?
 
 inter-user data-change notification?
 trigger notify
@@ -36,7 +34,7 @@ trigger notify
   kann/muß db-abstraction layer das tun? 
 
 versionieren
-db scala- oder mybatis migrations?
+ok-db scala- oder mybatis migrations?
 logging
 source dokumentation: event-sender und receiver müssen gut erkennbar sein 
   (scaladoc @see fkt nicht, yui-doc macht das nicht)
@@ -49,6 +47,7 @@ umgang mit/ops auf großen datenmengen/tabellenzeilen
   
 alle "proto"'s werden zu log-ausgaben
   manche davon sind für user relevant und sollten als verarbeitungs-rückmeldung angezeigt werden
+  protokolle parallel zu log? mit selbem logging mechanismus? welcher user soll die sehen können?
 
 filter-ketten
   fahrtbericht: user.location->user->tag
@@ -66,6 +65,7 @@ rows
 
 i18n
   was englisch, was deutsch?
+  ok-wohin mit texten?
 
 db modeling
   history
@@ -88,6 +88,19 @@ ok  vaadin: anbindung form data
 
 ok  events: enums in scala?
 ok  events: kein explizites wire-up, sondern jeder hört alles?
+
+states: 
+  ok-per datensatz: hierarchische stati oder ein "sammel-statusfeld" (was sonst)?
+  ok-ist session ein state? (session with stateful behaviour)
+  ist user recht ein state?
+feste zuteilung einer location zu einem computer: wie? (mit standard-inet technologien?)
+  custom header per computer? http-request zugänglich in scala/vaadin?
+  ok-überhaupt nötig? ist es ok, wenn zb. ein user rechte auf daten der wache x & y hat, egal wo er sich physikalisch befindet?
+ok-was passiert wenn user sich einloggt und
+  ok-innerhalb eines browsers mehrere tabs mit der selben url
+  ok-2te browser-instanz/anderer browser (anderer cookie-cache) mit selber url
+  ok-von zweitem rechner
+ok-user authentication: wie?
 
 model: wie interagieren services untereinander und innerhalb einer transaction?
 

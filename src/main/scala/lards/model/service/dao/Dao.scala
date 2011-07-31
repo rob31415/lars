@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession
 
 //@TODO: how can i say that A is subtype of something so that i can
 //use the there-defined members and thus merge save-new and save-existing.
+//get rid of save_new and save_existing and only have save.
 trait Dao[A] {
   type Recordlist = Option[Seq[A]]
 

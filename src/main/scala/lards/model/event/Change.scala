@@ -1,7 +1,13 @@
+/**
+sent when a datasource changes
+*/
+
 package lards.model.event
 
 import lards.global.Event
 
-
-class Change extends Model {
+/**
+meaning specifies the datasource
+*/
+class Change(override val meaning: Symbol) extends Event {
 }

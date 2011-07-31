@@ -1,45 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
 
-<mapper namespace="Rolemapper">
+<mapper namespace="lars.model.mybatis.mapper.role">
 
-  <resultMap id="RoleResult" type="lards.model.dto.Role">
+  <resultMap id="Result" type="lards.model.dto.Role">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
       <arg column="description" javaType="String"/>
     </constructor>
-    <collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" />
+    <!-- collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" / -->
   </resultMap>
 
-
-  <resultMap id="resultPosts" type="Post">
-    <id property="id" column="idPost" />
-    <!-- result property="title" column="title" / -->
-  <collection property="tags" column="idPost" javaType="ArrayList" ofType="Tag" resultMap="resultTag" />
-  </resultMap>
-
-
-  <select id="getRole" parameterType="String" resultMap="RoleResult">
-    SELECT id, description FROM user WHERE ID = #{value}
+  <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.role.Result">
+    SELECT id, description FROM role WHERE ID = #{value}
   </select>
 
-  <select id="getRoles" resultMap="RoleResult">
-    SELECT id, description FROM person
+  <select id="get_all" resultMap="lars.model.mybatis.mapper.role.Result">
+    SELECT id, description FROM role
   </select>
 
-	<update id="updateRole" parameterType="lards.model.dto.Role"> 
-    UPDATE person SET
-		description = #{description}, 
+	<update id="update" parameterType="lards.model.dto.Role"> 
+    UPDATE role SET
+    description = #{description}
     WHERE id = #{id}
 	</update>	
 
-  <insert id="insertRole" parameterType="lards.model.dto.Role">
-	    INSERT INTO user (description) 
+  <insert id="insert" parameterType="lards.model.dto.Role">
+	    INSERT INTO role (description) 
 	    values (#{description})
   </insert>
 
-	<delete id="deleteRole" parameterType="Long"> 
-			DELETE FROM user WHERE id = #{value}
+	<delete id="delete" parameterType="Long"> 
+    DELETE FROM role WHERE id = #{value}
 	</delete>
 
 </mapper>

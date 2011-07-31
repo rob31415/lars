@@ -1,13 +1,13 @@
 user (id*, firstname, lastname, role_id)
-role (id*, description)
+role (id*, description) <- später gruppen aus active-directory via ldap
 role2action (role_id*, permission_id[text]*)
-action (id[text]*, description, done[bool])
+action (id[text]*, description, done[bool]) <- nicht in db
 user2location (user_id*, location_id*)
 location (id[text]*)
 
 drive (id*, user_id, location_id[text])
 drive2tag (drive_id*, tag_id*)
-tag (id*, description)
+tag (id*, description) <- nicht in db
 booking (id*, drive_id)
 
 

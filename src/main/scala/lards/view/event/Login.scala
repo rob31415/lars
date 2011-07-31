@@ -1,3 +1,7 @@
+/**
+is sent when a user wants to login (e.g. presses login-button)
+*/
+
 package lards.view.event
 
 import lards.global.Event

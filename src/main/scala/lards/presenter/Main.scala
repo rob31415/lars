@@ -1,19 +1,22 @@
+/**
+Center of the Application.
+Instanciates everything and wires everything up.
+gives different users disjunct applications (memory).
+*/
+
 package lards.presenter
 
 import com.vaadin.Application 
 import com.vaadin.ui._
-import java.util.Date 
-import java.lang.reflect._
 
 import com.vaadin.terminal.gwt.server._
 import javax.servlet.http._
 
 import lards.view._
 import lards.model._
-import lards.presenter._
-//import lards.global.Broadcaster
 import lards.global.Applocal
 import lards.view.event.Main
+import lards.model.event.Login
 
 
 object Main {
@@ -24,7 +27,7 @@ object Main {
 class Main extends Application with HttpServletRequestListener { 
 
   private var window: Window = _
-  private var view = new lards.view.Main()
+  private var view: lards.view.Main = _
 
 
   override def init {
@@ -32,11 +35,23 @@ class Main extends Application with HttpServletRequestListener {
 
     Applocal.init(this)
     lards.presenter.Main.threadLocal.set(this)
+
     Applocal.broadcaster.subscribe(this)
-    create_layout
+
+    window = new Window("LeistungsAbrechnungssystem RDS")
+    setMainWindow(window)
+    view = new lards.view.Main(window)
+    window.getContent().setSizeFull()
+
     wire_up
 
     println("main init ok")
+  }
+
+
+  def wire_up() {
+    new lards.presenter.Login(new lards.view.Login(window), new lards.model.Login())
+    new lards.presenter.Role(new lards.view.Role(window), new lards.model.service.Role())
   }
 
 
@@ -53,23 +68,6 @@ class Main extends Application with HttpServletRequestListener {
   }
 
 
-  def create_layout {
-    window = new Window("LeistungsAbrechnungssystem RDS")
-    window.getContent().setSizeFull()
-    setMainWindow(window)
-//    window.setContent(new lards.view.Login())
-  }
-
-
-  def wire_up {
-    new lards.presenter.Login(new lards.view.Login(window), new lards.model.Login())
-/*      new lards.presenter.Main(new view.Main(main_window))
-    new lards.presenter.Table(new view.Table(main_window), model_service)
-    new lards.presenter.Edit(new view.Edit(main_window), model_service)
-*/
-  }
-
-
   def notify(event: Any) {
     println("main-presenter got event " + event)
 
@@ -81,6 +79,9 @@ class Main extends Application with HttpServletRequestListener {
             //@TODO: yes/no dialog
             close()
           }
+          case 'about => {
+            window.showNotification("Lars ist das neue Leistungsabrechnungssystem der RDS-Saar !")
+          }
       
           case _ =>
         }
@@ -88,7 +89,7 @@ class Main extends Application with HttpServletRequestListener {
 
       case event: lards.model.event.Login => {
         view.user_info.setValue("user: " + event.user.firstname)
-        window.setContent(view)
+        view.show
       }
       
       case _ =>

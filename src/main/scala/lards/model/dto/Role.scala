@@ -3,16 +3,13 @@ package lards.model.dto
 import scala.reflect.BeanProperty
 
 
-//@TODO: get rid of ugly -1. is making Option as id mybatis-compatible with typeHandler somehow?
+//@TODO: remove id, make description primary-key
 class Role(val id: java.lang.Long = -1, 
              @BeanProperty var description: String = "") {
-
-  def get_users() : List[User] = {
-    List(new User())
-  }
-
-  def get_deeds() : List[Deed] = {
-    List(new Deed())
-  }
   
+  def toArray(): Array[Object] = {
+    var list = new java.util.ArrayList[Object]
+    list.add(description)
+    list.toArray()
+  }
 }

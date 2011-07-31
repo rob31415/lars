@@ -1,11 +1,13 @@
-/*
+/**
 Holds Data with the notion of keeping it seperated
 for every session which lives longer than a servlet-thread
 (which is in fact a application).
 
 @TODO:
+-user
 -i18n (locale & resources)
 */
+
 package lards.global
 
 import com.vaadin.Application 
