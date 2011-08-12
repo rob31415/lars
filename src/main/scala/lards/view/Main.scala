@@ -10,6 +10,9 @@ import event.Main
 import lards.global.Applocal
 
 
+/**
+@emits lards.view.event.Main
+*/
 class Main(var window: Window) extends Panel with View {
 
   class Menu_Command(val meaning: Symbol) extends MenuBar.Command {

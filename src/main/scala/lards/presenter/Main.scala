@@ -72,21 +72,25 @@ class Main extends Application with HttpServletRequestListener {
     println("main-presenter got event " + event)
 
     event match {
-      case event: lards.view.event.Main => {
-        event.meaning match {
+
+      //something happend in the associated view (menu selection)
+      case event: lards.view.event.Main => {    
+          event.meaning match {
           case 'logout => {
             println("logging out user")
             //@TODO: yes/no dialog
+            Applocal.broadcaster.publish(new lards.presenter.event.Main('shutdown))
             close()
           }
           case 'about => {
-            window.showNotification("Lars ist das neue Leistungsabrechnungssystem der RDS-Saar !")
+            window.showNotification("Lars - das Leistungsabrechnungssystem der RDS-Saar !")
           }
       
           case _ =>
         }
       }
 
+      // a user has succesfully logged-in
       case event: lards.model.event.Login => {
         view.user_info.setValue("user: " + event.user.firstname)
         view.show

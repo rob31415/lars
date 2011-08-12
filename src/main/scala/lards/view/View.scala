@@ -32,6 +32,7 @@ trait View {
 
   def on_hide
 
+  //@TODO: protected in scala?
   def init
 
 }

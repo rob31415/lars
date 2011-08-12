@@ -49,6 +49,7 @@ trait Dao[A] {
       println("saving new " + record)
       _save_new(session, record)
       session.commit
+      on_success_insert()
     } finally {
       session.close
     }
@@ -63,6 +64,7 @@ trait Dao[A] {
       println("saving existing " + record)
       _save_existing(session, record)
       session.commit
+      on_success_update()
     } finally {
       session.close
     }
@@ -70,18 +72,25 @@ trait Dao[A] {
 
   def _save_existing(session: SqlSession, record: A)
 
-  def delete(record: A) {
+  def delete(record: java.util.Set[A]) {
     val session = DbSessionProvider.factory.openSession()
 
     try {
       println("deleting record with id=" + record)
       _delete(session, record)
       session.commit
+      on_success_delete()
     } finally {
       session.close
     }
   }
 
-  def _delete(session: SqlSession, record: A)
+  def _delete(session: SqlSession, record: java.util.Set[A])
+
+  def on_success_delete()
+
+  def on_success_update()
+ 
+  def on_success_insert()
 
 }

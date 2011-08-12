@@ -30,8 +30,12 @@
 	    values (#{description})
   </insert>
 
-	<delete id="delete" parameterType="Long"> 
-    DELETE FROM role WHERE id = #{value}
+	<delete id="delete" parameterType="collection"> 
+    DELETE FROM role WHERE 
+      <foreach collection="_parameter" item="parm" 
+               separator="OR">
+        id = #{parm.id}
+      </foreach>
 	</delete>
 
 </mapper>

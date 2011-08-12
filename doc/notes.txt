@@ -5,8 +5,16 @@ gui design
     editieren
     neuanlagen
 
+management für col-setup (und row-filter analog)
+  -es gibt globale
+    -cud geregelt durch rechtevergabe "cud global col-setup"
+    -r kann jeder user
+  -es gibt welche pro user
+    -crud durch entprechenden user
+  -die dem user angezeigte liste = pro-user-liste + globale-liste
+
 wie fkt' form-validierung in vaadin?
-    
+
 rollen syncen mit active-directory via ldap
 
 db last-test, zb. 3 mio. records
@@ -14,6 +22,17 @@ db pagination/lazy-loading/wie table arbeitet mit large datasets?
 testen mit 50 mvp-triaden & 50 usern (ram, performance)
 
 was wird gleichzeitig von mehreren usern bearbeitet? wie damit umgehen?
+  -edit
+  -was passiert wenn ein neuer record angelegt wird?
+  -was passiert wenn ein neuer record gelöscht wird?
+
+equality:
+java                    scala
+== val-types -> value   ==
+== obj-types -> ptr     eq
+equals() -> userdef'val == und equals
+
+
 wie fkt vaadin url fragment? site-location (was sollen browser back/fwd/reload buttons bewirken?)
 
 verschiedene gui's für verschiedene user: wie?
@@ -21,7 +40,7 @@ user/gruppen/rollen - rechteverteilung wie?
 
 concurrent-change while batch-run problematik:
   entweder mit ausschuss-nachbearbeitung
-  oder mit pessimistic lock
+  oder mit pessimistic lock und vor start des batch user über (in x sekunden bevorstehenden) lock informieren
 
 
 inter-user data-change notification?

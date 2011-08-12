@@ -30,8 +30,8 @@ class User extends Dao[_User] {
     //Broadcaster.publish(new lards.model.event.Change)
   }
 
-  def _delete(session: SqlSession, record: _User) {
-    session.delete("lards.model.dto.UserMapper.deleteUser", record.id)
+  def _delete(session: SqlSession, record: java.util.Set[_User]) {
+    //session.delete("lards.model.dto.UserMapper.deleteUser", record.id)
     //Broadcaster.publish(new lards.model.event.Change)
   }
 
@@ -41,6 +41,15 @@ class User extends Dao[_User] {
 
   def get_locations(user: _User) : _User = {
     return user
+  }
+
+  def on_success_delete() {
+  }
+
+  def on_success_insert() {
+  }
+
+  def on_success_update() {
   }
 
 }

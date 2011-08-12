@@ -10,6 +10,9 @@ import com.vaadin.ui._
 import lards.global.Applocal
 
 
+/**
+@emits lards.view.event.Login
+*/
 class Login(window: Window) extends Panel with View {
 
   private val username = new TextField("Username")

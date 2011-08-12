@@ -18,17 +18,16 @@ class Role extends Dao[_Role] {
 
   def _save_new(session: SqlSession, record: _Role) {
     session.insert("lars.model.mybatis.mapper.role.insert", record)
-    //Broadcaster.publish(new lards.model.event.Change)
   }
 
   def _save_existing(session: SqlSession, record: _Role) {
     session.update("lars.model.mybatis.mapper.role.update", record)
-    //Broadcaster.publish(new lards.model.event.Change)
   }
 
-  def _delete(session: SqlSession, record: _Role) {
-    session.delete("lars.model.mybatis.mapper.role.delete", record.id)
-    //Broadcaster.publish(new lards.model.event.Change)
+  def _delete(session: SqlSession, record: java.util.Set[_Role]) {
+    //delete from role where description = 'blub' or description = 'bla!';
+    session.delete("lars.model.mybatis.mapper.role.delete", record)
+    Applocal.broadcaster.publish(new lards.model.event.Change('role))
   }
 
   def save(record: _Role) = {
@@ -36,8 +35,18 @@ class Role extends Dao[_Role] {
       save_new(record)
     else
       save_existing(record)
+  }
 
-    Applocal.broadcaster.publish(new lards.model.event.Change('role))
+  def on_success_delete() {
+    Applocal.broadcaster.publish(new lards.model.event.Role())
+  }
+
+  def on_success_insert() {
+    Applocal.broadcaster.publish(new lards.model.event.Role())
+  }
+
+  def on_success_update() {
+    Applocal.broadcaster.publish(new lards.model.event.Role())
   }
 
 }
