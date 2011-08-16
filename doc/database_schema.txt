@@ -8,7 +8,9 @@ location (id[text]*)
 drive (id*, user_id, location_id[text])
 drive2tag (drive_id*, tag_id*)
 tag (id*, description) <- nicht in db
-booking (id*, drive_id)
+booking (id*, drive_id, ?)
+
+
 
 
 

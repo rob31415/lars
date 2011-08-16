@@ -12,13 +12,9 @@ edit-tab is enabled only if one and only one row is selected
 delete-tab is always enabled, has a summary of currently selected data and a yes/no dialog when clicking delete-button
   records in use by other users are regarded in the summary
 row-filter adjustable and managable pro user
-  "save row-filter
 col-setup is adjustable and managable pro user
-  dropdown-box
-  "save current col-setup under following name:" + textbox + save button
-    overwrite yes/no dialog
-  "delete the chosen col-setup" + delete button
-the window geo, currently selected row-filter, col-setup and row-selection(s) are preserved by window closing and data reloading
+sorting-setup is adjustable and managable pro user
+the window geo, currently selected row-filter, col-setup, sorting and probably row-selection(s) are preserved by window closing and data reloading
 */
 
 package lards.presenter
@@ -86,7 +82,8 @@ class Role(view: lards.view.Role, model: lards.model.service.Role) {
             if(currently_edited_dto != None)
               unlock_dto(currently_edited_dto.get)
             currently_edited_dto = view.get_current_edit_data()
-            lock_dto(currently_edited_dto.get)
+            if(currently_edited_dto != None)
+              lock_dto(currently_edited_dto.get)
           }
           //editing cancelled
           case 'cancel_modify => {

@@ -19,7 +19,7 @@ would that be done by the view or rather the presenter?
 */
 class Role(var parent: Window) extends Panel with View {
 
-  val window = new Window("Einstellungen / Rollen")
+  val window = new Window("Bearbeitungsfenster: Einstellungen / Rollen")
   private val number_of_selected = new Label()
   private val number_of_all = new Label()
   private var delete_button = new Button("Ausgewählte Löschen",
@@ -70,12 +70,13 @@ class Role(var parent: Window) extends Panel with View {
     
     accordion.setSizeFull
     
-    accordion.addTab(create_panel_table(), "Rollen", null)
+    accordion.addTab(create_panel_table(), "Rollen Übersicht", null)
     accordion.addTab(panel_edit, "Rolle bearbeiten", null)
     accordion.addTab(create_panel_new(), "Neue Rolle anlegen", null)
     accordion.addTab(create_panel_delete(), "Rollen löschen", null)
-    accordion.addTab(new Label("TODO"), "Zeilenfilter", null)
-    accordion.addTab(new Label("TODO"), "Spaltenaufbau", null)
+    accordion.addTab(new Label("TODO"), "Zeilenfilter einstellen", null)
+    accordion.addTab(new Label("TODO"), "Spaltenaufbau einstellen", null)
+    accordion.addTab(new Label("TODO"), "Sortierung einstellen", null)
 
     accordion.addListener(new TabSheet.SelectedTabChangeListener() {
       def selectedTabChange(event: TabSheet#SelectedTabChangeEvent) {
@@ -190,17 +191,23 @@ class Role(var parent: Window) extends Panel with View {
   }
 
 
-  private def create_panel_table(): Panel = {
+  private def create_panel_table() = {
+    val panel = new Panel()
     val layout = new HorizontalLayout()
 
     layout.addComponent(create_row_filter_select())
-    layout.addComponent(create_col_filter_select())
-    
-    val panel = new Panel()
+    layout.addComponent(create_col_setup_select())
+    layout.addComponent(create_sorting_select())
+
     panel.addComponent(layout)
-    panel.addComponent(table)
-    
-    panel
+
+    val splitpanel = new SplitPanel()
+    splitpanel.setOrientation(SplitPanel.ORIENTATION_VERTICAL)
+    splitpanel.setFirstComponent(panel)
+    splitpanel.setSecondComponent(table)
+    splitpanel.setSplitPosition(50)
+
+    splitpanel
   }
 
   
@@ -223,10 +230,18 @@ class Role(var parent: Window) extends Panel with View {
   }
 
 
-  private def create_col_filter_select(): ComboBox = {
+  private def create_col_setup_select(): ComboBox = {
     val box = new ComboBox("Spaltenaufbau auswählen")
     box.addItem("Alles")
     box.addItem("Minimal")
+    box
+  }
+
+
+  private def create_sorting_select(): ComboBox = {
+    val box = new ComboBox("Sortierung auswählen")
+    box.addItem("Sortierung A")
+    box.addItem("Sortierung B")
     box
   }
   

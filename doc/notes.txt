@@ -1,76 +1,118 @@
 gui design
-  abstraktion für
+  punkte:
     multiple auswählen
     löschen
     editieren
     neuanlagen
-
-management für col-setup (und row-filter analog)
-  -es gibt globale
-    -cud geregelt durch rechtevergabe "cud global col-setup"
-    -r kann jeder user
-  -es gibt welche pro user
-    -crud durch entprechenden user
-  -die dem user angezeigte liste = pro-user-liste + globale-liste
-
-wie fkt' form-validierung in vaadin?
-
-rollen syncen mit active-directory via ldap
-
-db last-test, zb. 3 mio. records
-db pagination/lazy-loading/wie table arbeitet mit large datasets?
-testen mit 50 mvp-triaden & 50 usern (ram, performance)
-
-was wird gleichzeitig von mehreren usern bearbeitet? wie damit umgehen?
-  -edit
-  -was passiert wenn ein neuer record angelegt wird?
-  -was passiert wenn ein neuer record gelöscht wird?
-
-equality:
-java                    scala
-== val-types -> value   ==
-== obj-types -> ptr     eq
-equals() -> userdef'val == und equals
+    zeilenfilter
+    spaltenaufbau
+    sortierung
+    wie fkt' form-validierung in vaadin?
+      validierung für edit & new
+  abstraktionen für o.g. punkte
+  scaffolding?
 
 
-wie fkt vaadin url fragment? site-location (was sollen browser back/fwd/reload buttons bewirken?)
+onchange-listener für form oder beanitem? (damit man erst bei tatsächlichem, aktivem start des editvorganges locken kann)
+  via vaadin-formfield-factory
+
+grundlegende tests
+  table mit 500000 records -> ok
+  wie arbeitet die table bei large datasets (zb. 3-7 mio. records)? (pagination/lazy-gui/lazy-container)
+  testen mit 50 mvp-triaden & 50+ usern (ram, cpu, garbagecollection, messageanzahl)
+
+"inter-user data-change notification": was wird gleichzeitig von mehreren usern bearbeitet? wie damit umgehen?
+  record
+    update
+      pessimistic lock mit lock & unlock notifizierung
+    create
+    delete
+    jeweils reload (bei batch-jobs after batch finished)
+  trigger notify (mechanismus in postgresql, in oracle heißt das anders)
+    möglich mit zieldatenbank?
+      was ist die zieldatenbank?
+    essentiell oder nice2have?
+    wie fkt das technisch?
+      threads nötig? wie sicher gestalten? actors?
+        wo ist die mainloop in einer webapp? kann man aus einem anderen thread/prozess messages hinscicken?
+      wie kann man trigger abschalten/ignorieren (für batchprocessing)?
+    kann/muß db-abstraction layer das tun? 
+
+batchjob problematik:
+  entweder mit ausschuss-nachbearbeitung (schlechte alternative)
+  oder mit pessimistic lock 
+    vor lauf müssten alle beteiligten tables gelockt werden
+      vor start des batch user über lock informieren
+        z.b. countdown von x sekunden anzeigen
+      oder mit lock (und somit mit batchjob run) warten bis jeder user mit edit fertig ist
+  "batchjob"/batchprocessing einführen
+    das, was momentan das "a=b" ist
+      was ist das genau im einzelnen? gibt es welche, die rein fachlich sind und daher im neuen system auch gebraucht werden könnten?
+    wie wird man los, diese zu bestimmten zeitpunkten in der dekadenverarb' ausführen zu müssen?
+      gar nicht? dann bleiben sie was sie sind, nämlich technische modalitäten (ausführungsarten), die dem fachlichen benutzer keinerlei mehrwert bringen (z.b. initialisieren von feldern o.ä.)
+        außderdem haben sie fürchterliche namen
+      könnte man wizard-mässig durch einzelne GPA oder ganze GPA-Abfolgen durchführen?
+
+win-geo beibehalten
+  per user für jedes fenster
+  wie fkt vaadin url fragment? site-location (was sollen browser back/fwd/reload buttons bewirken?)
 
 verschiedene gui's für verschiedene user: wie?
-user/gruppen/rollen - rechteverteilung wie?
+ok-user/gruppen/rollen - rechteverteilung wie?
+  rollen sind für rechtevergabe. ein user ist 1 rolle zugeordnet
+  rollen werden später mit ad via ldap gesynct
+  gruppen sind für zus'fassung von filter, zeilenaufbau und rfu. ein user ist 1 gruppe zugeordnet
 
-concurrent-change while batch-run problematik:
-  entweder mit ausschuss-nachbearbeitung
-  oder mit pessimistic lock und vor start des batch user über (in x sekunden bevorstehenden) lock informieren
-
-
-inter-user data-change notification?
-trigger notify
-  essentiell oder nice2have?
-  wie fkt das technisch? (kann das jede datenbank?)
-    threads nötig? wie sicher gestalten? actors?
-      wo ist die mainloop in einer webapp? kann man aus einem anderen thread/prozess messages hinscicken?
-    wie kann man trigger abschalten/ignorieren (für batchprocessing)?
-  kann/muß db-abstraction layer das tun? 
-
-versionieren
-ok-db scala- oder mybatis migrations?
-logging
-source dokumentation: event-sender und receiver müssen gut erkennbar sein 
-  (scaladoc @see fkt nicht, yui-doc macht das nicht)
-development als tdd mit unit testing? (junit)
+sourcecode management:
+  ok-versionieren
+  ok-db scala- oder mybatis migrations?
+  logging
+  source dokumentation: event-sender und receiver müssen gut erkennbar sein 
+    (scaladoc @see fkt nicht, yui-doc macht das nicht)
+  development als tdd mit unit testing? (junit)
+  scaffolding für table/edit triaden?
 
 umgang mit/ops auf großen datenmengen/tabellenzeilen
   nötig für was? nur für admin-mässige user? wie bequem?
-  reicht es, daß user lediglich filter auswählt u. die anzahl angezeigt bekommt?
+  reicht es, daß user lediglich filter auswählt u. die anzahl angezeigt bekommt und keine table?
   und daß er dann eine bequeme "fadenkreuz" fkt. hat?
-  
+
 alle "proto"'s werden zu log-ausgaben
   manche davon sind für user relevant und sollten als verarbeitungs-rückmeldung angezeigt werden
   protokolle parallel zu log? mit selbem logging mechanismus? welcher user soll die sehen können?
 
-filter-ketten
-  fahrtbericht: user.location->user->tag
-  immer true, immer false, einstellbar (vom user zb. per dialog oder benutzer-einstellung)
+database-design für row_filter, col_setup, row_sorting
+  welche der 4 alternativen (siehe papier-skizze)?
+
+row-filter-ketten
+  fahrtbericht: n * user.location (or) -> user -> tag -> m * gg-filter (and)
+  soll m = 2 sein?
+  filter de-/aktivieren übersichtlich und bequem in gui einbauen
+    split panel in übersicht-tab
+  filter editieren
+    wer soll das können? nur admin? ausgewählte "power-user"?
+    "power-user dialog" nötig (oder reicht sql-statement)?
+      wie kompliziert wäre ein solcher dialog?
+
+col-setup
+  =position+breite+fixed
+  fixed notwendig (wird das oft benutzt)?
+    wie fixe spalten realisieren?
+
+sortierung
+  multiple sortierung: 
+    wie technisch in vaadin?
+    editing bequem in gui einbauen?
+  
+user-vorschlag: "details" für ausgewählte datensätze
+  zeigt form (readonly?) in neuem fenster an (1 fenster pro datensatz)
+  button in Tabellen-tabbei
+  für maximal n ausgewählte; darüber: button ausgrauen
+
+suchen in table
+  notwendig (wird das oft benutzt)?
+  wie machen in gui-design und technisch?
+    feldauswahl, case-sensitivity, wrap, weitersuchen
 
 tag-bedeutungen/kategorien:
   progress/fortschritt innerhalb einer verarbeitung
@@ -78,20 +120,24 @@ tag-bedeutungen/kategorien:
   welche sind fachlich notwendige tags und welche technisch notwendige tags
   nach möglichkeit 1 zu 1 übernahme der (nur relevanten) stati als tag
 
-      filter
-cols
-rows
-
 i18n
   was englisch, was deutsch?
-  ok-wohin mit texten?
+  wo kommen die texte her? resource-system?
 
 db modeling
   history
 
-eyecatcher info's beim einloggen um den user zu motivieren ausstehende aufgaben zu erledigen (zb. offene rendevouzfälle)
+eyecatcher infos
+  zb. um den user zu motivieren ausstehende aufgaben zu erledigen (zb. offene rendevouzfälle)
+  oder allg. infos von bestimmten usern (wacheleiter) an bestimmte user
   broadcast infosystem zur verteilung interner neuigkeiten
-  p2p chat-fkt (zb. "hey, gib mal den datensatz frei")
+    z.b. beim oder nach einloggen in einem panel
+
+p2p chat-fkt (zb. "hey, gib mal den datensatz frei")
+  http://vaadin.com/forum/-/message_boards/view_message/290837
+  http://vaadin.com/web/henrik/wiki/-/wiki/Main/Simple%20Chat/
+
+
 
 ok negativ formulierte permission (also restriction) nötig? explizit?
   vlt für filter?
@@ -127,16 +173,18 @@ welche scopes gibt es? session management?
 
 dependency injection?
 
-fahrtbericht anlegen aus leitstellen-system
-divi daten vom tablet-pc zum server incl' fahrtbericht-zuweisung
-drucken aus dem browser
-wysiwyg text-editieren nötig? textblock templates nötig?
+große/neue features:
+  rollen syncen mit active-directory via ldap
+  fahrtbericht anlegen aus leitstellen-system
+  divi daten vom tablet-pc zum server incl' fahrtbericht-zuweisung
+  drucken aus dem browser
+  wysiwyg text-editieren nötig? textblock templates nötig?
 
-mvp: wieso events zu pres' aber method-calls auf view & model?
-alles async mit command-pattern. zu übertrieben?
-wäre undo/redo irgendwo gut?
-vaadin: welche daten werden wann hin- und her geschickt?
-scaffolding für table/edit triaden?
+architekturelle fragestellungen:
+  mvp: wieso events zu pres' aber method-calls auf view & model?
+  alles async mit command-pattern. zu übertrieben?
+  wäre undo/redo irgendwo gut?
+  vaadin: welche daten werden wann hin- und her geschickt?
 
 ok  bequemes orm (n:m), sql direkt, stored-proc, oracle&postgresql, lizenz
 
@@ -212,3 +260,9 @@ overly optimistic lock
   annahme, es gibt kein konkurrierenden schreibzugriffe.
   könnte abgedeckt werden durch rechtesystem
 
+
+equality:
+java                    scala
+== val-types -> value   ==
+== obj-types -> ptr     eq
+equals() -> userdef'val == und equals
