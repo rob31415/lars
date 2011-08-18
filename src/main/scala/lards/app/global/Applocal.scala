@@ -20,17 +20,28 @@ import lards.global.Event
 class Applocal extends TransactionListener {
 
   class Broadcaster extends Publisher[Event]
-  
+
   val broadcaster = new Broadcaster()
+
+  var user: lards.model.dto.User = null
 
 
   override def transactionStart(app: Application, transactionData: Object) {
       lards.global.Applocal.threadLocal.set(this)
   }
 
+
   override def transactionEnd(app: Application, transactionData: Object) {
       lards.global.Applocal.threadLocal.set(null)
   }
+
+
+  def set_user(user: lards.model.dto.User) {
+    this.user = user
+  }
+  
+
+  def get_user = this.user
 
 }
 
@@ -43,7 +54,11 @@ object Applocal {
     app.getContext().addTransactionListener(threadLocal.get())
   }
 
-  def broadcaster: lards.global.Applocal#Broadcaster = threadLocal.get().broadcaster
+  def broadcaster: lards.global.Applocal#Broadcaster = threadLocal.get.broadcaster
 
+  def get_user = threadLocal.get.get_user
+
+  def set_user(user: lards.model.dto.User) = threadLocal.get.set_user(user)
+  
 }
 

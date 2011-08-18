@@ -13,67 +13,78 @@ import com.vaadin.data.util.BeanItem
 
 
 /**
-TODO: should we fill data in table only if view is shown?
-would that be done by the view or rather the presenter?
 @emits lards.view.event.Role
 */
 class Role(var parent: Window) extends Panel with View {
 
-  val window = new Window("Bearbeitungsfenster: Einstellungen / Rollen")
+  /*
+  everything that's declared here is intentionally put into
+  "class-instance-scope" because it's being accessed
+  all over the place, e.g. from inside ui-element-callbacks.
+  */
+
+  private var window: Window = null
+
+  private var accordion: Accordion = null
+
+  private var table: Table = null
+
+  private var form_edit: Form = null  //@TODO: just 1 form for both, edit and new? no, i don't see a benefit (aug/11).
+  private var panel_edit: Panel = null
+
+  private var form_new: Form = null
+
+  private var delete_button: Button = null
   private val number_of_selected = new Label()
   private val number_of_all = new Label()
-  private var delete_button = new Button("Ausgewählte Löschen",
-    new Button.ClickListener() { 
-      def buttonClick(event: Button#ClickEvent) {
-        parent.showNotification("Ausgewählte Löschen...")
-        val selected = table.getValue.asInstanceOf[java.util.Set[lards.model.dto.Role]]
-        Applocal.broadcaster.publish(new lards.view.event.Role('delete, Some(selected)))
-      }
-    }
-  )
-  private val form_edit = new Form()
-  private val panel_edit = create_panel_edit()
-  private val form_create = new Form()  //@TODO: only 1 form for edit and new
-  private val table = create_table()
-  private val accordion = create_accordion()
-  private var i_have_aquired_lock = false //@TODO get rid of this
 
 
-  init
+  create_elements
 
-  override def init {
-    println("view.Role.init")
-    
-    window.setWidth(500)
-    window.setHeight(250)
-    window.setPositionX(10)
-    window.setPositionY(40)
-  
-    window.addComponent(accordion)
 
-    window.addListener(new Window.CloseListener() {
+  override def on_show = {
+    parent.addWindow(window)
+  }
+
+
+  override def on_hide = {
+    parent.removeWindow(window)
+  }
+
+
+  /*
+  this happens at creation-time.
+
+  instantiates all elements (quasi recursively and on-demand) at the time 
+  where they are needed - because correct order is crucial.
+
+  it's the create-function's responsibility to update the null-initialised
+  instance-variables and thus putting the newly created element 
+  in class-instance-scope.
+  */
+  override def create_elements {
+    this.window = new Window("Bearbeitungsfenster: Einstellungen / Rollen")
+    this.window.setWidth(500)
+    this.window.setHeight(250)
+    this.window.setPositionX(10)
+    this.window.setPositionY(40)
+    this.window.getContent.setSizeFull
+    this.window.addComponent(create_accordion)
+    this.window.addListener(new Window.CloseListener() {
       def windowClose(event: Window#CloseEvent) {
-        //hide
-        //unlock_dto(get_bean_from_form(form_edit))
         Applocal.broadcaster.publish(new lards.view.event.Role('close))
       }
     })
-    
-    form_edit.setWriteThrough(true)
-    form_edit.setReadThrough(true)
-    form_edit.setImmediate(true)
   }
-  
-  
+
+
   private def create_accordion(): Accordion = {
     val accordion = new Accordion()
-    
-    accordion.setSizeFull
-    
-    accordion.addTab(create_panel_table(), "Rollen Übersicht", null)
-    accordion.addTab(panel_edit, "Rolle bearbeiten", null)
-    accordion.addTab(create_panel_new(), "Neue Rolle anlegen", null)
-    accordion.addTab(create_panel_delete(), "Rollen löschen", null)
+        
+    accordion.addTab(create_panel_table, "Rollen Übersicht", null)
+    accordion.addTab(create_panel_edit, "Rolle bearbeiten", null)
+    accordion.addTab(create_panel_new, "Neue Rolle anlegen", null)
+    accordion.addTab(create_panel_delete, "Rollen löschen", null)
     accordion.addTab(new Label("TODO"), "Zeilenfilter einstellen", null)
     accordion.addTab(new Label("TODO"), "Spaltenaufbau einstellen", null)
     accordion.addTab(new Label("TODO"), "Sortierung einstellen", null)
@@ -82,146 +93,38 @@ class Role(var parent: Window) extends Panel with View {
       def selectedTabChange(event: TabSheet#SelectedTabChangeEvent) {
 
         if(accordion.getSelectedTab == panel_edit) {
+          form_new.setItemDataSource(new BeanItem[lards.model.dto.Role](new lards.model.dto.Role()))
           Applocal.broadcaster.publish(new lards.view.event.Role('start_modify))
         } else {
           Applocal.broadcaster.publish(new lards.view.event.Role('cancel_modify))
         }
-
-/*
-        val dto = get_bean_from_form(form_edit)
-        if(accordion.getSelectedTab == panel_edit) {
-          if(lards.global.Editlock.contains(dto)) {
-            parent.showNotification("Rolle wird momentan editiert!")
-            //@TODO: lock form input
-          } else {
-            lards.global.Editlock.add(dto)
-            i_have_aquired_lock = true
-          }
-        } else {
-          unlock_dto(dto)
-        }
-*/
-
       }
     })
-    
+
+    accordion.setSizeFull
+
+    this.accordion = accordion
     accordion
   }
 
 
-  private def create_panel_new(): Panel = {
-    val panel = new Panel()
-    
-    //@TODO: do this on accordion-selection-change
-    form_create.setItemDataSource(new BeanItem[lards.model.dto.Role](new lards.model.dto.Role()))
-    form_create.setVisibleItemProperties(List("description"))
-
-    var button = new Button("Neu Anlegen", 
-      new Button.ClickListener() { 
-        def buttonClick(event: Button#ClickEvent) {
-          parent.showNotification("Neue Rolle wird angelegt...")
-          broadcast_save(form_create)
-          //Applocal.broadcaster.publish(new lards.view.event.Role('save, put_in_new_list(get_bean_from_form(form_create))))
-          //@TODO: do this on accordion-selection-change
-          form_create.setItemDataSource(new BeanItem[lards.model.dto.Role](new lards.model.dto.Role()))
-        }
-      }
-    )
-    
-    panel.addComponent(form_create)
-    panel.addComponent(button)
-    panel
-  }
-
-
-  //returns true if something was broadcasted
-  private def broadcast_save(form: Form): Boolean = {
-    val obj = get_bean_from_form(form)
-    if(None != obj) {
-      Applocal.broadcaster.publish(new lards.view.event.Role('save, put_in_new_list(obj.get)))
-      return true
-    } else {
-      return false
-    }
-  }
-
-
-  private def get_bean_from_form(form: Form): Option[lards.model.dto.Role] = {
-    val ds = form.getItemDataSource.asInstanceOf[BeanItem[lards.model.dto.Role]]
-    if(ds == null) None else Some(ds.getBean)
-  }
-  
-/*
-  def pack_create_form_data() = {
-    //val obj = form_create.getItemDataSource.asInstanceOf[BeanItem[lards.model.dto.Role]].getBean
-    put_in_new_list(get_bean_from_form(form_create))
-  }
-
-  def pack_edit_form_data() = {
-    val obj = form_edit.getItemDataSource.asInstanceOf[BeanItem[lards.model.dto.Role]].getBean
-    put_in_new_list(obj)
-  }
-*/  
-
-  private def put_in_new_list(obj: lards.model.dto.Role) = {
-    val dto_list = new java.util.HashSet[lards.model.dto.Role]
-    dto_list.add(obj)
-    Some(dto_list)
-  }
-
-
-  private def create_panel_edit(): Panel = {
-    val panel = new Panel()
-
-    var button = new Button("Speichern", 
-      new Button.ClickListener() { 
-        def buttonClick(event: Button#ClickEvent) {
-          parent.showNotification("Rolle wird gespeichert...")
-          //val obj = form_edit.getItemDataSource.asInstanceOf[BeanItem[lards.model.dto.Role]].getBean
-          //Applocal.broadcaster.publish(new lards.view.event.Role('save, put_in_new_list(get_bean_from_form(form_edit))))
-          broadcast_save(form_edit)
-        }
-      }
-    )
-    
-    panel.addComponent(form_edit)
-    panel.addComponent(button)
-        
-    panel
-  }
-
-
-  private def create_panel_table() = {
-    val panel = new Panel()
+  private def create_panel_table = {
     val layout = new HorizontalLayout()
-
     layout.addComponent(create_row_filter_select())
     layout.addComponent(create_col_setup_select())
     layout.addComponent(create_sorting_select())
 
-    panel.addComponent(layout)
-
-    val splitpanel = new SplitPanel()
-    splitpanel.setOrientation(SplitPanel.ORIENTATION_VERTICAL)
-    splitpanel.setFirstComponent(panel)
-    splitpanel.setSecondComponent(table)
-    splitpanel.setSplitPosition(50)
+    val splitpanel = new VerticalSplitPanel()
+    splitpanel.setFirstComponent(layout)
+    splitpanel.setSecondComponent(create_table)
+    //@TODO: get rid of magik-nr. should be height of layout
+    splitpanel.setSplitPosition(50, com.vaadin.terminal.Sizeable.UNITS_PIXELS)
+    splitpanel.setSizeFull
 
     splitpanel
   }
 
-  
-  private def create_panel_delete(): Panel = {
-    val panel = new Panel()
 
-    panel.addComponent(number_of_all)
-    panel.addComponent(number_of_selected)
-    panel.addComponent(delete_button)
-
-    panel
-  }
-
-  
   private def create_row_filter_select(): ComboBox = {
     val box = new ComboBox("Zeilenfilter auswählen")
     box.addItem("Alles")
@@ -244,29 +147,17 @@ class Role(var parent: Window) extends Panel with View {
     box.addItem("Sortierung B")
     box
   }
-  
-  
-  override def on_show = {
-    parent.addWindow(window)
-  }
-
-
-  override def on_hide = {
-    parent.removeWindow(window)
-  }
 
 
   private def create_table(): com.vaadin.ui.Table = {
     val table = new com.vaadin.ui.Table("Rollen")
 
-    table.setHeight(100)
-//    table.setSizeFull
+    table.setSizeFull
     table.setSelectable(true)
     table.setNullSelectionAllowed(false)
     table.setImmediate(true)
-    table.setMultiSelectMode(AbstractSelect.MultiSelectMode.DEFAULT)
+    table.setMultiSelectMode(AbstractSelect.MultiSelectMode.DEFAULT)  //SIMPLE
     table.setMultiSelect(true)
-    //MultiSelectMode.SIMPLE
 
     table.addContainerProperty("Rollen Beschreibung", classOf[String], null)
 
@@ -279,7 +170,110 @@ class Role(var parent: Window) extends Panel with View {
       }
     })
 
+    this.table = table
     table
+  }
+
+
+  private def create_panel_edit() = {
+    val panel = new Panel()
+
+    var button = new Button("Speichern", 
+      new Button.ClickListener() { 
+        def buttonClick(event: Button#ClickEvent) {
+          parent.showNotification("Rolle wird gespeichert...")
+          broadcast_save(form_edit)
+        }
+      }
+    )
+    
+    panel.addComponent(create_form_edit)
+    panel.addComponent(button)
+
+    this.panel_edit = panel
+    panel
+  }
+
+
+  private def create_form_edit = {
+    this.form_edit = new Form()
+    this.form_edit.setWriteThrough(true)
+    this.form_edit.setReadThrough(true)
+    this.form_edit.setImmediate(true)
+    this.form_edit.setVisibleItemProperties(List("description"))
+    this.form_edit
+  }
+
+
+  private def create_panel_new = {
+    val panel = new Panel()
+
+    var button = new Button("Neu Anlegen", 
+      new Button.ClickListener() { 
+        def buttonClick(event: Button#ClickEvent) {
+          parent.showNotification("Neue Rolle wird angelegt...")
+          broadcast_save(form_new)
+        }
+      }
+    )
+
+    panel.addComponent(create_form_new)
+    panel.addComponent(button)
+
+    panel
+  }
+
+
+  private def create_form_new = {
+    this.form_new = new Form()
+    this.form_new.setVisibleItemProperties(List("description"))
+    this.form_new
+  }
+  
+
+  private def create_panel_delete(): Panel = {
+    val panel = new Panel()
+
+    this.delete_button = new Button("Ausgewählte Löschen",
+      new Button.ClickListener() { 
+        def buttonClick(event: Button#ClickEvent) {
+          parent.showNotification("Ausgewählte Löschen...")
+          val selected = table.getValue.asInstanceOf[java.util.Set[lards.model.dto.Role]]
+          Applocal.broadcaster.publish(new lards.view.event.Role('delete, Some(selected)))
+        }
+      }
+    )
+
+    panel.addComponent(number_of_all)
+    panel.addComponent(number_of_selected)
+    panel.addComponent(this.delete_button)
+
+    panel
+  }
+
+
+  //returns true if something was broadcasted
+  private def broadcast_save(form: Form): Boolean = {
+    val obj = get_bean_from_form(form)
+    if(None != obj) {
+      Applocal.broadcaster.publish(new lards.view.event.Role('save, put_in_new_list(obj.get)))
+      return true
+    } else {
+      return false
+    }
+  }
+
+
+  private def get_bean_from_form(form: Form): Option[lards.model.dto.Role] = {
+    val ds = form.getItemDataSource.asInstanceOf[BeanItem[lards.model.dto.Role]]
+    if(ds == null) None else Some(ds.getBean)
+  }
+  
+
+  private def put_in_new_list(obj: lards.model.dto.Role) = {
+    val dto_list = new java.util.HashSet[lards.model.dto.Role]
+    dto_list.add(obj)
+    Some(dto_list)
   }
 
 
@@ -299,9 +293,10 @@ class Role(var parent: Window) extends Panel with View {
   def set_data(data: lards.model.dto.Role) = {
     val bean_item = new BeanItem[lards.model.dto.Role](data)
     form_edit.setItemDataSource(bean_item)
-    form_edit.setVisibleItemProperties(List("description"));
 
-/* TODO this isn't called when a textfield is modified. that's a pity.
+  /* 
+  @TODO this isn't called when a textfield is modified. that's a pity.
+        maybe a formfield-factory makes it work
 
     bean_item.addListener(new com.vaadin.data.Item.PropertySetChangeListener() {
       def itemPropertySetChange(event: com.vaadin.data.Item.PropertySetChangeEvent) {
@@ -309,26 +304,30 @@ class Role(var parent: Window) extends Panel with View {
         println("!!!!!!!!!!!!!!!!!")
       }
     })
-*/
+  */
   }
 
 
   def set_number_of_selected_display(all: Integer, selected: Integer) = {
     number_of_all.setValue("Anzahl Datensätze insgesamt:" + all)
     number_of_selected.setValue("Anzahl ausgewählter Datensätze:" + selected)
-    delete_button.setEnabled(selected != 0)
+    this.delete_button.setEnabled(selected != 0)
   }
 
 
   def get_current_edit_data(): Option[lards.model.dto.Role] = {
     get_bean_from_form(form_edit)
-    //form_edit.setItemDataSource
+  }
+  
+  
+  def lock_edit {
+    parent.showNotification("Datensatz wird gerade von einem anderen Benutzer editiert")
+    //@TODO
   }
 
-/*
-  private def get_current_create_data(): Option[lards.model.dto.Role] = {
-    //get_bean_from_form(form_create)
-    //form_edit.setItemDataSource
+
+  def unlock_edit {
+    //@TODO
   }
-*/
+
 }

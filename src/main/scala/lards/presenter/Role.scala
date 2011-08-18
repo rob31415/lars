@@ -28,7 +28,7 @@ class Role(view: lards.view.Role, model: lards.model.service.Role) {
 
   Applocal.broadcaster.subscribe(this)
   var data: Seq[lards.model.dto.Role] = _
-  var currently_edited_dto: Option[lards.model.dto.Role] = None
+//  var currently_edited_dto: Option[lards.model.dto.Role] = None
 
 
   def notify(event: Any) {
@@ -79,23 +79,17 @@ class Role(view: lards.view.Role, model: lards.model.service.Role) {
           }
           //user intends to edit
           case 'start_modify => {
-            if(currently_edited_dto != None)
-              unlock_dto(currently_edited_dto.get)
-            currently_edited_dto = view.get_current_edit_data()
-            if(currently_edited_dto != None)
-              lock_dto(currently_edited_dto.get)
+            if(!lards.global.Editlock.add(view.get_current_edit_data))
+              view.lock_edit
           }
           //editing cancelled
           case 'cancel_modify => {
-            if(currently_edited_dto != None)
-              unlock_dto(currently_edited_dto.get)
-            currently_edited_dto = None
+            lards.global.Editlock.remove(view.get_current_edit_data)
           }
           //window is closed by user
           case 'close => {
             view.hide
-            if(currently_edited_dto != None)
-              unlock_dto(currently_edited_dto.get)
+            lards.global.Editlock.remove(view.get_current_edit_data)
           }
 
           case _ =>
@@ -121,18 +115,6 @@ class Role(view: lards.view.Role, model: lards.model.service.Role) {
 
       case _ =>
     }
-  }
-
-
-  def unlock_dto(dto: lards.model.dto.Role) {
-    lards.global.Editlock.remove(dto)
-    currently_edited_dto = None
-  }
-
-
-  def lock_dto(dto: lards.model.dto.Role) {
-    lards.global.Editlock.add(dto)
-    currently_edited_dto = Some(dto)
   }
 
 }

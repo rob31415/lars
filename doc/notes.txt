@@ -10,16 +10,22 @@ gui design
     wie fkt' form-validierung in vaadin?
       validierung für edit & new
   abstraktionen für o.g. punkte
-  scaffolding?
+    scaffolding?
+
+
+daos ohne dbzugriff
+  wie?
 
 
 onchange-listener für form oder beanitem? (damit man erst bei tatsächlichem, aktivem start des editvorganges locken kann)
   via vaadin-formfield-factory
 
+
 grundlegende tests
   table mit 500000 records -> ok
   wie arbeitet die table bei large datasets (zb. 3-7 mio. records)? (pagination/lazy-gui/lazy-container)
   testen mit 50 mvp-triaden & 50+ usern (ram, cpu, garbagecollection, messageanzahl)
+
 
 "inter-user data-change notification": was wird gleichzeitig von mehreren usern bearbeitet? wie damit umgehen?
   record

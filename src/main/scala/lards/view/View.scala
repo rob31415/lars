@@ -32,7 +32,9 @@ trait View {
 
   def on_hide
 
-  //@TODO: protected in scala?
-  def init
-
+  def create_elements
+  
+  //@TODO: can it be made so, that this is called *after* 
+  //       the derived class' constructor?
+  //create_elements
 }

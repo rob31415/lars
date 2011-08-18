@@ -80,6 +80,8 @@ class Main extends Application with HttpServletRequestListener {
             println("logging out user")
             //@TODO: yes/no dialog
             Applocal.broadcaster.publish(new lards.presenter.event.Main('shutdown))
+            Applocal.set_user(null)
+            //@TODO: anything to clean-up in Applocal?
             close()
           }
           case 'about => {

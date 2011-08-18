@@ -24,9 +24,10 @@ class Main(var window: Window) extends Panel with View {
   
   val user_info: Label = new Label("unknown user")
 
-  init
+  create_elements
+  
 
-  override def init {
+  override def create_elements {
     addComponent(user_info)
     addComponent(create_menu())
     setSizeFull()

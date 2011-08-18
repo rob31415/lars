@@ -1,3 +1,7 @@
+/**
+is sent when user successfully logges in
+*/
+
 package lards.model.event
 
 import lards.global.Event

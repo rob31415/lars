@@ -15,22 +15,25 @@ import lards.global.Applocal
 */
 class Login(window: Window) extends Panel with View {
 
-  private val username = new TextField("Username")
-  private val password = new TextField("Password")
-  private val button = new Button("Login", 
-    new Button.ClickListener() { 
-      def buttonClick(event: Button#ClickEvent) {
-        Applocal.broadcaster.publish(new lards.view.event.Login(Some(username.getValue.toString), Some(password.getValue.toString) ))
-      }
-    }
-  )
+  private var username: TextField = null
+  private var password: TextField = null
 
 
-  init  
+  create_elements
   show
-  
-  override def init {
-    password.setSecret(true)
+
+
+  override def on_show = {
+    window.setContent(this)
+  }
+
+
+  override def on_hide = {
+    window.setContent(null)
+  }
+
+
+  override def create_elements {
 
     val layout = new GridLayout(3, 3)
     layout.setWidth("100%")
@@ -40,7 +43,7 @@ class Login(window: Window) extends Panel with View {
     layout.addComponent(new Label("02"), 0, 2)
 
     layout.addComponent(new Label("10"), 1, 0)
-    layout.addComponent(create_input_panel(), 1, 1)
+    layout.addComponent(create_input_panel, 1, 1)
 //    layout.setComponentAlignment(layout.getComponent(1, 1), Alignment.MIDDLE_CENTER)
     layout.addComponent(new Label("12"), 1, 2)
 
@@ -65,20 +68,36 @@ class Login(window: Window) extends Panel with View {
   def create_input_panel(): Panel = {
     val panel = new Panel
     panel.addComponent(new Label("Bitte einloggen"))
-    panel.addComponent(username)
-    panel.addComponent(password)
-    panel.addComponent(button)
+    panel.addComponent(create_username_input)
+    panel.addComponent(create_password_input)
+    panel.addComponent(create_login_button)
 //    panel.setWidth("100px")
     panel
   }
 
-  override def on_show = {
-    window.setContent(this)
+
+  private def create_username_input = {
+    this.username = new TextField("Username")
+    this.username
   }
 
 
-  override def on_hide = {
-    window.setContent(null)
+  private def create_password_input = {
+    this.password = new TextField("Passwort")
+    this.password.setSecret(true)
+    this.password
+  }
+
+
+  private def create_login_button = {
+    val button = new Button("Login", 
+      new Button.ClickListener() { 
+        def buttonClick(event: Button#ClickEvent) {
+          Applocal.broadcaster.publish(new lards.view.event.Login(Some(username.getValue.toString), Some(password.getValue.toString) ))
+        }
+      }
+    )
+    button
   }
 
 }
