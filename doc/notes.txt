@@ -272,3 +272,29 @@ java                    scala
 == val-types -> value   ==
 == obj-types -> ptr     eq
 equals() -> userdef'val == und equals
+
+
+
+ein plädoyer für scala+vaadin+mvp-pattern
+
+das jahr ist 2011. das thema: user-interfaces von webapplikationen.
+vor 20 jahren erdachte jemand, daß man gedrucktes in einem computernetz lesen können soll und erschuf ein "system" dafür (www).
+dann kamen die sog. "browser-wars", in denen die rebellion (netscape) gegen das imperium (m$) kämpfte - um die gunst der leserschaft - diese wiederum wollte und will viel klicki-bunti.
+während dieser kriegszeit ging's darum wer schneller war - also wurden technologien für klicki-bunti so kurzfristig wie möglich nur so auf den markt geschmissen (javasript, css) - mit allem was "kurzfristig" so bedeuten kann.
+dann kam die idee, daß der kram ja mittlerweile so mächtig ist, daß man damit ganze anwendungen - wie man sie bis dato als zu installierende software kannte - im browser laufen lassen kann.
+dann kam einer und schreibt eine diss, die das furchtbare gestümpere, das bis dahin auf den bestehenden mist gewachsen ist begrifflich zusammenfasst (rest).
+und als entwickler war man dann verleitet zu denken: "wenn das so nen dollen namen hat, sich 'natürlich' als praktikabel und funkionierend herauskristallisiert hat, muß das ja was supi-dolles sein. das mach ich jetzt auch so."
+und nun zur gegenwart - also was draus geworden ist.
+nur ein wort: facebook - und ich meine nicht die (langweiligen ;-) gesellschaftlichen und individuen-rechtlichen implikationen, sondern die benutzerführung.
+fb ist ein prima beispiel, für alles was scheisse ist an den user-interfaces von applikationen die auf "standard" web-technologien beruhen.
+
+der leser wird sich jetzt denken: "dann mach's halt besser!"
+ok.
+ich benutz' scala (und kein scheiss javascript oder java), vaadin (und kein scheiss html & css) und das mvp-pattern (und kein scheiss - äh, was eigentlich genau? reenskaug-mvc? hm, wohl eher nicht...) um eine gute architektur für applikationen zu bauen, die sich u.a. auch in einem manierlichen benutzer-interface niederschlägt.
+
+
+schlacht und spill = ein schlechten spiel
+
+
+scala hat viele sehr schöne möglichkeiten, eleganten code zu schreiben, aber diese aus java übernommene c++ template missgeburt namens generics ist wegen der erbkrankheit "type-erasure" ein sehr ernüchterndes ärgernis, über das man immer wieder stolpert.
+
