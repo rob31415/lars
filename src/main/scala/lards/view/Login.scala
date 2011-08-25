@@ -23,12 +23,12 @@ class Login(window: Window) extends Panel with View {
   show
 
 
-  override def on_show = {
+  override def on_show {
     window.setContent(this)
   }
 
 
-  override def on_hide = {
+  override def on_hide {
     window.setContent(null)
   }
 

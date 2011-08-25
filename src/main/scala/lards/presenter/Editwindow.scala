@@ -25,22 +25,17 @@ import collection.JavaConversions._
 import lards.model.dto.Dto
 import lards.model.dto.Dtos
 import lards.view.event.{Editwindow => View_event}
-import lards.model.event.{Dao => Model_event}
 import lards.view.Editwindow
 import lards.model.service.Dao
 
 
-/**
-@TODO:
-derived class must overwrite notify to check for 
-model-updates (relevant to itself) and if positive, call reload
-*/
+
 class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
 
   Applocal.broadcaster.subscribe(this)
   var data: Dtos = _
 
-  println("creating Editwindow presenter")
+  println("creating Editwindow presenter listening to menu_id " + menu_id)
 
 
   def notify(event: Any) {
@@ -49,18 +44,17 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
     event match {
 
       // mainmenu-item selected
+      
       case event: lards.view.event.Main => {
-        event.meaning match {
-          case menu_id => {
-            if(view.is_shown) {
-              view.hide
-            } else {
-              view.show
-              reload
-            }
+        println("Editwindow event-meaning=" + event.meaning)
+        
+        if(event.meaning == menu_id) {
+          if(view.is_shown) {
+            view.hide
+          } else {
+            view.show
+            reload
           }
-    
-//          case _ =>
         }
       }
 
@@ -70,17 +64,18 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
         event.meaning match {
           //selection in table changed
           case 'select => {
-            if(event.dtos.get.size == 1) {
+            if(event.dtos.get.get.size == 1) {
               view.set_data(data.get.get.find({e => e.id == event.dtos.get.get.iterator.next.id}).get)
             }
-            view.set_number_of_selected_display(data.get.get.length, event.dtos.get.size)
+            view.set_number_of_selected_display(data.get.get.size, event.dtos.get.get.size)
           }
           //save button pressed
           case 'save => {
-            if(event.dtos.get.size == 1) {
+            if(event.dtos.get.get.size == 1) {
               val obj = event.dtos.get.get.iterator.next
               println("saving " + obj)
               model.save(obj)
+              view.restore_view_state
             } else {
               println("saving of more than 1 collectively not implemented")
             }
@@ -88,6 +83,7 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
           //delete button pressed
           case 'delete => {
             model.delete(event.dtos)
+            view.restore_view_state
           }
           //user intends to edit
           case 'start_modify => {
@@ -108,14 +104,6 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
         }
       }
 
-
-/* @TODO: goes into deriving class
-      // database was queried
-      case event: Model_event => {
-        data = model.get_all.get
-        view.set_data(data) 
-      }
-*/
 
       // app' is going down
       case event: lards.presenter.event.Main => {

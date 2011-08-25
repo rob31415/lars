@@ -15,8 +15,6 @@ import javax.servlet.http._
 import lards.view._
 import lards.model._
 import lards.global.Applocal
-import lards.view.event.Main
-import lards.model.event.Login
 
 
 object Main {
@@ -26,21 +24,35 @@ object Main {
 
 class Main extends Application with HttpServletRequestListener { 
 
-  private val window: Window = new Window("LeistungsAbrechnungssystem RDS")
+  /**
+    as an exception to the mvp rules, this presenter
+    aggregates the gui-main-window.
+    it's the container in which all mvp-views display themselves
+  */
+  private var window: Window = _
   private var view: lards.view.Main = _
 
 
+  /**
+    application entry point.
+    this is being called from the servlet-container via
+    vaadin-toolkit, the first time that a request from
+    a certain client (browser) arrives
+  */
   override def init {
-    println("main init")
+    println("presenter.Main init")
 
     Applocal.init(this)
     lards.presenter.Main.threadLocal.set(this)
 
     Applocal.broadcaster.subscribe(this)
 
+    window = new Window("LeistungsAbrechnungssystem RDS")
+    println("presenter.Main init window=" + window)
+
     setMainWindow(window)
     view = new lards.view.Main(window)
-    window.getContent().setSizeFull()
+    window.getContent.setSizeFull
 
     wire_up
 

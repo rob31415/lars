@@ -11,7 +11,7 @@ import lards.global.Applocal
 import com.vaadin.data.Property
 import com.vaadin.data.util.BeanItemContainer
 import collection.JavaConversions._
-import java.util.Collections
+import java.util._
 import com.vaadin.data.util.BeanItem
 
 import lards.view.event.{Editwindow => Event}
@@ -36,7 +36,7 @@ abstract class Editwindow
   val dto_factory: () => Dto,
   val event_factory: (Symbol, Dtos) => Event
   )
-  extends Panel with View {
+  extends View {
 
   /*
   every var that's declared here is intentionally put into
@@ -62,17 +62,16 @@ abstract class Editwindow
 
 
   create_elements
-  println("Editwindow-view created")
 
 
-  override def on_show = {
-    println("Editwindow on_show" + parent + "," + window)
+  override def on_show {
+    println("Editwindow on_show " + parent + ", " + window)
     parent.addWindow(window)
   }
 
 
-  override def on_hide = {
-    println("Editwindow on_hide" + parent + "," + window)
+  override def on_hide {
+    println("Editwindow on_hide " + parent + ", " + window)
     parent.removeWindow(window)
   }
 
@@ -89,19 +88,22 @@ abstract class Editwindow
   in class-instance-scope.
   */
   override def create_elements {
-    this.window = new Window(title)
-    this.window.setWidth(500)
-    this.window.setHeight(250)
-    this.window.setPositionX(10)
-    this.window.setPositionY(40)
-    this.window.getContent.setSizeFull
-    this.window.addComponent(create_accordion)
-    this.window.addListener(new Window.CloseListener() {
+    println("view.Editwindow creating")
+    window = new Window(title)
+    println("view.Editwindow window=" + window)
+    window.setWidth(500)
+    window.setHeight(250)
+    window.setPositionX(10)
+    window.setPositionY(40)
+    window.addComponent(create_accordion)
+    window.getContent.setSizeFull
+    window.addListener(new Window.CloseListener() {
       def windowClose(event: Window#CloseEvent) {
-        //@TODO: provokes bug
+        //@TODO: provokes bug by closing via mainmenu
         Applocal.broadcaster.publish(event_factory('close, new Dtos))
       }
     })
+    println("view.Editwindow creating finished")
   }
 
 
@@ -189,14 +191,19 @@ abstract class Editwindow
     table.addListener(new Property.ValueChangeListener() {
       def valueChange(event: Property.ValueChangeEvent) {
         println("table selection changed " + table.getValue().getClass())
-        val selected = event.getProperty.getValue.asInstanceOf[java.util.List[Dto]]
-        accordion.getTab(1).setEnabled(selected.size == 1)
-        Applocal.broadcaster.publish(event_factory('select, new Dtos(Some(selected))) )
+        val selected = get_selected
+        accordion.getTab(1).setEnabled(selected.get.get.size == 1)
+        Applocal.broadcaster.publish(event_factory('select, selected))
       }
     })
 
     this.table = table
     table
+  }
+
+
+  private def get_selected: Dtos = {
+    new Dtos(Some(table.getValue.asInstanceOf[java.util.Set[Dto]]))
   }
 
 
@@ -263,8 +270,7 @@ abstract class Editwindow
       new Button.ClickListener() { 
         def buttonClick(event: Button#ClickEvent) {
           parent.showNotification("Ausgewählte Löschen...")
-          val selected = table.getValue.asInstanceOf[java.util.List[Dto]]
-          Applocal.broadcaster.publish(event_factory('delete, new Dtos(Some(selected))) )
+          Applocal.broadcaster.publish(event_factory('delete, get_selected))
         }
       }
     )
@@ -296,7 +302,7 @@ abstract class Editwindow
 
 
   private def wrap(obj: Dto): Dtos = {
-    val dtos = new java.util.ArrayList[Dto]()
+    val dtos = new java.util.HashSet[Dto]() //ArrayList
     dtos.add(obj)
     new Dtos( Some(dtos) )
   }
@@ -306,20 +312,14 @@ abstract class Editwindow
   def set_data(data: Dtos) = {
     println("data=" + data)
     if(data != null) {
-      table.removeAllItems()
-      fill_table(data, table)
+      table.removeAllItems
+      table.setContainerDataSource(create_beanitem_container(data))
       table.setValue(table.firstItemId()) //autoselect first
     }
   }
 
 
-  // BeanItemContainer needs a java.lang.Class parameter.
-  // using "classOf[Dto]" as value for constructor-parameter 
-  // "val class_of_dto: java.lang.Class[_ <: Dto]"
-  // unfortunately is leading to a mysterious scala errormessage.
-  // that's why the creation of BeanItemConatiner is done in
-  // the deriving class
-  def fill_table(dtos: Dtos, table: Table)
+  def create_beanitem_container(dtos: Dtos): BeanItemContainer[_ <: Dto]
 
 
   // for editing
@@ -336,8 +336,15 @@ abstract class Editwindow
   }
 
 
-  def get_current_edit_data(): Option[Dto] = {
+  def get_current_edit_data: Option[Dto] = {
     get_bean_from_form(form_edit)
+  }
+  
+
+  // restores to default
+  // @TODO: invent system to store app-state
+  def restore_view_state {
+    accordion.setSelectedTab(accordion.getTab(0).getComponent)
   }
 
 

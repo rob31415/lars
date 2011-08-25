@@ -59,7 +59,8 @@ batchjob problematik:
         außderdem haben sie fürchterliche namen
       könnte man wizard-mässig durch einzelne GPA oder ganze GPA-Abfolgen durchführen?
 
-win-geo beibehalten
+view-state (win-geo) beibehalten
+  system einfallen lassen
   per user für jedes fenster
   wie fkt vaadin url fragment? site-location (was sollen browser back/fwd/reload buttons bewirken?)
 
@@ -298,6 +299,9 @@ schlacht und spill = ein schlechten spiel
 
 scala hat viele sehr schöne möglichkeiten, eleganten code zu schreiben, aber diese aus java übernommene c++ template missgeburt namens generics ist wegen der erbkrankheit "type-erasure" ein sehr ernüchterndes ärgernis, über das man immer wieder stolpert.
 
+scala suckt dort wo man mit java in berührung kommt.
+das sind generics (generics sind keine templates(!)), (und im erweiterten sinne abstract types), das fehlen von namespaces und vor allem conversions von und nach java collections.
+außerdem gibt's (noch) kein manierliches dokumentations-system (scaladoc sucks + keine doku) und debugging habe ich bisher noch nicht betrieben, könnt aber vlt' auch schlecht sein.
 
 
 dto-type = lards.model.dto.Role

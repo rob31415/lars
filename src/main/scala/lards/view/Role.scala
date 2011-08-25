@@ -11,7 +11,7 @@ import lards.view.event.{Role => Event}
 import lards.model.dto.Dtos
 
 
-class Role(override val parent: Window) 
+class Role(override val parent: Window)
   extends Editwindow(
   parent, 
   "Bearbeitungsfenster: Einstellungen / Rollen",
@@ -20,9 +20,8 @@ class Role(override val parent: Window)
   {(meaning: Symbol, dtos: Dtos) => new Event(meaning, dtos)}
   ) {
 
-  override def fill_table(data: Dtos, table: Table) {
-      val container = new BeanItemContainer(classOf[lards.model.dto.Dto], data.get.get)
-      table.setContainerDataSource(container)
+  override def create_beanitem_container(data: Dtos): BeanItemContainer[_ <: lards.model.dto.Dto] = {
+    new BeanItemContainer[Dto](classOf[Dto], data.get.get.asInstanceOf[scala.collection.Set[Dto]])
   }
 
 }

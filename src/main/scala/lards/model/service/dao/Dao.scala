@@ -5,8 +5,9 @@ import lards.model.dto.Dto
 import lards.model.dto.Dtos
 
 
-//@TODO: get rid of save_new and save_existing and only have save.
+
 trait Dao {
+
 
   def get_all: Dtos = {
     val session = DbSessionProvider.factory.openSession()
@@ -18,7 +19,9 @@ trait Dao {
     new Dtos
   }
 
+
   def _get_all(session: SqlSession): Dtos
+
 
   def get(id: Long): Option[Dto] = {
     println("get(" + id + ")")
@@ -26,6 +29,7 @@ trait Dao {
     //if(id == -1) Some(new derived_dto()) else get_from_db(id)
     if(id == -1) None else get_from_db(id)
   }
+
 
   private def get_from_db(id: Long): Option[Dto] = {
     val session = DbSessionProvider.factory.openSession()
@@ -37,7 +41,9 @@ trait Dao {
     None
   }
   
+  
   def _get(session: SqlSession, id: Long): Option[Dto]
+
 
   def save(record: Dto) = {
     if(record.id == -1)
@@ -45,6 +51,7 @@ trait Dao {
     else
       save_existing(record)
   }
+
 
   def save_new(record: Dto) {
     val session = DbSessionProvider.factory.openSession()
@@ -59,7 +66,9 @@ trait Dao {
     }
   }
 
+
   def _save_new(session: SqlSession, record: Dto)
+
 
   def save_existing(record: Dto) {
     val session = DbSessionProvider.factory.openSession()
@@ -74,7 +83,9 @@ trait Dao {
     }
   }
 
+
   def _save_existing(session: SqlSession, record: Dto)
+
 
   def delete(record: Dtos) {
     val session = DbSessionProvider.factory.openSession()
@@ -89,11 +100,15 @@ trait Dao {
     }
   }
 
+
   def _delete(session: SqlSession, record: Dtos)
+
 
   def on_success_delete()
 
+
   def on_success_update()
+ 
  
   def on_success_insert()
 
