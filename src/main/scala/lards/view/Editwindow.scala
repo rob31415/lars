@@ -5,13 +5,19 @@ used throughout the application.
 
 package lards.view
 
-import event._
+import lards.view.event._
 import com.vaadin.ui._
 import lards.global.Applocal
 import com.vaadin.data.Property
 import com.vaadin.data.util.BeanItemContainer
 import collection.JavaConversions._
+import java.util.Collections
 import com.vaadin.data.util.BeanItem
+
+import lards.view.event.{Editwindow => Event}
+import lards.model.dto.Dto
+import lards.model.dto.Dtos
+
 
 
 /**
@@ -23,14 +29,13 @@ abstract methods are the means to specialise behaviour.
 the unelegant, tedious and clumsy factory-workaround is used 
 due to vexatious generics' type-erasure.
 */
-class Editwindow
-  [Dto, Notification_event <: lards.view.event.Editwindow[Dto], Dtos >: Option[java.util.Set[Dto]]]
+abstract class Editwindow
   (val parent: Window,
   val title: String,
   val visible_item_props: List[String],
-  val dto_type_factory: () => Dto,
-  val event_type_factory: (Symbol, Dtos) => Notification_event,
-  val class_of_dto: Class[Dto])
+  val dto_factory: () => Dto,
+  val event_factory: (Symbol, Dtos) => Event
+  )
   extends Panel with View {
 
   /*
@@ -57,14 +62,17 @@ class Editwindow
 
 
   create_elements
+  println("Editwindow-view created")
 
 
   override def on_show = {
+    println("Editwindow on_show" + parent + "," + window)
     parent.addWindow(window)
   }
 
 
   override def on_hide = {
+    println("Editwindow on_hide" + parent + "," + window)
     parent.removeWindow(window)
   }
 
@@ -90,7 +98,8 @@ class Editwindow
     this.window.addComponent(create_accordion)
     this.window.addListener(new Window.CloseListener() {
       def windowClose(event: Window#CloseEvent) {
-        Applocal.broadcaster.publish(event_type_factory('close, None))
+        //@TODO: provokes bug
+        Applocal.broadcaster.publish(event_factory('close, new Dtos))
       }
     })
   }
@@ -98,11 +107,11 @@ class Editwindow
 
   private def create_accordion(): Accordion = {
     val accordion = new Accordion()
-        
-    accordion.addTab(create_panel_table, "Rollen Übersicht", null)
-    accordion.addTab(create_panel_edit, "Rolle bearbeiten", null)
-    accordion.addTab(create_panel_new, "Neue Rolle anlegen", null)
-    accordion.addTab(create_panel_delete, "Rollen löschen", null)
+      
+    accordion.addTab(create_panel_table, "Übersicht", null)
+    accordion.addTab(create_panel_edit, "Bearbeiten", null)
+    accordion.addTab(create_panel_new, "Neu anlegen", null)
+    accordion.addTab(create_panel_delete, "Löschen", null)
     accordion.addTab(new Label("TODO"), "Zeilenfilter einstellen", null)
     accordion.addTab(new Label("TODO"), "Spaltenaufbau einstellen", null)
     accordion.addTab(new Label("TODO"), "Sortierung einstellen", null)
@@ -111,10 +120,10 @@ class Editwindow
       def selectedTabChange(event: TabSheet#SelectedTabChangeEvent) {
 
         if(accordion.getSelectedTab == panel_edit) {
-          form_new.setItemDataSource(new BeanItem[Dto](dto_type_factory()))
-          Applocal.broadcaster.publish(event_type_factory('start_modify, None))
+          form_new.setItemDataSource(new BeanItem[Dto](dto_factory()))
+          Applocal.broadcaster.publish(event_factory('start_modify, new Dtos))
         } else {
-          Applocal.broadcaster.publish(event_type_factory('cancel_modify, None))
+          Applocal.broadcaster.publish(event_factory('cancel_modify, new Dtos))
         }
       }
     })
@@ -168,7 +177,7 @@ class Editwindow
 
 
   private def create_table(): com.vaadin.ui.Table = {
-    val table = new com.vaadin.ui.Table("Rollen")
+    val table = new com.vaadin.ui.Table("Datensätze")
 
     table.setSizeFull
     table.setSelectable(true)
@@ -177,14 +186,12 @@ class Editwindow
     table.setMultiSelectMode(AbstractSelect.MultiSelectMode.DEFAULT)  //SIMPLE
     table.setMultiSelect(true)
 
-    table.addContainerProperty("Rollen Beschreibung", classOf[String], null)
-
     table.addListener(new Property.ValueChangeListener() {
       def valueChange(event: Property.ValueChangeEvent) {
         println("table selection changed " + table.getValue().getClass())
-        val selected = event.getProperty.getValue.asInstanceOf[java.util.Set[Dto]]
+        val selected = event.getProperty.getValue.asInstanceOf[java.util.List[Dto]]
         accordion.getTab(1).setEnabled(selected.size == 1)
-        Applocal.broadcaster.publish(event_type_factory('select, Some(selected)))
+        Applocal.broadcaster.publish(event_factory('select, new Dtos(Some(selected))) )
       }
     })
 
@@ -199,12 +206,12 @@ class Editwindow
     var button = new Button("Speichern", 
       new Button.ClickListener() { 
         def buttonClick(event: Button#ClickEvent) {
-          parent.showNotification("Rolle wird gespeichert...")
+          parent.showNotification("Datensatz wird gespeichert...")
           broadcast_save(form_edit)
         }
       }
     )
-    
+  
     panel.addComponent(create_form_edit)
     panel.addComponent(button)
 
@@ -229,7 +236,7 @@ class Editwindow
     var button = new Button("Neu Anlegen", 
       new Button.ClickListener() { 
         def buttonClick(event: Button#ClickEvent) {
-          parent.showNotification("Neue Rolle wird angelegt...")
+          parent.showNotification("Neuer Datensatz wird angelegt...")
           broadcast_save(form_new)
         }
       }
@@ -247,7 +254,7 @@ class Editwindow
     this.form_new.setVisibleItemProperties(visible_item_props)
     this.form_new
   }
-  
+
 
   private def create_panel_delete(): Panel = {
     val panel = new Panel()
@@ -256,8 +263,8 @@ class Editwindow
       new Button.ClickListener() { 
         def buttonClick(event: Button#ClickEvent) {
           parent.showNotification("Ausgewählte Löschen...")
-          val selected = table.getValue.asInstanceOf[java.util.Set[Dto]]
-          Applocal.broadcaster.publish(event_type_factory('delete, Some(selected)))
+          val selected = table.getValue.asInstanceOf[java.util.List[Dto]]
+          Applocal.broadcaster.publish(event_factory('delete, new Dtos(Some(selected))) )
         }
       }
     )
@@ -274,7 +281,7 @@ class Editwindow
   private def broadcast_save(form: Form): Boolean = {
     val obj = get_bean_from_form(form)
     if(None != obj) {
-      Applocal.broadcaster.publish(event_type_factory('save, put_in_new_list(obj.get)))
+      Applocal.broadcaster.publish(event_factory('save, wrap(obj.get)))
       return true
     } else {
       return false
@@ -286,25 +293,33 @@ class Editwindow
     val ds = form.getItemDataSource.asInstanceOf[BeanItem[Dto]]
     if(ds == null) None else Some(ds.getBean)
   }
-  
 
-  private def put_in_new_list(obj: Dto) = {
-    val dto_list = new java.util.HashSet[Dto]
-    dto_list.add(obj)
-    Some(dto_list)
+
+  private def wrap(obj: Dto): Dtos = {
+    val dtos = new java.util.ArrayList[Dto]()
+    dtos.add(obj)
+    new Dtos( Some(dtos) )
   }
 
 
   // for the table
-  def set_data(data: Seq[Dto]) = {
+  def set_data(data: Dtos) = {
     println("data=" + data)
     if(data != null) {
       table.removeAllItems()
-      val container = new BeanItemContainer(class_of_dto, data)
-      table.setContainerDataSource(container)
+      fill_table(data, table)
       table.setValue(table.firstItemId()) //autoselect first
     }
   }
+
+
+  // BeanItemContainer needs a java.lang.Class parameter.
+  // using "classOf[Dto]" as value for constructor-parameter 
+  // "val class_of_dto: java.lang.Class[_ <: Dto]"
+  // unfortunately is leading to a mysterious scala errormessage.
+  // that's why the creation of BeanItemConatiner is done in
+  // the deriving class
+  def fill_table(dtos: Dtos, table: Table)
 
 
   // for editing
@@ -324,8 +339,8 @@ class Editwindow
   def get_current_edit_data(): Option[Dto] = {
     get_bean_from_form(form_edit)
   }
-  
-  
+
+
   def lock_edit {
     parent.showNotification("Datensatz wird gerade von einem anderen Benutzer editiert")
     //@TODO

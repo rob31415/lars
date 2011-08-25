@@ -26,7 +26,7 @@ object Main {
 
 class Main extends Application with HttpServletRequestListener { 
 
-  private var window: Window = _
+  private val window: Window = new Window("LeistungsAbrechnungssystem RDS")
   private var view: lards.view.Main = _
 
 
@@ -38,7 +38,6 @@ class Main extends Application with HttpServletRequestListener {
 
     Applocal.broadcaster.subscribe(this)
 
-    window = new Window("LeistungsAbrechnungssystem RDS")
     setMainWindow(window)
     view = new lards.view.Main(window)
     window.getContent().setSizeFull()
@@ -49,9 +48,9 @@ class Main extends Application with HttpServletRequestListener {
   }
 
 
-  def wire_up() {
+  def wire_up {
     new lards.presenter.Login(new lards.view.Login(window), new lards.model.Login())
-    new lards.presenter.Role(new lards.view.Role(window), new lards.model.service.Role())
+    new lards.presenter.Role( new lards.view.Role(window), new lards.model.service.Role() )
   }
 
 

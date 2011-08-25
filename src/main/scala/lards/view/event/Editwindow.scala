@@ -12,8 +12,9 @@ is sent when
 package lards.view.event
 
 import lards.global.Event
+import lards.model.dto.Dtos
 
 
-class Editwindow[Dto](override val meaning: Symbol,
-           val dto_list: Option[java.util.Set[Dto]] = None)
+class Editwindow(override val meaning: Symbol,
+           val dtos: Dtos)
   extends Event

@@ -4,8 +4,9 @@ import scala.reflect.BeanProperty
 
 
 //@TODO: remove id, make description primary-key
-class Role(val id: java.lang.Long = -1, 
-             @BeanProperty var description: String = "") {
+class Role(override val id: java.lang.Long = -1, 
+             @BeanProperty var description: String = "")
+  extends Dto {
 
   
   def toArray(): Array[Object] = {

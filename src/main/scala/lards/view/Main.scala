@@ -56,9 +56,9 @@ class Main(var window: Window) extends Panel with View {
   def create_menu2(menu_bar: MenuBar): MenuBar = {
     var menu: MenuBar#MenuItem = menu_bar.addItem("Einstellungen", null, null)
 
-    menu.addItem("Rollen", new Menu_Command('roles))
+    menu.addItem("Rollen", new Menu_Command('role))
     menu.addItem("Benutzer", new Menu_Command('user))
-    menu.addItem("Locations", new Menu_Command('locations))
+    menu.addItem("Locations", new Menu_Command('location))
 
     menu_bar
   }

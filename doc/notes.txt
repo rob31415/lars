@@ -298,3 +298,54 @@ schlacht und spill = ein schlechten spiel
 
 scala hat viele sehr schöne möglichkeiten, eleganten code zu schreiben, aber diese aus java übernommene c++ template missgeburt namens generics ist wegen der erbkrankheit "type-erasure" ein sehr ernüchterndes ärgernis, über das man immer wieder stolpert.
 
+
+
+dto-type = lards.model.dto.Role
+event-type = lards.view.event.Role subtypeof lards.view.event.Editwindow
+dto_factory-type = () => dto-type
+event_factory-type = (Symbol, collection-type of dto-collection) => event-type,
+collection-type of dto-collection = Option[java.util.Set[dto-type]]
+view.Editwindow-type = view.Role subtypeof view.Editwindow 
+model.dao-type = model.service.Role subtypeof model.service.dao
+Class[dto-type]
+
+
+
+
+model.dto = dto-type
+
+
+model.service.dao
+  dto-type
+
+
+view.event.Editwidow
+  dto-type
+  collection-type of dto-collection
+
+
+view.Editwindow
+  dto-type
+  event-type
+  collection-type of dto-collection
+  dto_factory-type
+  event_factory-type
+  
+  val parent: Window,
+  val title: String,
+  val visible_item_props: List[String],
+  val dto_type_factory: () => Dto,
+  val event_type_factory: (Symbol, Dtos) => Notification_event,
+  val class_of_dto: Class[Dto]
+
+
+presenter.Editwindow
+  dto-type
+  view.Editwindow-type
+  model.dao-type
+  
+  menuitem-id
+
+
+
+
