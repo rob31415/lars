@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="lars.model.mybatis.mapper._REPLACE_">
+
+  <resultMap id="Result" type="lards.model.dto._REPLACE_">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long"/>
+      <arg column="_REPLACE_" javaType="_REPLACE_"/>
+    </constructor>
+    <!-- collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" / -->
+  </resultMap>
+
+  <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper._REPLACE_.Result">
+    SELECT id, description FROM _REPLACE_ WHERE ID = #{value}
+  </select>
+
+  <select id="get_all" resultMap="lars.model.mybatis.mapper._REPLACE_.Result">
+    SELECT id, description FROM _REPLACE_
+  </select>
+
+	<update id="update" parameterType="lards.model.dto._REPLACE_"> 
+    UPDATE _REPLACE_ SET
+    description = #{description}
+    WHERE id = #{id}
+	</update>	
+
+  <insert id="insert" parameterType="lards.model.dto._REPLACE_">
+	    INSERT INTO _REPLACE_ (description) 
+	    values (#{description})
+  </insert>
+
+	<delete id="delete" parameterType="collection"> 
+    DELETE FROM _REPLACE_ WHERE 
+      <foreach collection="_parameter" item="parm" 
+               separator="OR">
+        id = #{parm.id}
+      </foreach>
+	</delete>
+
+</mapper>
