@@ -40,6 +40,8 @@ class Main(var window: Window) extends Panel with View {
     val menu_bar = new MenuBar()
     create_menu1(menu_bar)
     create_menu2(menu_bar)
+    create_menu3(menu_bar)
+    create_menu4(menu_bar)
   }
 
 
@@ -59,6 +61,25 @@ class Main(var window: Window) extends Panel with View {
     menu.addItem("Rollen", new Menu_Command('role))
     menu.addItem("Benutzer", new Menu_Command('user))
     menu.addItem("Locations", new Menu_Command('location))
+
+    menu_bar
+  }
+
+
+  def create_menu3(menu_bar: MenuBar): MenuBar = {
+    var menu: MenuBar#MenuItem = menu_bar.addItem("Fahrterfassung", null, null)
+
+    menu.addItem("Fahrten", new Menu_Command('transport))
+
+    menu_bar
+  }
+
+
+  def create_menu4(menu_bar: MenuBar): MenuBar = {
+    var menu: MenuBar#MenuItem = menu_bar.addItem("Buchungen", null, null)
+
+    menu.addItem("Buchungen", new Menu_Command('account))
+    menu.addItem("Konten", new Menu_Command('account))
 
     menu_bar
   }

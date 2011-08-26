@@ -19,7 +19,8 @@
     </environment> 
   </environments> 
   <mappers> 
-    <mapper resource="mybatis/role.xml"/>
-    <mapper resource="mybatis/location.xml"/>
+    <mapper resource="mybatis/mappings/role.xml"/>
+    <mapper resource="mybatis/mappings/location.xml"/>
+    <mapper resource="mybatis/mappings/user.xml"/>
   </mappers> 
 </configuration>

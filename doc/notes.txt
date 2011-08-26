@@ -350,3 +350,14 @@ presenter.Editwindow
   model.dao-type
   
   menuitem-id
+
+
+
+Aufgabe: Neues standard crud (editwindow) einführen
+  neue migration schreiben
+  in mybatis/config.xml neues mapping zufügen
+  datei (mybatis/_REPLACE_.xml) aus scaffolding kopieren und mapping anpassen ("_REPLACE_" ersetzen)
+  in presenter.main triade instantiieren
+  in view.main menüpunkt einführen
+  dateien (model, view, presenter) aus scaffolding kopieren, "_REPLACE_" ersetzen und ggf' spezialisierte implementierung zufügen
+

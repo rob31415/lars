@@ -26,11 +26,11 @@ package lards.global
 
 object Editlock {
 
-  var dtos = Set[(Any, lards.model.dto.User)]()
+  var dtos = Set[(lards.model.dto.Dto, lards.model.dto.User)]()
 
 
   //adding is successful, if option is defined and element not already in set
-  def add(dto: Option[Any]): Boolean = {
+  def add(dto: Option[lards.model.dto.Dto]): Boolean = {
     if(dto.isDefined && !contains(dto)) {
       println("Editlock add " + dto.get)
       val set_entry = (dto.get, Applocal.get_user)
@@ -45,7 +45,7 @@ object Editlock {
   removing is successful, if option is defined and element is in set 
   and removing user is the one who added
   */
-  def remove(dto: Option[Any]): Boolean = {
+  def remove(dto: Option[lards.model.dto.Dto]): Boolean = {
     val set_entry = dtos.find(o => o._1 == dto.get).getOrElse((null, null))
     if(contains(dto) && set_entry._2 == Applocal.get_user) {
       println("Editlock remove " + dto.get)
@@ -57,7 +57,7 @@ object Editlock {
   
 
   //true if option is defined and element is in set
-  def contains(dto: Option[Any]): Boolean = {
+  def contains(dto: Option[lards.model.dto.Dto]): Boolean = {
     val ret_val = dto.isDefined && dtos.find(o => o._1 == dto.get).isDefined
     println("Editlock contains " + dto.getOrElse("nothing") + " = " + ret_val)
     ret_val

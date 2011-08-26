@@ -12,11 +12,11 @@
   </resultMap>
 
   <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper._REPLACE_.Result">
-    SELECT id, description FROM _REPLACE_ WHERE ID = #{value}
+    SELECT id, _REPLACE_ FROM _REPLACE_ WHERE ID = #{value}
   </select>
 
   <select id="get_all" resultMap="lars.model.mybatis.mapper._REPLACE_.Result">
-    SELECT id, description FROM _REPLACE_
+    SELECT id, _REPLACE_ FROM _REPLACE_
   </select>
 
 	<update id="update" parameterType="lards.model.dto._REPLACE_"> 
@@ -26,8 +26,8 @@
 	</update>	
 
   <insert id="insert" parameterType="lards.model.dto._REPLACE_">
-	    INSERT INTO _REPLACE_ (description) 
-	    values (#{description})
+	    INSERT INTO _REPLACE_ (_REPLACE_) 
+	    values (#{_REPLACE_})
   </insert>
 
 	<delete id="delete" parameterType="collection"> 

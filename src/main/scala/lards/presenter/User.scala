@@ -5,15 +5,15 @@ package lards.presenter
 
 import lards.global.Applocal
 import lards.presenter.Editwindow
-import lards.model.event.{_REPLACE_ => Model_event}
-import lards.view.event.{_REPLACE_ => View_event}
+import lards.model.event.{User => Model_event}
+import lards.view.event.{User => View_event}
 
 
-class _REPLACE_(view: lards.view._REPLACE_, model: lards.model.service._REPLACE_)
-  extends Editwindow(view, model, '_REPLACE_) {
+class User(view: lards.view.User, model: lards.model.service.User)
+  extends Editwindow(view, model, 'user) {
 
   override def notify(event: Any) {
-    println("presenter._REPLACE_ got event " + event)
+    println("presenter.User got event " + event)
 
     event match {
 
