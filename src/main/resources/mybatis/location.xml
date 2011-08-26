@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="lars.model.mybatis.mapper.Location">
+
+  <resultMap id="Result" type="lards.model.dto.Location">
+    <constructor>
+      <idArg column="id" javaType="java.lang.Long"/>
+      <arg column="description" javaType="String"/>
+    </constructor>
+    <!-- collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" / -->
+  </resultMap>
+
+  <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.Location.Result">
+    SELECT id, description FROM Location WHERE ID = #{value}
+  </select>
+
+  <select id="get_all" resultMap="lars.model.mybatis.mapper.Location.Result">
+    SELECT id, description FROM Location
+  </select>
+
+	<update id="update" parameterType="lards.model.dto.Location"> 
+    UPDATE Location SET
+    description = #{description}
+    WHERE id = #{id}
+	</update>	
+
+  <insert id="insert" parameterType="lards.model.dto.Location">
+	    INSERT INTO Location (description) 
+	    values (#{description})
+  </insert>
+
+	<delete id="delete" parameterType="collection"> 
+    DELETE FROM Location WHERE 
+      <foreach collection="_parameter" item="parm" 
+               separator="OR">
+        id = #{parm.id}
+      </foreach>
+	</delete>
+
+</mapper>

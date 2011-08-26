@@ -63,6 +63,7 @@ class Main extends Application with HttpServletRequestListener {
   def wire_up {
     new lards.presenter.Login(new lards.view.Login(window), new lards.model.Login())
     new lards.presenter.Role( new lards.view.Role(window), new lards.model.service.Role() )
+    new lards.presenter.Location( new lards.view.Location(window), new lards.model.service.Location() )
   }
 
 

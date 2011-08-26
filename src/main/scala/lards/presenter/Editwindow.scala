@@ -30,7 +30,7 @@ import lards.model.service.Dao
 
 
 
-class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
+abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
 
   Applocal.broadcaster.subscribe(this)
   var data: Dtos = _
@@ -39,14 +39,14 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
 
 
   def notify(event: Any) {
-    println("Editwindow got event " + event)
+    println("presenter.Editwindow got event " + event)
 
     event match {
 
       // mainmenu-item selected
       
       case event: lards.view.event.Main => {
-        println("Editwindow event-meaning=" + event.meaning)
+        println("presenter.Editwindow M event-meaning= " + event.meaning)
         
         if(event.meaning == menu_id) {
           if(view.is_shown) {
@@ -60,49 +60,56 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
 
       //something happend in the associated view
 
-      case event: View_event => {
-        event.meaning match {
-          //selection in table changed
-          case 'select => {
-            if(event.dtos.get.get.size == 1) {
-              view.set_data(data.get.get.find({e => e.id == event.dtos.get.get.iterator.next.id}).get)
-            }
-            view.set_number_of_selected_display(data.get.get.size, event.dtos.get.get.size)
-          }
-          //save button pressed
-          case 'save => {
-            if(event.dtos.get.get.size == 1) {
-              val obj = event.dtos.get.get.iterator.next
-              println("saving " + obj)
-              model.save(obj)
-              view.restore_view_state
-            } else {
-              println("saving of more than 1 collectively not implemented")
-            }
-          }
-          //delete button pressed
-          case 'delete => {
-            model.delete(event.dtos)
-            view.restore_view_state
-          }
-          //user intends to edit
-          case 'start_modify => {
-            if(!lards.global.Editlock.add(view.get_current_edit_data))
-              view.lock_edit
-          }
-          //editing cancelled
-          case 'cancel_modify => {
-            lards.global.Editlock.remove(view.get_current_edit_data)
-          }
-          //window is closed by user
-          case 'close => {
-            view.hide
-            lards.global.Editlock.remove(view.get_current_edit_data)
-          }
+      case event: lards.view.event.Editwindow => {
 
-          case _ =>
-        }
-      }
+        if(comes_from_associated_view(event)) {
+          println("presenter.Editwindow V event-meaning=" + event.meaning + " event=" + event + " type=" + event.asInstanceOf[View_event].getClass)
+
+          event.meaning match {
+            //selection in table changed
+            case 'select => {
+              if(event.dtos.get.get.size == 1) {
+                view.set_data(data.get.get.find({e => e.id == event.dtos.get.get.iterator.next.id}).get)
+              }
+              view.set_number_of_selected_display(data.get.get.size, event.dtos.get.get.size)
+            }
+            //save button pressed
+            case 'save => {
+              if(event.dtos.get.get.size == 1) {
+                val obj = event.dtos.get.get.iterator.next
+                println("saving " + obj)
+                model.save(obj)
+                view.restore_view_state
+              } else {
+                println("saving of more than 1 collectively not implemented")
+              }
+            }
+            //delete button pressed
+            case 'delete => {
+              model.delete(event.dtos)
+              view.restore_view_state
+            }
+            //user intends to edit
+            case 'start_modify => {
+              if(!lards.global.Editlock.add(view.get_current_edit_data))
+                view.lock_edit
+            }
+            //editing cancelled
+            case 'cancel_modify => {
+              lards.global.Editlock.remove(view.get_current_edit_data)
+            }
+            //window is closed by user
+            case 'close => {
+              view.hide
+              lards.global.Editlock.remove(view.get_current_edit_data)
+            }
+
+            case _ =>
+          }
+          
+        } //if
+        
+      } //case
 
 
       // app' is going down
@@ -118,6 +125,8 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
 
       case _ =>
     }
+
+    println("presenter.Editwindow processing of event " + event + " finished")
   }
   
   
@@ -125,6 +134,8 @@ class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
     data = model.get_all
     view.set_data(data) 
   }
+
+  def comes_from_associated_view(event: lards.view.event.Editwindow): Boolean
 
 }
 

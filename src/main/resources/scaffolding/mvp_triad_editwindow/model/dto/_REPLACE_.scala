@@ -5,13 +5,13 @@ import scala.reflect.BeanProperty
 
 //@TODO: remove id, make description primary-key
 class _REPLACE_(override val id: java.lang.Long = -1, 
-             @BeanProperty _REPLACE_)
+             @BeanProperty _REPLACE_: _REPLACE = _REPLACE_)
   extends Dto {
 
   
   def toArray(): Array[Object] = {
     var list = new java.util.ArrayList[Object]
-    list.add(description)
+    list.add(_REPLACE_)
     list.toArray()
   }
 

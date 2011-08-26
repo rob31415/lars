@@ -11,6 +11,7 @@ gui design
       validierung für edit & new
   abstraktionen für o.g. punkte
     scaffolding?
+    vlt dao nocheinmal abstrahieren?
 
 
 daos ohne dbzugriff
@@ -349,7 +350,3 @@ presenter.Editwindow
   model.dao-type
   
   menuitem-id
-
-
-
-

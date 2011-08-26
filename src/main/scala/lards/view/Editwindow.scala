@@ -91,8 +91,8 @@ abstract class Editwindow
     println("view.Editwindow creating")
     window = new Window(title)
     println("view.Editwindow window=" + window)
-    window.setWidth(500)
-    window.setHeight(250)
+    window.setWidth(400)
+    window.setHeight(400)
     window.setPositionX(10)
     window.setPositionY(40)
     window.addComponent(create_accordion)
@@ -313,7 +313,8 @@ abstract class Editwindow
     println("data=" + data)
     if(data != null) {
       table.removeAllItems
-      table.setContainerDataSource(create_beanitem_container(data))
+      //@TODO: what's the damn problem!?
+//      table.setContainerDataSource(create_beanitem_container(data))
       table.setValue(table.firstItemId()) //autoselect first
     }
   }

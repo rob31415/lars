@@ -59,7 +59,7 @@ object Editlock {
   //true if option is defined and element is in set
   def contains(dto: Option[Any]): Boolean = {
     val ret_val = dto.isDefined && dtos.find(o => o._1 == dto.get).isDefined
-    println("Editlock contains " + dto.get + " = " + ret_val)
+    println("Editlock contains " + dto.getOrElse("nothing") + " = " + ret_val)
     ret_val
   }
 
