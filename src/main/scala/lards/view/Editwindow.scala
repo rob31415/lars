@@ -313,8 +313,7 @@ abstract class Editwindow
     println("data=" + data)
     if(data != null) {
       table.removeAllItems
-      //@TODO: what's the damn problem!?
-//      table.setContainerDataSource(create_beanitem_container(data))
+      table.setContainerDataSource(create_beanitem_container(data))
       table.setValue(table.firstItemId()) //autoselect first
     }
   }

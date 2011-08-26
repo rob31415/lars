@@ -15,7 +15,7 @@ class Role(override val id: java.lang.Long = -1,
     list.toArray()
   }
 
-  
+
   //@TODO: what happens if an object is passed with a type other than Role?
   override def equals(that: Any): Boolean = {
     val that_id = that.asInstanceOf[Role].id

@@ -26,5 +26,10 @@ class _REPLACE_(view: lards.view._REPLACE_, model: lards.model.service._REPLACE_
     
     super.notify(event)
   }
+
   
+  def comes_from_associated_view(event: lards.view.event.Editwindow): Boolean = {
+    event.isInstanceOf[View_event]
+  }
+
 }

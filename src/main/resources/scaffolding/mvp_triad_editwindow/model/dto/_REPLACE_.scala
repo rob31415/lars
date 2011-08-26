@@ -5,7 +5,7 @@ import scala.reflect.BeanProperty
 
 //@TODO: remove id, make description primary-key
 class _REPLACE_(override val id: java.lang.Long = -1, 
-             @BeanProperty _REPLACE_: _REPLACE = _REPLACE_)
+             @BeanProperty var _REPLACE_: _REPLACE = _REPLACE_)
   extends Dto {
 
   

@@ -5,7 +5,7 @@ import scala.reflect.BeanProperty
 
 //@TODO: remove id, make description primary-key
 class Location(override val id: java.lang.Long = -1, 
-             @BeanProperty description: String = "")
+             @BeanProperty var description: String = "")
   extends Dto {
 
   
@@ -15,7 +15,6 @@ class Location(override val id: java.lang.Long = -1,
     list.toArray()
   }
 
-  
   //@TODO: what happens if an object is passed with a type other than Location?
   override def equals(that: Any): Boolean = {
     val that_id = that.asInstanceOf[Location].id
