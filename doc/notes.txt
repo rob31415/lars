@@ -13,6 +13,33 @@ gui design
     scaffolding?
     vlt dao nocheinmal abstrahieren?
 
+ui-beautification
+
+idee
+  system als möglichkeit, ein soziales netzwerk zu untermauern
+    user können nachrichten an einzelne oder mehrere empfänger schicken
+    user können profil erstellen, welches andere user sehen (zb. pseudonym, bild, telnr. etc.)
+    während log-in neuigkeiten (vom system oder infos die alle betreffen) in einer liste anzeigen
+      news-admin muß das editieren können
+
+1-zu-n
+  ui
+    forms überschreiben
+      create_form_new
+      create_form_edit
+      get_bean_from_form
+    typ auf ui-element mappen
+      formfieldfactory
+    table muß fremd-daten aufgelöst anzeigen
+    vlt' edit/new form unifizieren aber 2 beans dafür haben?
+    vu kriegt zusätzl' set_data methode(n) für fremd-dtos
+
+  model/presenter
+    muß presenter daten aus fremd dao holen?
+      schon di nötig?
+    set_data überschreiben?
+    presenter interessiert sich für model-events des fremd-dao
+
 
 daos ohne dbzugriff
   wie?
@@ -361,3 +388,5 @@ Aufgabe: Neues standard crud (editwindow) einführen
   in view.main menüpunkt einführen
   dateien (model, view, presenter) aus scaffolding kopieren, "_REPLACE_" ersetzen und ggf' spezialisierte implementierung zufügen
 
+
+ganz klar, wenn man die power einer unbeschränkten gestaltung der software-implementierung hat kann man geilere sachen machen als mit reinen web-technologien.

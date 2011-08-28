@@ -13,28 +13,30 @@ import lards.global.Applocal
 /**
 @emits lards.view.event.Login
 */
-class Login(window: Window) extends Panel with View {
+class Login(parent: Window) extends Panel with View {
 
   private var username: TextField = null
   private var password: TextField = null
 
 
+  setSizeFull
   create_elements
   show
 
 
   override def on_show {
-    window.setContent(this)
+    println("WINDOW S GEO=" + parent.getWidth() + ", " + parent.getHeight())
+    parent.setContent(this)
   }
 
 
   override def on_hide {
-    window.setContent(null)
+    parent.setContent(null)
   }
 
 
   override def create_elements {
-
+/*
     val layout = new GridLayout(3, 3)
     layout.setWidth("100%")
     layout.setHeight("100%")
@@ -54,30 +56,43 @@ class Login(window: Window) extends Panel with View {
 //    layout.setComponentAlignment(layout.getComponent(1, 2), Alignment.BOTTOM_RIGHT)
 //    layout.setComponentAlignment(layout.getComponent(0, 0), Alignment.BOTTOM_RIGHT)
 
-    addComponent(layout)    
-    setSizeFull()
 
     layout.setComponentAlignment(layout.getComponent(1, 2), Alignment.BOTTOM_RIGHT)
     layout.setComponentAlignment(layout.getComponent(0, 0), Alignment.BOTTOM_RIGHT)
     layout.getComponent(1, 2).setWidth("100%")
+*/
 
-    println("login created")
+    val layout = new AbsoluteLayout
+    println("WINDOW C GEO=" + parent.getWidth() + ", " + parent.getHeight())
+    layout.setSizeFull  //doesn't work  @TODO: fix size while in application.init problem
+    layout.setWidth("800px")
+    layout.setHeight("600px")
+    layout.addComponent(create_input_panel, "left: 100px; top: 100px; " /*top: 50%; bottom: 50%;" */)
+
+    addComponent(layout)    
+
+    println("view.Login created")
   }
 
 
   def create_input_panel(): Panel = {
-    val panel = new Panel
-    panel.addComponent(new Label("Bitte einloggen"))
-    panel.addComponent(create_username_input)
-    panel.addComponent(create_password_input)
+    val panel = new Panel("Willkommen zum LARS, dem Leistungsabrechnungssystem der RDS Saar")
+    val layout = new HorizontalLayout
+    layout.addComponent(create_username_input)
+    layout.addComponent(create_password_input)
+//    panel.addComponent(new Label("Bitte einloggen"))
+    panel.addComponent(layout)
+//    panel.addComponent(create_password_input)
     panel.addComponent(create_login_button)
-//    panel.setWidth("100px")
+    panel.setWidth("500px")
+    panel.setHeight("130px")
+    //panel.setSizeFull
     panel
   }
 
 
   private def create_username_input = {
-    this.username = new TextField("Username")
+    this.username = new TextField("Benutzername")
     this.username
   }
 

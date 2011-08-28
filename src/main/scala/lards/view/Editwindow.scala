@@ -219,6 +219,7 @@ abstract class Editwindow
       }
     )
   
+    panel.setSizeFull
     panel.addComponent(create_form_edit)
     panel.addComponent(button)
 
@@ -233,6 +234,7 @@ abstract class Editwindow
     this.form_edit.setReadThrough(true)
     this.form_edit.setImmediate(true)
     this.form_edit.setVisibleItemProperties(visible_item_props)
+    this.form_edit.setSizeFull
     this.form_edit
   }
 
@@ -249,6 +251,7 @@ abstract class Editwindow
       }
     )
 
+    panel.setSizeFull
     panel.addComponent(create_form_new)
     panel.addComponent(button)
 
@@ -275,6 +278,7 @@ abstract class Editwindow
       }
     )
 
+    panel.setSizeFull
     panel.addComponent(number_of_all)
     panel.addComponent(number_of_selected)
     panel.addComponent(this.delete_button)

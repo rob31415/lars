@@ -38,6 +38,9 @@ class Main extends Application with HttpServletRequestListener {
     this is being called from the servlet-container via
     vaadin-toolkit, the first time that a request from
     a certain client (browser) arrives
+    note:
+    after this, a repaintAll happens and it's only after that,
+    the window has it's correct size
   */
   override def init {
     println("presenter.Main init")
@@ -47,14 +50,17 @@ class Main extends Application with HttpServletRequestListener {
 
     Applocal.broadcaster.subscribe(this)
 
-    window = new Window("LeistungsAbrechnungssystem RDS")
+    setTheme("bree")
+    window = new Window("LARS - Das LeistungsAbrechnungssystem der RDS Saar")
     println("presenter.Main init window=" + window)
 
     setMainWindow(window)
-    view = new lards.view.Main(window)
     window.getContent.setSizeFull
+    view = new lards.view.Main(window)
 
     wire_up
+
+    println("WINDOW MP GEO=" + window.getWidth() + ", " + window.getHeight())
 
     println("main init ok")
   }
@@ -72,6 +78,7 @@ class Main extends Application with HttpServletRequestListener {
     if(lards.presenter.Main.threadLocal.get == null)
       lards.presenter.Main.threadLocal.set(this)
     println("OnRequestStart:" + request.getQueryString() + ", " + request.getPathInfo())
+    setTheme("bree")
   }
 
 

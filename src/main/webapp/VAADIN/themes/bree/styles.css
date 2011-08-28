@@ -1,0 +1,27 @@
+@import "../reindeer/styles.css";
+
+
+.v-app {
+  background: #667766;
+}
+
+
+.v-panel .v-panel-caption {
+  background: #AAAACC;
+}
+
+.v-ie6 .v-panel-content, .v-panel-content > div {
+  background: #AACCAA;
+  background: url(img/cols.jpg) no-repeat;
+  background-size: 100%;
+  /* for IE */
+  /* filter:alpha(opacity=10); */
+  /* CSS3 standard */
+  /* opacity:0.1; */
+}
+
+.v-panel .v-textfield > div {
+}
+
+.v-panel .v-button {
+}

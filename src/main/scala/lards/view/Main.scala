@@ -13,7 +13,7 @@ import lards.global.Applocal
 /**
 @emits lards.view.event.Main
 */
-class Main(var window: Window) extends Panel with View {
+class Main(var parent: Window) extends Panel with View {
 
   class Menu_Command(val meaning: Symbol) extends MenuBar.Command {
     def menuSelected(selectedItem: MenuBar#MenuItem) {
@@ -28,6 +28,8 @@ class Main(var window: Window) extends Panel with View {
   
 
   override def create_elements {
+    println("WINDOW MAIN C GEO=" + parent.getWidth() + ", " + parent.getHeight())
+
     addComponent(user_info)
     addComponent(create_menu())
     setSizeFull()
@@ -86,12 +88,13 @@ class Main(var window: Window) extends Panel with View {
 
 
   override def on_show {
-    window.setContent(this)
+    println("WINDOW MAIN S GEO=" + parent.getWidth() + ", " + parent.getHeight())
+    parent.setContent(this)
   }
 
 
   override def on_hide {
-    window.setContent(null)
+    parent.setContent(null)
   }
 
 }
