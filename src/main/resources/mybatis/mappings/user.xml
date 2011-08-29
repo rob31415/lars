@@ -9,6 +9,7 @@
       <arg column="firstname" javaType="String"/>
       <arg column="lastname" javaType="String"/>
     </constructor>
+    <association property="role" column="role_id" javaType="lards.model.dto.Role" select="get_role_by_id"/>
     <!-- collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" / -->
   </resultMap>
 
@@ -39,5 +40,9 @@
         id = #{parm.id}
       </foreach>
 	</delete>
+
+  <select id="get_role_by_id" parameterType="Long" resultType="lards.model.dto.Role">
+    SELECT * FROM "role" WHERE ID = #{value}
+  </select>
 
 </mapper>

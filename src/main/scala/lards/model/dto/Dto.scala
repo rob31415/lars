@@ -1,6 +1,6 @@
 package lards.model.dto
 
-abstract class Dto(val id: java.lang.Long = -1) {
+abstract class Dto(var id: java.lang.Long = -1) {
 
 
   // returns whether the given type the same as the type of the class overriding this

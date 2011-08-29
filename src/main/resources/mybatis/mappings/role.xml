@@ -8,7 +8,6 @@
       <idArg column="id" javaType="java.lang.Long"/>
       <arg column="description" javaType="String"/>
     </constructor>
-    <!-- collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" / -->
   </resultMap>
 
   <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.role.Result">

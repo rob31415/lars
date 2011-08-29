@@ -261,9 +261,15 @@ abstract class Editwindow
 
   private def create_form_new = {
     this.form_new = new Form()
+    val factory = create_form_field_factory
+    if(factory.isDefined) this.form_new.setFormFieldFactory(factory.get)
+    //@TODO: does this really work?
     this.form_new.setVisibleItemProperties(visible_item_props)
     this.form_new
   }
+
+
+  def create_form_field_factory: Option[FormFieldFactory]
 
 
   private def create_panel_delete(): Panel = {

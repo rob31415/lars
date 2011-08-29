@@ -24,4 +24,8 @@ class Role(override val parent: Window)
     new BeanItemContainer[Dto](classOf[Dto], data.get.get.asInstanceOf[scala.collection.Set[Dto]])
   }
 
+  override def create_form_field_factory: Option[FormFieldFactory] = {
+    None
+  }
+
 }
