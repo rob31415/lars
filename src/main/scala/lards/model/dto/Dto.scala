@@ -8,13 +8,32 @@ abstract class Dto(var id: java.lang.Long = -1) {
 
 
   def equals(other: lards.model.dto.Dto): Boolean = {
+    var retVal: Boolean = false
+
     if(is_same_type(other)) {
-      val that_id = other.id
-//      println("Role equals other.id=" + that_id + " this.id=" + id)
-      that_id == id
+      retVal = other.id == id
     } else {
-      false
+      retVal = false
     }
+
+    if(retVal)
+      println("Dto.equals: Dto(id=" + id + ") equals other (id=" + other.id + ")")
+    else
+      println("Dto.equals: Dto(id=" + id + ") doesn't equal other (id=" + other.id + ")")
+
+    retVal
   }
+  
+/* do we need this? sideeffects?
+ 
+  override def hashCode(): Int = {
+    val prime = 31
+    val result = super.hashCode
+    val add = if(id == -1) id.hashCode else 0
+    val hash = prime * result + add
+    println("Dto.hashCode="+hash)
+    hash
+  }
+*/
 
 }

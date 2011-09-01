@@ -13,4 +13,8 @@ class User(val pid: java.lang.Long = -1,
   override def is_same_type(other: lards.model.dto.Dto): Boolean = 
     other.isInstanceOf[User]
 
+  override def toString: String = {
+    firstname + ", " + lastname + ", " + id + "; role:" + role.description + ", " + role.id
+  }
+  
 }

@@ -19,6 +19,15 @@ import lards.model.dto.Dto
 import lards.model.dto.Dtos
 
 
+//@TODO: get rid of this - it's unneccessary
+class Form_index extends Form {
+  var selected = -1
+  
+  def set_selected(id: Integer) = selected = id
+
+  def get_selected: Integer = selected
+}
+
 
 /**
 @emits subtype of lards.view.event.Editwindow
@@ -51,10 +60,13 @@ abstract class Editwindow
 
   private var table: Table = null
 
-  private var form_edit: Form = null  //@TODO: just 1 form for both, edit and new? no, i don't see a benefit (aug/11).
+  //@TODO: just 1 form for both, edit and new? 
+  //no, i don't see a benefit (rg/aug/11).
+  var form_edit: Form_index = null
   private var panel_edit: Panel = null
 
-  private var form_new: Form = null
+  private var form_new: Form_index = null
+  private var panel_new: Panel = null
 
   private var delete_button: Button = null
   private val number_of_selected = new Label()
@@ -122,6 +134,8 @@ abstract class Editwindow
       def selectedTabChange(event: TabSheet#SelectedTabChangeEvent) {
 
         if(accordion.getSelectedTab == panel_edit) {
+          //@TODO: why is this null in println but obviously really isn't?
+          println("form_new inside closure="+form_new)
           form_new.setItemDataSource(new BeanItem[Dto](dto_factory()))
           Applocal.broadcaster.publish(event_factory('start_modify, new Dtos))
         } else {
@@ -229,18 +243,24 @@ abstract class Editwindow
 
 
   private def create_form_edit = {
-    this.form_edit = new Form()
+    this.form_edit = new Form_index()
+
+    val factory = create_form_field_factory
+    if(factory.isDefined) this.form_edit.setFormFieldFactory(factory.get)
+    //@TODO: why doesn't this work?
+    this.form_edit.setVisibleItemProperties(visible_item_props)
+
     this.form_edit.setWriteThrough(true)
     this.form_edit.setReadThrough(true)
     this.form_edit.setImmediate(true)
-    this.form_edit.setVisibleItemProperties(visible_item_props)
     this.form_edit.setSizeFull
+
     this.form_edit
   }
 
 
   private def create_panel_new = {
-    val panel = new Panel()
+    this.panel_new = new Panel()
 
     var button = new Button("Neu Anlegen", 
       new Button.ClickListener() { 
@@ -251,20 +271,35 @@ abstract class Editwindow
       }
     )
 
-    panel.setSizeFull
-    panel.addComponent(create_form_new)
-    panel.addComponent(button)
+    this.panel_new.setSizeFull
+    this.panel_new.addComponent(create_form_new)
+    this.panel_new.addComponent(button)
 
-    panel
+    this.panel_new
+  }
+
+
+  def rebuild {
+    println("view.Editwindow.rebuild")
+
+    panel_new.removeComponent(form_new)
+    panel_new.addComponent(create_form_new)
+
+    panel_edit.removeComponent(form_edit)
+    panel_edit.addComponent(create_form_edit)
   }
 
 
   private def create_form_new = {
-    this.form_new = new Form()
+    this.form_new = new Form_index()
+    
     val factory = create_form_field_factory
     if(factory.isDefined) this.form_new.setFormFieldFactory(factory.get)
-    //@TODO: does this really work?
+    //@TODO: why doesn't this work?
     this.form_new.setVisibleItemProperties(visible_item_props)
+
+    this.form_new.setSizeFull
+
     this.form_new
   }
 
@@ -314,16 +349,17 @@ abstract class Editwindow
   private def wrap(obj: Dto): Dtos = {
     val dtos = new java.util.HashSet[Dto]() //ArrayList
     dtos.add(obj)
-    new Dtos( Some(dtos) )
+    new Dtos(Some(dtos))
   }
 
 
   // for the table
-  def set_data(data: Dtos) = {
+  def set_data(data: Dtos) {
     println("data=" + data)
     if(data != null) {
       table.removeAllItems
       table.setContainerDataSource(create_beanitem_container(data))
+      //@TODO: why doesn't this work?
       table.setValue(table.firstItemId()) //autoselect first
     }
   }
@@ -333,7 +369,7 @@ abstract class Editwindow
 
 
   // for editing
-  def set_data(data: Dto) = {
+  def set_data(data: Dto) {
     val bean_item = new BeanItem[Dto](data)
     form_edit.setItemDataSource(bean_item)
   }
@@ -361,11 +397,13 @@ abstract class Editwindow
   def lock_edit {
     parent.showNotification("Datensatz wird gerade von einem anderen Benutzer editiert")
     //@TODO
+    form_edit.setEnabled(false)
   }
 
 
   def unlock_edit {
     //@TODO
+    form_edit.setEnabled(true)
   }
 
 }

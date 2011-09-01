@@ -24,13 +24,14 @@
 	<update id="update" parameterType="lards.model.dto.User"> 
     UPDATE "user" SET
     firstname = #{firstname},
-    lastname = #{lastname}
+    lastname = #{lastname},
+    role_id = #{role.id}
     WHERE id = #{id}
 	</update>	
 
   <insert id="insert" parameterType="lards.model.dto.User">
-	    INSERT INTO "user" (firstname, lastname) 
-	    values (#{firstname}, #{lastname})
+	    INSERT INTO "user" (firstname, lastname, role_id) 
+	    values (#{firstname}, #{lastname}, #{role.id})
   </insert>
 
 	<delete id="delete" parameterType="collection"> 
