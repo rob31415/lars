@@ -14,7 +14,7 @@ class User(val pid: java.lang.Long = -1,
     other.isInstanceOf[User]
 
   override def toString: String = {
-    firstname + ", " + lastname + ", " + id + "; role:" + role.description + ", " + role.id
+    firstname + ", " + lastname + ", " + id + ", " + super.toString + "; role=" + role.toString
   }
   
 }

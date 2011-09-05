@@ -19,15 +19,6 @@ import lards.model.dto.Dto
 import lards.model.dto.Dtos
 
 
-//@TODO: get rid of this - it's unneccessary
-class Form_index extends Form {
-  var selected = -1
-  
-  def set_selected(id: Integer) = selected = id
-
-  def get_selected: Integer = selected
-}
-
 
 /**
 @emits subtype of lards.view.event.Editwindow
@@ -62,10 +53,10 @@ abstract class Editwindow
 
   //@TODO: just 1 form for both, edit and new? 
   //no, i don't see a benefit (rg/aug/11).
-  var form_edit: Form_index = null
+  var form_edit: Form = null
   private var panel_edit: Panel = null
 
-  private var form_new: Form_index = null
+  private var form_new: Form = null
   private var panel_new: Panel = null
 
   private var delete_button: Button = null
@@ -243,15 +234,15 @@ abstract class Editwindow
 
 
   private def create_form_edit = {
-    this.form_edit = new Form_index()
+    this.form_edit = new Form()
 
-    val factory = create_form_field_factory
+    val factory = get_form_field_factory
     if(factory.isDefined) this.form_edit.setFormFieldFactory(factory.get)
     //@TODO: why doesn't this work?
     this.form_edit.setVisibleItemProperties(visible_item_props)
 
     this.form_edit.setWriteThrough(true)
-    this.form_edit.setReadThrough(true)
+    this.form_edit.setReadThrough(false)
     this.form_edit.setImmediate(true)
     this.form_edit.setSizeFull
 
@@ -279,21 +270,10 @@ abstract class Editwindow
   }
 
 
-  def rebuild {
-    println("view.Editwindow.rebuild")
-
-    panel_new.removeComponent(form_new)
-    panel_new.addComponent(create_form_new)
-
-    panel_edit.removeComponent(form_edit)
-    panel_edit.addComponent(create_form_edit)
-  }
-
-
   private def create_form_new = {
-    this.form_new = new Form_index()
+    this.form_new = new Form()
     
-    val factory = create_form_field_factory
+    val factory = get_form_field_factory
     if(factory.isDefined) this.form_new.setFormFieldFactory(factory.get)
     //@TODO: why doesn't this work?
     this.form_new.setVisibleItemProperties(visible_item_props)
@@ -304,7 +284,7 @@ abstract class Editwindow
   }
 
 
-  def create_form_field_factory: Option[FormFieldFactory]
+  def get_form_field_factory: Option[FormFieldFactory]
 
 
   private def create_panel_delete(): Panel = {
@@ -353,9 +333,22 @@ abstract class Editwindow
   }
 
 
+  def rebuild {
+    println("view.Editwindow.rebuild")
+
+    panel_new.removeComponent(form_new)
+    panel_new.addComponent(create_form_new)
+
+    panel_edit.removeComponent(form_edit)
+    panel_edit.addComponent(create_form_edit)
+  }
+
+
   // for the table
   def set_data(data: Dtos) {
     println("data=" + data)
+    
+    //@TODO: what's with this null ?
     if(data != null) {
       table.removeAllItems
       table.setContainerDataSource(create_beanitem_container(data))
@@ -385,7 +378,7 @@ abstract class Editwindow
   def get_current_edit_data: Option[Dto] = {
     get_bean_from_form(form_edit)
   }
-  
+
 
   // restores to default
   // @TODO: invent system to store app-state

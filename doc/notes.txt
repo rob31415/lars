@@ -13,7 +13,22 @@ gui design
     scaffolding?
     vlt dao nocheinmal abstrahieren?
 
+
+broadcaster notification problem
+  app' ist nicht reihenfolgen-agnostisch geschrieben.
+  das führt irgendwann zu problemen!
+  TODO: analysieren wo - und dort event-sequenzen einführen.
+  zur not beim notifizieren testen, indem
+  zufällig über die angemeldeten listener iteriert wird...
+  der notifikations-mechanismus kann rein theoretisch zukünftig
+  auch anders implementiert werden. z.b. über scala-actors.
+
+
 ui-beautification
+  main-layout (zb. menü z-order über rest)
+  theme tuning
+  vlt' verschiedene theme's, pro user einstellbar (akzeptanz erhöhen)
+
 
 idee
   system als möglichkeit, ein soziales netzwerk zu untermauern

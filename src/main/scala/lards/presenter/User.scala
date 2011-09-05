@@ -25,15 +25,6 @@ class User(view: lards.view.User, model: lards.model.service.User, model_role: l
 
       // foreign model event
       case event: lards.model.event.Role => reload
-      
-      // from own-view
-      case event: View_event => {
-        if(event.meaning == 'select) {
-          if(event.dtos.get.get.size == 1) {
-            view.set_edit_form_role_selection(event.dtos.get.get.iterator.next.asInstanceOf[Dto])
-          }
-        }
-      }
 
       case _ =>
     }
@@ -48,7 +39,7 @@ class User(view: lards.view.User, model: lards.model.service.User, model_role: l
   
   override def reload {
     super.reload
-    view.set_role_data(model_role.get_all)
+    view.create_form_field_factory(model_role.get_all)
     view.rebuild
   }
 

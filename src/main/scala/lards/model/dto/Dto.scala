@@ -6,34 +6,37 @@ abstract class Dto(var id: java.lang.Long = -1) {
   // returns whether the given type the same as the type of the class overriding this
   def is_same_type(other: lards.model.dto.Dto): Boolean
 
-
-  def equals(other: lards.model.dto.Dto): Boolean = {
+  
+  override def equals(other: Any /*lards.model.dto.Dto*/ ): Boolean = {
     var retVal: Boolean = false
 
-    if(is_same_type(other)) {
-      retVal = other.id == id
+    if(other.isInstanceOf[lards.model.dto.Dto])
+    {
+      val other_casted = other.asInstanceOf[lards.model.dto.Dto]
+      if(is_same_type(other_casted)) {
+        retVal = other_casted.id == id
+      } else {
+        retVal = false
+      }
     } else {
-      retVal = false
+      false
     }
 
     if(retVal)
-      println("Dto.equals: Dto(id=" + id + ") equals other (id=" + other.id + ")")
+      println("Dto.equals: Dto(id=" + id + ") equals other")
     else
-      println("Dto.equals: Dto(id=" + id + ") doesn't equal other (id=" + other.id + ")")
+      println("Dto.equals: Dto(id=" + id + ") doesn't equal other")
 
     retVal
   }
   
-/* do we need this? sideeffects?
+ //do we need this? sideeffects?
  
   override def hashCode(): Int = {
-    val prime = 31
-    val result = super.hashCode
-    val add = if(id == -1) id.hashCode else 0
-    val hash = prime * result + add
-    println("Dto.hashCode="+hash)
+    val hash = 41 * id.hashCode
+    //println("Dto.hashCode="+hash)
     hash
   }
-*/
+
 
 }

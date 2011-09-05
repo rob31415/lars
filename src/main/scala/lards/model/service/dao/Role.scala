@@ -15,6 +15,7 @@ class Role extends Dao {
 
   def _get_all(session: SqlSession): Dtos = {
     val data = session.selectList("lars.model.mybatis.mapper.role.get_all").asInstanceOf[java.util.ArrayList[Dto]]
+    println("dao.Role " + data)
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
 

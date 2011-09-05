@@ -15,6 +15,7 @@ class User extends Dao {
 
   def _get_all(session: SqlSession): Dtos = {
     val data = session.selectList("lars.model.mybatis.mapper.User.get_all").asInstanceOf[java.util.ArrayList[Dto]]
+    println("dao.User " + data)
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
 
