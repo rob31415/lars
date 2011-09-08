@@ -9,8 +9,8 @@
       <arg column="firstname" javaType="String"/>
       <arg column="lastname" javaType="String"/>
     </constructor>
-    <association property="role" column="role_id" javaType="lards.model.dto.Role" select="get_role_by_id"/>
-    <!-- collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" / -->
+    <association property="role" column="role_id" javaType="lards.model.dto.Role" select="role.get_by_id"/>
+    <collection property="location" column="id" javaType="java.util.HashSet" ofType="lards.model.dto.Location" select="location.get_by_id"/>
   </resultMap>
 
   <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.User.Result">
@@ -42,8 +42,20 @@
       </foreach>
 	</delete>
 
-  <select id="get_role_by_id" parameterType="Long" resultType="lards.model.dto.Role">
+  <select id="role.get_by_id" parameterType="Long" resultType="lards.model.dto.Role">
     SELECT * FROM "role" WHERE ID = #{value}
   </select>
+
+  <select id="location.get_by_id" parameterType="Long" resultType="lards.model.dto.Location">
+    SELECT L.id,description FROM LOCATION L JOIN USER_LOCATION UL ON L.id = UL.id_location WHERE id_user = #{id}
+  </select>
+
+	<insert id="location.insert" parameterType="collection"> 
+	</insert>
+
+	<delete id="location.delete" parameterType="collection"> 
+	</delete>
+
+
 
 </mapper>

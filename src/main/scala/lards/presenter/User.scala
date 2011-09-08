@@ -10,7 +10,7 @@ import lards.view.event.{User => View_event}
 import lards.model.dto.{User => Dto}
 
 
-class User(view: lards.view.User, model: lards.model.service.User, model_role: lards.model.service.Role)
+class User(view: lards.view.User, model: lards.model.service.User, model_role: lards.model.service.Role, model_location: lards.model.service.Location)
   extends Editwindow(view, model, 'user) {
 
 
@@ -26,6 +26,17 @@ class User(view: lards.view.User, model: lards.model.service.User, model_role: l
       // foreign model event
       case event: lards.model.event.Role => reload
 
+      // foreign model event
+      case event: lards.model.event.Location => reload
+      
+      case event: View_event => {
+        if(event.meaning == 'select) {
+          if(event.dtos.get.get.size == 1) {
+            view.get_form_field_factory.get.set_user(event.dtos.get.get.iterator.next.asInstanceOf[Dto])
+          }
+        }
+      }
+
       case _ =>
     }
     
@@ -39,7 +50,7 @@ class User(view: lards.view.User, model: lards.model.service.User, model_role: l
   
   override def reload {
     super.reload
-    view.create_form_field_factory(model_role.get_all)
+    view.create_form_field_factory(model_role.get_all, model_location.get_all)
     view.rebuild
   }
 

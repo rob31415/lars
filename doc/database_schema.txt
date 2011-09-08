@@ -3,7 +3,7 @@ user (id*, firstname, lastname, role_id)
 role (id*, description) <- später gruppen aus active-directory via ldap
 role2action (role_id*, action_id[text]*)
 action (id[text]*, description, done[bool]) <- nicht in db
-user2location (user_id*, location_id*)
+user_location (id, user_id*, location_id*)
 location (id[text]*)
 
 transport (id*, user_id, location_id[text])

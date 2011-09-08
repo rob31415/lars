@@ -27,16 +27,21 @@ class User extends Dao {
 
   def _save_new(session: SqlSession, record: Dto) {
     session.insert("lars.model.mybatis.mapper.User.insert", record)
+//    session.delete("lars.model.mybatis.mapper.User.location.delete", record)
+//    session.delete("lars.model.mybatis.mapper.User.location.insert", record)
   }
 
 
   def _save_existing(session: SqlSession, record: Dto) {
     session.update("lars.model.mybatis.mapper.User.update", record)
+//    session.delete("lars.model.mybatis.mapper.User.location.delete", record)
+//    session.delete("lars.model.mybatis.mapper.User.location.insert", record)
   }
 
 
   def _delete(session: SqlSession, record: Dtos) {
     session.delete("lars.model.mybatis.mapper.User.delete", record.asJava)
+    session.delete("lars.model.mybatis.mapper.User.location.delete", record)
   }
 
 

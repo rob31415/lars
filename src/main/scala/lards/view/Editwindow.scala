@@ -242,7 +242,7 @@ abstract class Editwindow
     this.form_edit.setVisibleItemProperties(visible_item_props)
 
     this.form_edit.setWriteThrough(true)
-    this.form_edit.setReadThrough(false)
+    this.form_edit.setReadThrough(true)
     this.form_edit.setImmediate(true)
     this.form_edit.setSizeFull
 

@@ -56,6 +56,18 @@ idee
     presenter interessiert sich für model-events des fremd-dao
 
 
+n-zu-n
+  user-location
+    wie?
+    java.dzone.com/articles/ibatis-mybatis-handling-joins
+    insert?
+    update?
+    welches gui element?
+    java-typ kapseln?
+    daten sind alle locations & user.locations
+      wie und wann daten nach gui schaufeln?
+
+
 daos ohne dbzugriff
   wie?
 

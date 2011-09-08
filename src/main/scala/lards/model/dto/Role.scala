@@ -8,6 +8,7 @@ class Role(val pid: java.lang.Long = -1,
   extends Dto(pid) {
 
 
+  //mybatis wants this
   def this() = this(-1,"")
     
 

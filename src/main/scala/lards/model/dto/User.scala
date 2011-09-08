@@ -1,6 +1,8 @@
 package lards.model.dto
 
 import scala.reflect.BeanProperty
+import java.util.Collection
+import collection.JavaConversions._
 
 
 class User(val pid: java.lang.Long = -1,
@@ -9,6 +11,7 @@ class User(val pid: java.lang.Long = -1,
   extends Dto(pid) {
 
   @BeanProperty var role: Role = new Role
+  @BeanProperty var location: java.util.Set[Location] = new java.util.HashSet[Location]
   
   override def is_same_type(other: lards.model.dto.Dto): Boolean = 
     other.isInstanceOf[User]

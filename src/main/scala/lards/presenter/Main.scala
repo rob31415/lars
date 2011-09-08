@@ -69,10 +69,11 @@ class Main extends Application with HttpServletRequestListener {
   //@TODO: do we need DI yet?
   def wire_up {
     val model_role = new lards.model.service.Role
+    val model_location = new lards.model.service.Location
     new lards.presenter.Login(new lards.view.Login(window), new lards.model.Login())
     new lards.presenter.Role( new lards.view.Role(window), model_role )
-    new lards.presenter.Location( new lards.view.Location(window), new lards.model.service.Location() )
-    new lards.presenter.User( new lards.view.User(window), new lards.model.service.User(), model_role )
+    new lards.presenter.Location( new lards.view.Location(window), model_location )
+    new lards.presenter.User( new lards.view.User(window), new lards.model.service.User(), model_role, model_location )
   }
 
 
