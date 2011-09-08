@@ -10,7 +10,7 @@
       <arg column="lastname" javaType="String"/>
     </constructor>
     <association property="role" column="role_id" javaType="lards.model.dto.Role" select="role.get_by_id"/>
-    <collection property="location" column="id" javaType="java.util.HashSet" ofType="lards.model.dto.Location" select="location.get_by_id"/>
+    <collection property="location" column="id" javaType="java.util.HashSet" ofType="lards.model.dto.Location" select="location_get_by_id"/>
   </resultMap>
 
   <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.User.Result">
@@ -36,9 +36,8 @@
 
 	<delete id="delete" parameterType="collection"> 
     DELETE FROM "user" WHERE 
-      <foreach collection="_parameter" item="parm" 
-               separator="OR">
-        id = #{parm.id}
+      <foreach collection="_parameter" item="item" separator="OR">
+        id = #{item.id}
       </foreach>
 	</delete>
 
@@ -46,16 +45,21 @@
     SELECT * FROM "role" WHERE ID = #{value}
   </select>
 
-  <select id="location.get_by_id" parameterType="Long" resultType="lards.model.dto.Location">
+  <select id="location_get_by_id" parameterType="Long" resultType="lards.model.dto.Location">
     SELECT L.id,description FROM LOCATION L JOIN USER_LOCATION UL ON L.id = UL.id_location WHERE id_user = #{id}
   </select>
 
-	<insert id="location.insert" parameterType="collection"> 
+	<insert id="location_insert" parameterType="lards.model.dto.User">
+    <if test="location.size() > 0">
+      INSERT INTO "user_location" ("id_user", "id_location") VALUES 
+      <foreach collection="location" item="item" separator=",">
+        (#{id},#{item.id})
+      </foreach>
+    </if>
 	</insert>
 
-	<delete id="location.delete" parameterType="collection"> 
+	<delete id="location_delete" parameterType="lards.model.dto.User">
+    DELETE FROM "user_location" WHERE id_user = #{id}
 	</delete>
-
-
 
 </mapper>

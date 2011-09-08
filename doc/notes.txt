@@ -66,6 +66,17 @@ n-zu-n
     java-typ kapseln?
     daten sind alle locations & user.locations
       wie und wann daten nach gui schaufeln?
+      
+
+-datenbank: was ist, wenn sequenzen ihr maximum erreichen? wann ist das?
+
+
+-java-collection in dto problematik
+  -kein bock mit jc's rumzuhantieren in fachlogik. will Dtos haben.
+  -setter/getter für daos
+    -problem hier: 2 unsynchronisierte zugriffsmethoden auf selbe daten
+      -lösung: locking
+        -problem: unnötig komplexer kram. wohin mit der komplexität?
 
 
 daos ohne dbzugriff
