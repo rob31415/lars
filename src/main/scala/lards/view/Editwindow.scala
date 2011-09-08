@@ -32,7 +32,8 @@ due to vexatious generics' type-erasure.
 abstract class Editwindow
   (val parent: Window,
   val title: String,
-  val visible_item_props: List[String],
+  val visible_fields_table: Map[String, String],  //dto-field id, table-header string
+  val visible_fields_edit: List[String],
   val dto_factory: () => Dto,
   val event_factory: (Symbol, Dtos) => Event
   )
@@ -42,7 +43,7 @@ abstract class Editwindow
   every var that's declared here is intentionally put into
   "class-instance-scope" because it's being accessed
   all over the place, e.g. from inside ui-element-callbacks.
-  (vaadin is a classical imperative gui toolkit.)
+  (vaadin is a classic imperative gui toolkit.)
   */
 
   private var window: Window = null
@@ -102,7 +103,6 @@ abstract class Editwindow
     window.getContent.setSizeFull
     window.addListener(new Window.CloseListener() {
       def windowClose(event: Window#CloseEvent) {
-        //@TODO: provokes bug by closing via mainmenu
         Applocal.broadcaster.publish(event_factory('close, new Dtos))
       }
     })
@@ -121,21 +121,38 @@ abstract class Editwindow
     accordion.addTab(new Label("TODO"), "Spaltenaufbau einstellen", null)
     accordion.addTab(new Label("TODO"), "Sortierung einstellen", null)
 
+
     accordion.addListener(new TabSheet.SelectedTabChangeListener() {
       def selectedTabChange(event: TabSheet#SelectedTabChangeEvent) {
+        
+        //@TODO: how to get case to work here? this code is smelly!
 
-        if(accordion.getSelectedTab == panel_edit) {
-          //@TODO: why is this null in println but obviously really isn't?
-          println("form_new inside closure="+form_new)
-          form_new.setItemDataSource(new BeanItem[Dto](dto_factory()))
+        val edit_tab = event.getTabSheet.getTab(1).getComponent()
+        val new_tab = event.getTabSheet.getTab(2).getComponent()
+
+        if(event.getTabSheet.getSelectedTab == edit_tab) {
+          //@TODO: just out of curiosity:
+          // why is this null in println but obviously really isn't?
+          println("form_new inside selectedTabChange closure="+form_new)
+
           Applocal.broadcaster.publish(event_factory('start_modify, new Dtos))
         } else {
           Applocal.broadcaster.publish(event_factory('cancel_modify, new Dtos))
         }
+        
+        if(event.getTabSheet.getSelectedTab == new_tab) {
+          form_new.setItemDataSource(new BeanItem[Dto](dto_factory()))
+          form_new.setVisibleItemProperties(visible_fields_edit)
+        } 
+        
       }
     })
 
+
     accordion.setSizeFull
+
+    //because initially nothing is selected in the table
+    accordion.getTab(1).setEnabled(false)
 
     this.accordion = accordion
     accordion
@@ -159,6 +176,7 @@ abstract class Editwindow
   }
 
 
+  //@TODO
   private def create_row_filter_select(): ComboBox = {
     val box = new ComboBox("Zeilenfilter auswählen")
     box.addItem("Alles")
@@ -167,6 +185,7 @@ abstract class Editwindow
   }
 
 
+  //@TODO
   private def create_col_setup_select(): ComboBox = {
     val box = new ComboBox("Spaltenaufbau auswählen")
     box.addItem("Alles")
@@ -175,6 +194,7 @@ abstract class Editwindow
   }
 
 
+  //@TODO
   private def create_sorting_select(): ComboBox = {
     val box = new ComboBox("Sortierung auswählen")
     box.addItem("Sortierung A")
@@ -192,6 +212,7 @@ abstract class Editwindow
     table.setImmediate(true)
     table.setMultiSelectMode(AbstractSelect.MultiSelectMode.DEFAULT)  //SIMPLE
     table.setMultiSelect(true)
+    table.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_EXPLICIT)
 
     table.addListener(new Property.ValueChangeListener() {
       def valueChange(event: Property.ValueChangeEvent) {
@@ -238,8 +259,6 @@ abstract class Editwindow
 
     val factory = get_form_field_factory
     if(factory.isDefined) this.form_edit.setFormFieldFactory(factory.get)
-    //@TODO: why doesn't this work?
-    this.form_edit.setVisibleItemProperties(visible_item_props)
 
     this.form_edit.setWriteThrough(true)
     this.form_edit.setReadThrough(true)
@@ -275,8 +294,6 @@ abstract class Editwindow
     
     val factory = get_form_field_factory
     if(factory.isDefined) this.form_new.setFormFieldFactory(factory.get)
-    //@TODO: why doesn't this work?
-    this.form_new.setVisibleItemProperties(visible_item_props)
 
     this.form_new.setSizeFull
 
@@ -308,7 +325,7 @@ abstract class Editwindow
   }
 
 
-  //returns true if something was broadcasted
+  //returns wether something was broadcasted
   private def broadcast_save(form: Form): Boolean = {
     val obj = get_bean_from_form(form)
     if(None != obj) {
@@ -327,7 +344,7 @@ abstract class Editwindow
 
 
   private def wrap(obj: Dto): Dtos = {
-    val dtos = new java.util.HashSet[Dto]() //ArrayList
+    val dtos = new java.util.HashSet[Dto]()
     dtos.add(obj)
     new Dtos(Some(dtos))
   }
@@ -346,14 +363,22 @@ abstract class Editwindow
 
   // for the table
   def set_data(data: Dtos) {
-    println("data=" + data)
+    println("view.Editwindow.set_data(" + data + ")")
     
     //@TODO: what's with this null ?
     if(data != null) {
       table.removeAllItems
       table.setContainerDataSource(create_beanitem_container(data))
-      //@TODO: why doesn't this work?
-      table.setValue(table.firstItemId()) //autoselect first
+      
+      table.setVisibleColumns(visible_fields_table.keySet.toArray)
+      visible_fields_table.foreach((el) => table.setColumnHeader(el._1, el._2))
+
+      /* is ugly and doesn't fire valueChange event
+      val set = new java.util.HashSet[Dto]
+      set.add( table.firstItemId().asInstanceOf[Dto] )
+      table.setValue(set) //autoselect first
+      */
+
     }
   }
 
@@ -365,6 +390,7 @@ abstract class Editwindow
   def set_data(data: Dto) {
     val bean_item = new BeanItem[Dto](data)
     form_edit.setItemDataSource(bean_item)
+    form_edit.setVisibleItemProperties(visible_fields_edit)
   }
 
 
@@ -388,8 +414,8 @@ abstract class Editwindow
 
 
   def lock_edit {
-    parent.showNotification("Datensatz wird gerade von einem anderen Benutzer editiert")
     //@TODO
+    parent.showNotification("Datensatz wird gerade von einem anderen Benutzer editiert")
     form_edit.setEnabled(false)
   }
 

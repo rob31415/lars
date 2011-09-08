@@ -1,3 +1,18 @@
+ok-table schön machen
+ok-angezeigte felder problem
+-form feldbeschriftung problem
+  -geht nur über fff
+ok-table initiale selection problem
+ok-neu anlegen leer problem
+-layout probleme?
+  -app'start window-grosse problem
+-fahrt anlegen
+-rg anlegen
+-der user soll sehen, welcher andere user den ds gesperrt hat
+-validierung impl'
+  -passwort einführen
+
+
 gui design
   punkte:
     multiple auswählen
@@ -37,7 +52,7 @@ idee
     während log-in neuigkeiten (vom system oder infos die alle betreffen) in einer liste anzeigen
       news-admin muß das editieren können
 
-1-zu-n
+ok 1-zu-n
   ui
     forms überschreiben
       create_form_new
@@ -56,7 +71,7 @@ idee
     presenter interessiert sich für model-events des fremd-dao
 
 
-n-zu-n
+ok n-zu-n
   user-location
     wie?
     java.dzone.com/articles/ibatis-mybatis-handling-joins

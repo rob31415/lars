@@ -61,8 +61,8 @@ class Main(var parent: Window) extends Panel with View {
     var menu: MenuBar#MenuItem = menu_bar.addItem("Einstellungen", null, null)
 
     menu.addItem("Rollen", new Menu_Command('role))
+    menu.addItem("Arbeitsorte", new Menu_Command('location))
     menu.addItem("Benutzer", new Menu_Command('user))
-    menu.addItem("Locations", new Menu_Command('location))
 
     menu_bar
   }

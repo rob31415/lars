@@ -28,14 +28,6 @@ class User(view: lards.view.User, model: lards.model.service.User, model_role: l
 
       // foreign model event
       case event: lards.model.event.Location => reload
-      
-      case event: View_event => {
-        if(event.meaning == 'select) {
-          if(event.dtos.get.get.size == 1) {
-            view.get_form_field_factory.get.set_user(event.dtos.get.get.iterator.next.asInstanceOf[Dto])
-          }
-        }
-      }
 
       case _ =>
     }

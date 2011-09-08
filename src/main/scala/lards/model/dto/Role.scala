@@ -23,6 +23,6 @@ class Role(val pid: java.lang.Long = -1,
   }
 
   
-  override def toString(): String = description + "(" + id + ")" + super.toString
+  override def toString(): String = description // + "(" + id + ")" + super.toString
 
 }

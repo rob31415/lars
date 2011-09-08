@@ -11,6 +11,7 @@ class User(val pid: java.lang.Long = -1,
   extends Dto(pid) {
 
   @BeanProperty var role: Role = new Role
+  //@TODO: how to make this Dtos without much complexity?
   @BeanProperty var location = new java.util.HashSet[Location]
   
   override def is_same_type(other: lards.model.dto.Dto): Boolean = 

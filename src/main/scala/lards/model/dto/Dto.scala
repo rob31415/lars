@@ -22,15 +22,18 @@ abstract class Dto(var id: java.lang.Long = -1) {
       false
     }
 
+/*
     if(retVal)
       println("Dto.equals: Dto(id=" + id + ") equals other")
     else
       println("Dto.equals: Dto(id=" + id + ") doesn't equal other")
+*/
 
     retVal
   }
   
- //do we need this? sideeffects?
+
+  //@TODO: sideeffects? what's the proper way for generation?
  
   override def hashCode(): Int = {
     val hash = 41 * id.hashCode

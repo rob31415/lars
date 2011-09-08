@@ -18,15 +18,7 @@ import lards.model.dto.{Location => Location_dto}
 
 class Factory(roles: Dtos, locations: Dtos) extends FormFieldFactory {
 
-
-//  def this() = this(new Dtos(None))
-
   var user_locations: Dtos = new Dtos
-
-
-  def set_user(dao: Dto) {
-    //@TODO user_locations = dao.location
-  }
 
 
   override def createField(item: Item, _property_id: Object, ui_context: Component): Field = {
@@ -58,15 +50,14 @@ class Factory(roles: Dtos, locations: Dtos) extends FormFieldFactory {
         select
       }
 
+
       case "location" => {
 
-//        val select = new TwinColSelectEx(classOf[Location], "Locations")
-        val select = new TwinColSelect("Locations")
-        select.setLeftColumnCaption("verfügbare")
+        val select = new TwinColSelect("Einsatzorte")
+        select.setLeftColumnCaption("verfügbar")
         select.setRightColumnCaption("zugewiesen")
         select.setItemCaptionMode(AbstractSelect.ITEM_CAPTION_MODE_PROPERTY)
         select.setItemCaptionPropertyId("description")
-        //select.setNullSelectionAllowed(false)
         select.setMultiSelect(true)
         select.setWriteThrough(true)
         select.setReadThrough(true)
@@ -74,8 +65,9 @@ class Factory(roles: Dtos, locations: Dtos) extends FormFieldFactory {
 
         if(locations.get.isDefined && locations.get.get.size > 0) {
           select.setContainerDataSource(
-            new BeanItemContainer[Location_dto](classOf[Location_dto], locations.get.get.asInstanceOf[scala.collection.Set[Location_dto]]))
-          //println("BBBBBBBBBBBBBBBBB" + select.removeContainerProperty("locations"))
+            new BeanItemContainer[Location_dto](
+              classOf[Location_dto], 
+              locations.get.get.asInstanceOf[scala.collection.Set[Location_dto]]))
           select.setEnabled(true)
         } else {
           select.setEnabled(false)
@@ -94,7 +86,8 @@ class User(override val parent: Window)
   extends Editwindow(
   parent, 
   "Bearbeitungsfenster: Einstellungen / Benutzer",
-  List("firstname", "lastname", "role"),
+  Map("firstname" -> "Vorname", "lastname" -> "Nachname", "role" -> "Rolle"),
+  List("firstname", "lastname", "location", "role"),
   {() => new Dto()},
   {(meaning: Symbol, dtos: Dtos) => new Event(meaning, dtos)}
   ) {

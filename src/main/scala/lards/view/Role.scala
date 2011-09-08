@@ -15,6 +15,7 @@ class Role(override val parent: Window)
   extends Editwindow(
   parent, 
   "Bearbeitungsfenster: Einstellungen / Rollen",
+  Map("description" -> "Bezeichnung"),
   List("description"),
   {() => new Dto()},
   {(meaning: Symbol, dtos: Dtos) => new Event(meaning, dtos)}
