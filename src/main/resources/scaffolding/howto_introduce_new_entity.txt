@@ -1,0 +1,8 @@
+howto: Neues standard crud (editwindow) für eine entität einführen
+
+1. neue db-migration schreiben
+2. in mybatis/config.xml neues mapping zufügen
+3. datei (mybatis/_REPLACE_.xml) aus scaffolding kopieren und mapping anpassen ("_REPLACE_" ersetzen)
+4. in presenter.main neue triade instantiieren
+5. in view.main neuen menüpunkt einführen
+6. dateien (model, view, presenter) aus scaffolding kopieren, "_REPLACE_" ersetzen und ggf' spezialisierte implementierung zufügen

@@ -7,7 +7,6 @@ import lards.global.Applocal
 import lards.presenter.Editwindow
 import lards.model.event.{User => Model_event}
 import lards.view.event.{User => View_event}
-import lards.model.dto.{User => Dto}
 
 
 class User(view: lards.view.User, model: lards.model.service.User, model_role: lards.model.service.Role, model_location: lards.model.service.Location)

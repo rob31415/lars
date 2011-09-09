@@ -6,6 +6,7 @@ ok-table initiale selection problem
 ok-neu anlegen leer problem
 -layout probleme?
   -app'start window-grosse problem
+-scaffolding updaten
 -fahrt anlegen
 -rg anlegen
 -der user soll sehen, welcher andere user den ds gesperrt hat
@@ -433,13 +434,13 @@ presenter.Editwindow
 
 
 
-Aufgabe: Neues standard crud (editwindow) einführen
-  neue migration schreiben
+howto: Neues standard crud (editwindow) einführen
+  neue db-migration schreiben
   in mybatis/config.xml neues mapping zufügen
   datei (mybatis/_REPLACE_.xml) aus scaffolding kopieren und mapping anpassen ("_REPLACE_" ersetzen)
-  in presenter.main triade instantiieren
-  in view.main menüpunkt einführen
+  in presenter.main neue triade instantiieren
+  in view.main neuen menüpunkt einführen
   dateien (model, view, presenter) aus scaffolding kopieren, "_REPLACE_" ersetzen und ggf' spezialisierte implementierung zufügen
 
 
-ganz klar, wenn man die power einer unbeschränkten gestaltung der software-implementierung hat kann man geilere sachen machen als mit reinen web-technologien.
+ganz klar, wenn man die power einer uneingeschränkten gestaltung der software-implementierung hat kann man dinge eleganter machen als mit reinen web-technologien.

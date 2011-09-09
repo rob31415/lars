@@ -26,16 +26,22 @@ class _REPLACE_ extends Dao {
 
   def _save_new(session: SqlSession, record: Dto) {
     session.insert("lars.model.mybatis.mapper._REPLACE_.insert", record)
+    //@TODO: remove next line if no n:n is wanted
+    session.delete("lars.model.mybatis.mapper._REPLACE_._REPLACE_", record) //insert in jointable
   }
 
 
   def _save_existing(session: SqlSession, record: Dto) {
     session.update("lars.model.mybatis.mapper._REPLACE_.update", record)
+    //@TODO: remove next two lines if no n:n is wanted
+    session.delete("lars.model.mybatis.mapper._REPLACE_._REPLACE_", record) //delete in jointable
+    session.delete("lars.model.mybatis.mapper._REPLACE_._REPLACE_", record) //insert in jointable
   }
 
 
   def _delete(session: SqlSession, record: Dtos) {
     session.delete("lars.model.mybatis.mapper._REPLACE_.delete", record.asJava)
+    session.delete("lars.model.mybatis.mapper._REPLACE_._REPLACE_", record)  //delete in jointable
   }
 
 
