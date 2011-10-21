@@ -1,6 +1,10 @@
 package lards.model.dto
 
-abstract class Dto(var id: java.lang.Long = -1) {
+import java.sql.Timestamp
+
+
+abstract class Dto(var id: java.lang.Long = -1,
+  var timestamp: Timestamp = new Timestamp(0)) {
 
 
   // returns whether the given type the same as the type of the class overriding this

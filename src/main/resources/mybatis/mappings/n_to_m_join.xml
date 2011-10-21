@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="lars.model.mybatis.mapper.n_to_m_join">
+
+  <resultMap id="Result" type="lards.model.dto.N_to_m_join">
+    <id column="a_id" javaType="java.lang.Long"/>
+    <id column="b_id" javaType="java.lang.Long"/>
+    <id column="timestamp" javaType="java.sql.Timestamp"/>
+  </resultMap>
+
+</mapper>

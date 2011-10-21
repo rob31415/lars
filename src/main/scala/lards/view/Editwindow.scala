@@ -1,6 +1,7 @@
 /**
 implements the abstract base of an editwindow which is 
-used throughout the application.
+used throughout the application as a standard-view
+for crud of any entity.
 */
 
 package lards.view
@@ -48,7 +49,7 @@ abstract class Editwindow
 
   private var window: Window = null
 
-  private var accordion: Accordion = null
+  private var accordion: TabSheet = null
 
   private var table: Table = null
 
@@ -110,10 +111,11 @@ abstract class Editwindow
   }
 
 
-  private def create_accordion(): Accordion = {
-    val accordion = new Accordion()
-      
+  private def create_accordion(): TabSheet = {
+    val accordion = new TabSheet()
+
     accordion.addTab(create_panel_table, "Übersicht", null)
+    accordion.addTab(new Label("TODO"), "Historie", null)
     accordion.addTab(create_panel_edit, "Bearbeiten", null)
     accordion.addTab(create_panel_new, "Neu anlegen", null)
     accordion.addTab(create_panel_delete, "Löschen", null)
@@ -127,8 +129,8 @@ abstract class Editwindow
         
         //@TODO: how to get case to work here? this code is smelly!
 
-        val edit_tab = event.getTabSheet.getTab(1).getComponent()
-        val new_tab = event.getTabSheet.getTab(2).getComponent()
+        val edit_tab = event.getTabSheet.getTab(2).getComponent()
+        val new_tab = event.getTabSheet.getTab(3).getComponent()
 
         if(event.getTabSheet.getSelectedTab == edit_tab) {
           //@TODO: just out of curiosity:
@@ -153,6 +155,7 @@ abstract class Editwindow
 
     //because initially nothing is selected in the table
     accordion.getTab(1).setEnabled(false)
+    accordion.getTab(2).setEnabled(false)
 
     this.accordion = accordion
     accordion
@@ -219,6 +222,7 @@ abstract class Editwindow
         println("table selection changed " + table.getValue().getClass())
         val selected = get_selected
         accordion.getTab(1).setEnabled(selected.get.get.size == 1)
+        accordion.getTab(2).setEnabled(selected.get.get.size == 1)
         Applocal.broadcaster.publish(event_factory('select, selected))
       }
     })

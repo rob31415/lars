@@ -21,6 +21,8 @@
   <mappers> 
     <mapper resource="mybatis/mappings/role.xml"/>
     <mapper resource="mybatis/mappings/location.xml"/>
+    <!-- mapper resource="mybatis/mappings/n_to_m_join.xml"/ -->
+    <mapper resource="mybatis/mappings/user2location.xml"/>
     <mapper resource="mybatis/mappings/user.xml"/>
   </mappers> 
 </configuration>

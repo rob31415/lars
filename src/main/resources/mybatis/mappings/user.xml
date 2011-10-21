@@ -1,25 +1,60 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
 
-<mapper namespace="lars.model.mybatis.mapper.User">
+<mapper namespace="lars.model.mybatis.mapper.user">
+
 
   <resultMap id="Result" type="lards.model.dto.User">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
+      <idArg column="timestamp" javaType="java.sql.Timestamp"/>
       <arg column="firstname" javaType="String"/>
       <arg column="lastname" javaType="String"/>
     </constructor>
-    <association property="role" column="role_id" javaType="lards.model.dto.Role" select="role.get_by_id"/>
-    <collection property="location" column="id" javaType="java.util.HashSet" ofType="lards.model.dto.Location" select="location_get_by_id"/>
+    <!-- association property="role" column="{id_role=role_id,timestamp=timestamp}" javaType="lards.model.dto.Role" select="get_role"/ -->
+    <collection property="location" column="{id_assoc=id,trequest=trequest}" javaType="java.util.HashSet" ofType="lards.model.dto.Location" select="lars.model.mybatis.mapper.user2location.get_location"/>
   </resultMap>
 
-  <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.User.Result">
-    SELECT * FROM "user" WHERE ID = #{value}
+
+  <select id="get_all" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.user.Result">
+  <![CDATA[
+    SELECT * FROM get_all('user', #{timestamp,jdbcType=TIMESTAMP,mode=IN}) AS
+    tmp_schema(id bigint, firstname character varying, lastname character varying, role_id bigint, "timestamp" timestamp without time zone, trequest timestamp without time zone)
+  ]]>
+  </select>
+  
+
+  <select id="get" parameterType="map" resultMap="lars.model.mybatis.mapper.user.Result">
+  <![CDATA[
+    SELECT "user".* FROM "user" INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM "user" WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long} )
+        AS nested2
+      GROUP BY id) AS nested1
+    ON "user".id = nested1.id AND "user".timestamp = nested1.timestamp
+  ]]>
   </select>
 
-  <select id="get_all" resultMap="lars.model.mybatis.mapper.User.Result">
-    SELECT * FROM "user"
+
+  <select id="get_all_history" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.user.Result">
+  <![CDATA[
+    SELECT * from "user" WHERE timestamp <= #{value} ORDER BY id,timestamp ASC
+  ]]>
   </select>
+
+
+  <select id="get_history" parameterType="map" resultMap="lars.model.mybatis.mapper.user.Result">
+  <![CDATA[
+    SELECT * from "user" WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long}
+  ]]>
+  </select>
+
+
+  <insert id="insert" parameterType="lards.model.dto.User">
+	    INSERT INTO "user" (<if test="id != -1">id,</if>timestamp,firstname,lastname,role_id) 
+	    values (<if test="id != -1">#{id},</if>#{timestamp},#{firstname},#{lastname},#{role.id})
+  </insert>
+
 
 	<update id="update" parameterType="lards.model.dto.User"> 
     UPDATE "user" SET
@@ -27,39 +62,53 @@
     lastname = #{lastname},
     role_id = #{role.id}
     WHERE id = #{id}
+    AND timestamp = #{timestamp}
 	</update>	
 
-  <insert id="insert" parameterType="lards.model.dto.User">
-	    INSERT INTO "user" (firstname, lastname, role_id) 
-	    values (#{firstname}, #{lastname}, #{role.id})
-  </insert>
 
 	<delete id="delete" parameterType="collection"> 
     DELETE FROM "user" WHERE 
-      <foreach collection="_parameter" item="item" separator="OR">
-        id = #{item.id}
+      <foreach collection="_parameter" item="parm" 
+               separator="OR">
+        id = #{parm.id}
       </foreach>
 	</delete>
 
-  <select id="role.get_by_id" parameterType="Long" resultType="lards.model.dto.Role">
-    SELECT * FROM "role" WHERE ID = #{value}
-  </select>
 
-  <select id="location_get_by_id" parameterType="Long" resultType="lards.model.dto.Location">
-    SELECT L.id,description FROM LOCATION L JOIN USER_LOCATION UL ON L.id = UL.id_location WHERE id_user = #{id}
+  <select id="get_role" parameterType="map" resultType="lards.model.dto.Role">
+  <![CDATA[
+    SELECT role.* FROM role INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM role WHERE timestamp <= #{timestamp,javaType=java.sql.Timestamp} AND id = #{id_role,javaType=Long} )
+        AS nested2
+      GROUP BY id) AS nested1
+    ON role.id = nested1.id AND role.timestamp = nested1.timestamp
+  ]]>
   </select>
 
 	<insert id="location_insert" parameterType="lards.model.dto.User">
     <if test="location.size() > 0">
-      INSERT INTO "user_location" ("id_user", "id_location") VALUES 
+      INSERT INTO "user_location" ("id_user", "id_location", "timestamp") VALUES 
       <foreach collection="location" item="item" separator=",">
-        (#{id},#{item.id})
+        (#{id}, #{item.id}, NOW())
       </foreach>
     </if>
 	</insert>
 
+
+	<update id="location_update" parameterType="lards.model.dto.User">
+    UPDATE "user_location" SET
+    id_user = #{id},
+    id_location = #{location.id},
+    "timestamp" = NOW()
+    WHERE id = #{id}
+    AND timestamp = #{timestamp}
+  </update>
+
+
 	<delete id="location_delete" parameterType="lards.model.dto.User">
     DELETE FROM "user_location" WHERE id_user = #{id}
 	</delete>
+
 
 </mapper>

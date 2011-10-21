@@ -1,3 +1,37 @@
+
+datenhistorie
+  konzept
+  stored procedure parametrisierbar mit table name?
+  ist das möglich: s.p. ruft eine andere auf und macht "typ-konversion" für mybatis?
+  n:m mechanismus für alle kardinalitäten benutzen
+  n:m mit historie zum laufen bringen
+  was ist unterschied "timestamp without time zone" und anderen?
+
+
+
+
+Systemeinstellungen
+  Beauftragte (admin)
+    Beauftragte-Typen (admin)
+  Einsatzarten (admin)
+  Benutzer (wache, kv)
+    Angestelltenverhältnisse (admin)
+    Qualifikationen (admin)
+  Rollen (admin)
+Einstellungen
+  Tarife (admin)
+  Konten (admin)
+  Umlagen (admin)
+  Fahrzeuge (wache)
+Erfassung
+  Transportberichte (wache, rds)
+  Orte (wache, rds)
+  Teilnehmer (wache, rds)
+  Posten (rds)
+  Kostenträger (rds)
+
+
+
 ok-table schön machen
 ok-angezeigte felder problem
 -form feldbeschriftung problem
@@ -159,7 +193,7 @@ sourcecode management:
   source dokumentation: event-sender und receiver müssen gut erkennbar sein 
     (scaladoc @see fkt nicht, yui-doc macht das nicht)
   development als tdd mit unit testing? (junit)
-  scaffolding für table/edit triaden?
+  ok scaffolding für table/edit triaden? -> jep!
 
 umgang mit/ops auf großen datenmengen/tabellenzeilen
   nötig für was? nur für admin-mässige user? wie bequem?

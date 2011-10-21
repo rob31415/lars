@@ -28,3 +28,430 @@ rds stat
 
 usr role
 
+
+    SELECT test.* FROM test INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM test WHERE timestamp <= '1977-06-11 12:15:00')
+        AS nested2
+      GROUP BY id) AS nested1
+    ON test.id = nested1.id AND test.timestamp = nested1.timestamp;
+
+
+
+    SELECT L.id,description FROM LOCATION L 
+    JOIN USER_LOCATION UL ON L.id = UL.id_location 
+    WHERE id_user = #{id}
+    
+
+SELECT L.* FROM
+(
+  SELECT user_location.* FROM user_location INNER JOIN(
+    SELECT id_user,MAX(timestamp) AS timestamp FROM
+      (SELECT * FROM user_location WHERE timestamp <= '2011-10-04 11:10:09' AND id_user = 3 )
+      AS nested2
+    GROUP BY id_user) AS nested1
+  ON user_location.id_user = nested1.id_user AND user_location.timestamp = nested1.timestamp
+) AS U2L
+INNER JOIN 
+(
+  SELECT location.* FROM location INNER JOIN(
+    SELECT id,MAX(timestamp) AS timestamp FROM
+      (SELECT * FROM location WHERE timestamp <= '2011-10-04 11:10:09' )
+      AS nested2
+    GROUP BY id) AS nested1
+  ON location.id = nested1.id AND location.timestamp = nested1.timestamp
+) AS L
+ON L.id = U2L.id_location;
+
+
+
+
+SELECT L.* FROM
+(
+  SELECT * FROM user_location WHERE id_user = 3 AND timestamp <= '2011-10-04 11:10:09'
+) AS U2L
+INNER JOIN 
+(
+  SELECT * FROM location WHERE timestamp <= '2011-10-04 11:10:09'
+) AS L
+ON L.id = U2L.id_location
+WHERE U2L.id_user = 3;
+
+
+
+-- Function: get_b(timestamp without time zone)
+
+DROP FUNCTION get_b(timestamp without time zone);
+DROP TYPE S1;
+
+CREATE TYPE S1 AS (id integer, t timestamp without time zone);
+
+CREATE OR REPLACE FUNCTION get_b(t IN timestamp without time zone)
+  RETURNS setof S1 AS
+  $$ SELECT id,timestamp FROM "B"; $$
+  LANGUAGE sql VOLATILE
+  COST 100;
+ALTER FUNCTION get_b(timestamp without time zone) OWNER TO rob;
+
+
+
+SELECT * FROM get_B(CAST('1999-09-09 05:01' AS TIMESTAMP WITHOUT TIME ZONE))
+
+
+/* SELECT * FROM get_B(CAST('2011-09-09 06:01' AS TIMESTAMP WITHOUT TIME ZONE)) */
+
+
+AN B:
+
+SELECT * FROM
+(
+  SELECT J1.* FROM
+  (
+    SELECT T2.* FROM
+    (
+      SELECT "B".id, "B".timestamp FROM "B" INNER JOIN(
+        SELECT id,MAX(timestamp) AS timestamp FROM
+          (SELECT * FROM "B" WHERE timestamp <= '2011-09-09 05:01')
+          AS nested2
+        GROUP BY id) AS nested1
+      ON "B".id = nested1.id AND "B".timestamp = nested1.timestamp
+    ) AS S1
+    INNER JOIN
+    (
+      SELECT * FROM "A2B"
+    ) AS T2 
+    ON T2.id_b = S1.id AND T2.t_b = S1.timestamp
+  ) AS J1
+  INNER JOIN
+  (
+    SELECT "A2B".* FROM "A2B" INNER JOIN(
+      SELECT id_a,MAX(t_a) AS t_a FROM
+        (SELECT * FROM "A2B" WHERE t_a <= '2011-09-09 05:01')
+        AS nested2
+      GROUP BY id_a) AS nested1
+    ON "A2B".id_a = nested1.id_a AND "A2B".t_a = nested1.t_a
+  ) AS S2
+  ON J1.id_a = S2.id_a AND J1.t_a = S2.t_a
+  AND J1.id_b = S2.id_b AND J1.t_b = S2.t_b
+) AS J2
+INNER JOIN
+(
+  SELECT * FROM "A"
+) AS J3
+ON J3.id = J2.id_a AND J3.timestamp = J2.t_a;
+
+
+AN A:
+
+
+SELECT * FROM
+(
+  SELECT J1.* FROM
+  (
+    SELECT T2.* FROM
+    (
+      SELECT "A".id, "A".timestamp FROM "A" INNER JOIN(
+        SELECT id,MAX(timestamp) AS timestamp FROM
+          (SELECT * FROM "A" WHERE timestamp <= '2011-09-09 05:01')
+          AS nested2
+        GROUP BY id) AS nested1
+      ON "A".id = nested1.id AND "A".timestamp = nested1.timestamp
+    ) AS S1
+    INNER JOIN
+    (
+      SELECT * FROM "A2B"
+    ) AS T2 
+    ON T2.id_a = S1.id AND T2.t_a = S1.timestamp
+  ) AS J1
+  INNER JOIN
+  (
+    SELECT "A2B".* FROM "A2B" INNER JOIN(
+      SELECT id_b,MAX(t_b) AS t_b FROM
+        (SELECT * FROM "A2B" WHERE t_b <= '2011-09-09 05:01')
+        AS nested2
+      GROUP BY id_b) AS nested1
+    ON "A2B".id_b = nested1.id_b AND "A2B".t_b = nested1.t_b
+  ) AS S2
+  ON J1.id_a = S2.id_a AND J1.t_a = S2.t_a
+  AND J1.id_b = S2.id_b AND J1.t_b = S2.t_b
+) AS J2
+INNER JOIN
+(
+  SELECT * FROM "B"
+) AS J3
+ON J3.id = J2.id_b AND J3.timestamp = J2.t_b;
+
+
+
+-- Function: get_test(timestamp without time zone)
+
+DROP FUNCTION get_test(timestamp without time zone);
+DROP TYPE S1;
+
+CREATE TYPE S1 AS (id integer, t timestamp without time zone);
+
+CREATE OR REPLACE FUNCTION get_test(t IN timestamp without time zone, tablename IN character varying)
+  RETURNS setof S1 AS
+  $$
+  DECLARE
+    rec  record;
+  BEGIN 
+    FOR rec in 
+    EXECUTE 'SELECT id,timestamp FROM ' || quote_ident(tablename) || ' WHERE timestamp<=' || quote_literal(t) || ';'
+    LOOP RETURN NEXT rec; END LOOP;
+  END;
+  $$
+  LANGUAGE plpgsql;
+ALTER FUNCTION get_test(timestamp without time zone, character varying) OWNER TO rob;
+
+
+createlang -d dbname plpgsql
+
+
+select * from get_test('2011-09-09 04:00:00', 'A');
+
+statementType="CALLABLE"
+    {call get_all_user(#{timestamp,jdbcType=TIMESTAMP,mode=IN})}
+
+
+CREATE OR REPLACE FUNCTION get_test(t IN timestamp without time zone, tablename IN character varying)
+  RETURNS setof S1 AS
+  $$
+  DECLARE
+    rec  record;
+  BEGIN 
+    RETURN QUERY EXECUTE
+      SELECT id,timestamp FROM ' || quote_ident(tablename) || ' WHERE timestamp<=' || quote_literal(t) || ';'
+    USING t, tablename;
+    RETURN;
+  END;
+  $$
+  LANGUAGE plpgsql;
+ALTER FUNCTION get_test(timestamp without time zone, character varying) OWNER TO rob;
+
+
+
+
+
+
+DROP FUNCTION get_test(t IN timestamp without time zone, tablename IN character varying);
+
+CREATE OR REPLACE FUNCTION get_test(t IN timestamp without time zone, tablename IN character varying)
+  RETURNS setof record AS
+  $$
+  DECLARE
+    rec  record;
+  BEGIN 
+    RETURN QUERY EXECUTE
+      'SELECT * FROM ' || quote_ident(tablename) || ' WHERE timestamp<=' || quote_literal(t) || ';'
+    USING t, tablename;
+    RETURN;
+  END;
+  $$
+  LANGUAGE plpgsql;
+ALTER FUNCTION get_test(timestamp without time zone, character varying) OWNER TO rob;
+
+select * from get_test('2011-09-09 04:00:00', 'A') AS 
+tmp_schema(id integer, t timestamp without time zone, "user" character varying, data character varying);
+
+
+
+
+
+CREATE OR REPLACE FUNCTION get_all(tablename IN character varying, p_trequest IN timestamp without time zone)
+  RETURNS setof record AS
+  $$
+  DECLARE
+    rec  record;
+  BEGIN 
+    RETURN QUERY EXECUTE
+
+    'SELECT ' || quote_ident(tablename) || '.*, CAST(' || quote_literal(p_trequest) || ' AS timestamp without time zone) AS trequest FROM ' || quote_ident(tablename) || ' INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM ' || quote_ident(tablename) || ' WHERE timestamp <= ' || quote_literal(p_trequest) || ')
+        AS nested2
+      GROUP BY id) AS nested1
+    ON ' || quote_ident(tablename) || '.id = nested1.id AND ' || quote_ident(tablename) || '.timestamp = nested1.timestamp'
+
+    USING p_timestamp, tablename;
+    RETURN;
+  END;
+  $$
+  LANGUAGE plpgsql;
+ALTER FUNCTION get_all(tablename IN character varying, p_timestamp IN timestamp without time zone) OWNER TO rob;
+
+select * from get_all('A', '2011-09-09 04:00:00') AS 
+tmp_schema(id integer, t timestamp without time zone, "user" character varying, data character varying, trequest timestamp without time zone);
+
+
+
+
+
+
+  p_ IN character varying,
+  p_ IN character varying)
+  
+
+  
+/*
+let's say "table a" and "table b" are connected by a join-table "a2b".
+if direction_left_to_right is true, this function returns all "b's" belonging to an "a" which is given by it's id.
+if direction_left_to_right is false, this function returns all "a's" belonging to a "b" which is given by it's id.
+this function returns the data as it is/was at the given time.
+*/
+
+CREATE OR REPLACE FUNCTION get_all_assoc(
+  p_id IN bigint, 
+  p_trequest IN timestamp without time zone,
+  p_tablename_a IN character varying,
+  p_tablename_b IN character varying,
+  p_tablename_a2b IN character varying,
+  p_direction_left_to_right IN boolean)
+  RETURNS setof record AS
+  $$
+  DECLARE
+    rec     record;
+    tablename_join character varying := p_tablename_a || '2' || p_tablename_b;
+    tablename_1    character varying;
+    tablename_2    character varying;
+    id_col_1 character varying;
+    id_col_2 character varying;
+    timestamp_col_1 character varying;
+    timestamp_col_2 character varying;
+    
+  BEGIN 
+    IF p_direction_left_to_right = true THEN
+      tablename_1 = p_tablename_a;
+      tablename_2 = p_tablename_b;
+      id_col_1 = 'id_a';
+      id_col_2 = 'id_b';
+      timestamp_col_1 = 'timestamp_a';
+      timestamp_col_2 = 'timestamp_b';
+    ELSE
+      tablename_1 = p_tablename_b;
+      tablename_2 = p_tablename_a;
+      id_col_1 = 'id_b';
+      id_col_2 = 'id_a';
+      timestamp_col_1 = 'timestamp_b';
+      timestamp_col_2 = 'timestamp_a';
+    END IF;
+  
+  
+    RETURN QUERY EXECUTE
+
+      'SELECT J3.* FROM
+      (
+        SELECT J1.* FROM
+        (
+          SELECT T2.* FROM
+          (
+            SELECT ' || quote_ident(tablename_1) || '.id, ' || quote_ident(tablename_1) || '.timestamp FROM ' || quote_ident(tablename_1) || ' INNER JOIN(
+              SELECT id,MAX(timestamp) AS timestamp FROM
+                (SELECT * FROM ' || quote_ident(tablename_1) || ' WHERE timestamp <= ' || quote_literal(p_trequest) || ' AND id = ' || quote_literal(p_id) || ')
+                AS nested2
+              GROUP BY id) AS nested1
+            ON ' || quote_ident(tablename_1) || '.id = nested1.id AND ' || quote_ident(tablename_1) || '.timestamp = nested1.timestamp
+          ) AS S1
+          INNER JOIN
+          (
+            SELECT * FROM ' || quote_ident(tablename_join) || '
+          ) AS T2 
+          ON T2.' || quote_ident(id_col_1) || ' = S1.id AND T2.' || quote_ident(timestamp_col_1) || ' = S1.timestamp
+        ) AS J1
+        INNER JOIN
+        (
+          SELECT ' || quote_ident(tablename_join) || '.* FROM ' || quote_ident(tablename_join) || ' INNER JOIN(
+            SELECT ' || quote_ident(id_col_2) || ',MAX(' || quote_ident(timestamp_col_2) || ') AS ' || quote_ident(timestamp_col_2) || ' FROM
+              (SELECT * FROM ' || quote_ident(tablename_join) || ' WHERE ' || quote_ident(timestamp_col_2) || ' <= ' || quote_literal(p_trequest) || ')
+              AS nested2
+            GROUP BY ' || quote_ident(id_col_2) || ') AS nested1
+          ON ' || quote_ident(tablename_join) || '.' || quote_ident(id_col_2) || ' = nested1.' || quote_ident(id_col_2) || ' AND ' || quote_ident(tablename_join) || '.' || quote_ident(timestamp_col_2) || ' = nested1.' || quote_ident(timestamp_col_2) || '
+        ) AS S2
+        ON J1.id_a = S2.id_a AND J1.timestamp_a = S2.timestamp_a
+        AND J1.id_b = S2.id_b AND J1.timestamp_b = S2.timestamp_b
+      ) AS J2
+      INNER JOIN
+      (
+        SELECT * FROM ' || quote_ident(tablename_2) || '
+      ) AS J3
+      ON J3.id = J2.' || quote_ident(id_col_2) || ' AND J3.timestamp = J2.' || quote_ident(timestamp_col_2) || ';'
+
+    USING p_id, p_trequest, tablename_1, tablename_2, tablename_join, id_col_1, id_col_2;
+    RETURN;
+  END;
+  $$
+  LANGUAGE plpgsql;
+
+ALTER FUNCTION get_all_assoc(
+  p_id IN bigint, 
+  p_trequest IN timestamp without time zone,
+  p_tablename_a IN character varying,
+  p_tablename_b IN character varying,
+  p_tablename_a2b IN character varying,
+  p_direction_left_to_right IN boolean) OWNER TO rob;
+
+
+/*
+select * from get_all_assoc(22, '1977-06-09 05:01:00', 'user', 'location', 'user2location', true) AS 
+tmp_schema(id bigint, description character varying, t timestamp without time zone);
+*/
+
+select * from get_all_assoc(12, '1977-06-09 06:01:00', 'user', 'location', 'user2location', false) AS 
+tmp_schema(id bigint, firstname character varying, f2irstname character varying, rsole bigint, t timestamp without time zone);
+
+
+
+
+
+user.xml
+  <select id="get_all" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.user.Result">
+  <![CDATA[
+    SELECT "user".*, CAST(#{value,javaType=java.sql.Timestamp} AS timestamp) AS trequest FROM "user" INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM "user" WHERE timestamp <= #{value,javaType=java.sql.Timestamp})
+        AS nested2
+      GROUP BY id) AS nested1
+    ON "user".id = nested1.id AND "user".timestamp = nested1.timestamp
+  ]]>
+  </select>
+
+  <select id="get_location" parameterType="map" resultType="lards.model.dto.Location">
+  <![CDATA[
+    SELECT * FROM
+    (
+      SELECT J1.* FROM
+      (
+        SELECT T2.* FROM
+        (
+          SELECT "user".id, "user".timestamp FROM "user" INNER JOIN(
+            SELECT id,MAX(timestamp) AS timestamp FROM
+              (SELECT * FROM "user" WHERE timestamp <= #{trequest,javaType=java.sql.Timestamp} AND id = #{id_user,javaType=Long})
+              AS nested2
+            GROUP BY id) AS nested1
+          ON "user".id = nested1.id AND "user".timestamp = nested1.timestamp
+        ) AS S1
+        INNER JOIN
+        (
+          SELECT * FROM "user2location"
+        ) AS T2 
+        ON T2.id_user = S1.id AND T2.timestamp_user = S1.timestamp
+      ) AS J1
+      INNER JOIN
+      (
+        SELECT "user2location".* FROM "user2location" INNER JOIN(
+          SELECT id_location,MAX(timestamp_location) AS timestamp_location FROM
+            (SELECT * FROM "user2location" WHERE timestamp_location <= #{trequest,javaType=java.sql.Timestamp})
+            AS nested2
+          GROUP BY id_location) AS nested1
+        ON "user2location".id_location = nested1.id_location AND "user2location".timestamp_location = nested1.timestamp_location
+      ) AS S2
+      ON J1.id_user = S2.id_user AND J1.timestamp_user = S2.timestamp_user
+      AND J1.id_location = S2.id_location AND J1.timestamp_location = S2.timestamp_location
+    ) AS J2
+    INNER JOIN
+    (
+      SELECT * FROM "location"
+    ) AS J3
+    ON J3.id = J2.id_location AND J3.timestamp = J2.timestamp_location;
+  ]]>
+  </select>

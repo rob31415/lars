@@ -41,7 +41,7 @@ class User(view: lards.view.User, model: lards.model.service.User, model_role: l
   
   override def reload {
     super.reload
-    view.create_form_field_factory(model_role.get_all, model_location.get_all)
+    view.create_form_field_factory(model_role.get_all(), model_location.get_all())
     view.rebuild
   }
 

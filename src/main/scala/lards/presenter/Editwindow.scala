@@ -1,5 +1,5 @@
 /**
-Role CRUD.
+Standard-CRUD
 
 multiple selection possible
 new-tab is always enabled
@@ -11,6 +11,10 @@ edit-tab is enabled only if one and only one row is selected
     once the other user has saved the data, the edit form is updated and edit-lock disappears
 delete-tab is always enabled, has a summary of currently selected data and a yes/no dialog when clicking delete-button
   records in use by other users are regarded in the summary
+history-tab is enabled only if one and only one row is selected in edit-tab.
+  it shows all modifications ever made to the record.
+  it has same row&col setup than main tab.
+  additionally there are two cols more, namely timestamp and modified-by-user
 row-filter adjustable and managable pro user
 col-setup is adjustable and managable pro user
 sorting-setup is adjustable and managable pro user
@@ -131,7 +135,7 @@ abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: 
   
   
   def reload {
-    data = model.get_all
+    data = model.get_all()
     view.set_data(data) 
   }
 

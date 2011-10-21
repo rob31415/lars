@@ -1,37 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
 
-<mapper namespace="lars.model.mybatis.mapper.Location">
+<mapper namespace="lars.model.mybatis.mapper.location">
 
   <resultMap id="Result" type="lards.model.dto.Location">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
+      <idArg column="timestamp" javaType="java.sql.Timestamp"/>
       <arg column="description" javaType="String"/>
     </constructor>
-    <!-- collection property="actions" column="id_action" javaType="ArrayList" ofType="lards.model.dto.Action" resultMap="ActionResult" / -->
+    <collection property="user" column="{id_assoc=id,trequest=trequest}" javaType="java.util.HashSet" ofType="lards.model.dto.User" select="lars.model.mybatis.mapper.user2location.get_user"/>
   </resultMap>
 
-  <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.Location.Result">
-    SELECT id, description FROM Location WHERE ID = #{value}
+
+  <select id="get_all" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.location.Result">
+  <![CDATA[
+    SELECT * FROM get_all('location', #{timestamp,jdbcType=TIMESTAMP,mode=IN}) AS
+    tmp_schema(id bigint, description character varying, "timestamp" timestamp without time zone, trequest timestamp without time zone)
+  ]]>
   </select>
 
-  <select id="get_all" resultMap="lars.model.mybatis.mapper.Location.Result">
-    SELECT id, description FROM Location
+  <select id="get" parameterType="map" resultMap="lars.model.mybatis.mapper.location.Result">
+  <![CDATA[
+    SELECT location.* FROM location INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM location WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long} )
+        AS nested2
+      GROUP BY id) AS nested1
+    ON location.id = nested1.id AND location.timestamp = nested1.timestamp
+  ]]>
   </select>
 
-	<update id="update" parameterType="lards.model.dto.Location"> 
-    UPDATE Location SET
-    description = #{description}
-    WHERE id = #{id}
-	</update>	
+  <select id="get_all_history" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.location.Result">
+  <![CDATA[
+    SELECT * from location WHERE timestamp <= #{value} ORDER BY id,timestamp ASC
+  ]]>
+  </select>
+
+  <select id="get_history" parameterType="map" resultMap="lars.model.mybatis.mapper.location.Result">
+  <![CDATA[
+    SELECT * from location WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long}
+  ]]>
+  </select>
 
   <insert id="insert" parameterType="lards.model.dto.Location">
-	    INSERT INTO Location (description) 
-	    values (#{description})
+	    INSERT INTO location (<if test="id != -1">id,</if>timestamp,description) 
+	    values (<if test="id != -1">#{id},</if>#{timestamp},#{description})
   </insert>
 
+	<update id="update" parameterType="lards.model.dto.Location"> 
+    UPDATE location SET
+    description = #{description}
+    WHERE id = #{id}
+    AND timestamp = #{timestamp}
+	</update>	
+
 	<delete id="delete" parameterType="collection"> 
-    DELETE FROM Location WHERE 
+    DELETE FROM location WHERE 
       <foreach collection="_parameter" item="parm" 
                separator="OR">
         id = #{parm.id}

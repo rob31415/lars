@@ -1,33 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" ?>  
 <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
 
-<mapper namespace="lars.model.mybatis.mapper.role">
+<mapper namespace="lars.model.mybatis.mapper.Role">
 
   <resultMap id="Result" type="lards.model.dto.Role">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
+      <idArg column="timestamp" javaType="java.sql.Timestamp"/>
       <arg column="description" javaType="String"/>
     </constructor>
   </resultMap>
 
-  <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper.role.Result">
-    SELECT id, description FROM role WHERE ID = #{value}
+
+  <select id="get_all" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.Role.Result">
+  <![CDATA[
+    SELECT role.* FROM role INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM role WHERE timestamp <= #{value})
+        AS nested2
+      GROUP BY id) AS nested1
+    ON role.id = nested1.id AND role.timestamp = nested1.timestamp
+  ]]>
   </select>
 
-  <select id="get_all" resultMap="lars.model.mybatis.mapper.role.Result">
-    SELECT id, description FROM role
+  <select id="get" parameterType="map" resultMap="lars.model.mybatis.mapper.Role.Result">
+  <![CDATA[
+    SELECT role.* FROM role INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM role WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long} )
+        AS nested2
+      GROUP BY id) AS nested1
+    ON role.id = nested1.id AND role.timestamp = nested1.timestamp
+  ]]>
   </select>
+
+  <select id="get_all_history" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.Role.Result">
+  <![CDATA[
+    SELECT * from role WHERE timestamp <= #{value} ORDER BY id,timestamp ASC
+  ]]>
+  </select>
+
+  <select id="get_history" parameterType="map" resultMap="lars.model.mybatis.mapper.Role.Result">
+  <![CDATA[
+    SELECT * from role WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long}
+  ]]>
+  </select>
+
+  <insert id="insert" parameterType="lards.model.dto.Role">
+	    INSERT INTO role (<if test="id != -1">id,</if>timestamp,description) 
+	    values (<if test="id != -1">#{id},</if>NOW(),#{description})
+  </insert>
 
 	<update id="update" parameterType="lards.model.dto.Role"> 
     UPDATE role SET
     description = #{description}
     WHERE id = #{id}
+    AND timestame = #{timestamp}
 	</update>	
-
-  <insert id="insert" parameterType="lards.model.dto.Role">
-	    INSERT INTO role (description) 
-	    values (#{description})
-  </insert>
 
 	<delete id="delete" parameterType="collection"> 
     DELETE FROM role WHERE 

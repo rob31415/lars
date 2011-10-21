@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+
+<mapper namespace="lars.model.mybatis.mapper.user2location">
+
+  <select id="get_location" parameterType="map" resultType="lards.model.dto.Location">
+  <![CDATA[
+    select * from get_all_assoc(#{id_assoc,javaType=Long}, #{trequest,javaType=java.sql.Timestamp}, 'user', 'location', 'user2location', true) AS 
+    tmp_schema(id bigint, description character varying, t timestamp without time zone);
+  ]]>
+  </select>
+
+  <select id="get_user" parameterType="map" resultType="lards.model.dto.User">
+  <![CDATA[
+    select * from get_all_assoc(#{id_assoc,javaType=Long}, #{trequest,javaType=java.sql.Timestamp}, 'user', 'location', 'user2location', false) AS 
+    tmp_schema(id bigint, firstname character varying, lastname character varying, role bigint, "timestamp" timestamp without time zone);
+  ]]>
+  </select>
+
+  <insert id="insert" parameterType="lards.model.dto.N_to_m_join">
+    INSERT INTO user_location 
+    (id_user, id_location, timestamp) 
+    VALUES
+    (#{a_id}, #{b_id}, #{timestamp})
+  </insert>
+
+</mapper>

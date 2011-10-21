@@ -1,18 +1,35 @@
+/**
+superclass for all data-access-objects.
+unifies db-access and handles session-management.
+
+all deriving classes have to override the 
+methods of class Dao_overridable.
+
+They are called from this class, respectively (hollywood principle).
+
+@TODO: incorporate the modifying user!
+*/
+
 package lards.model.service
 
 import org.apache.ibatis.session.SqlSession
 import lards.model.dto.Dto
 import lards.model.dto.Dtos
+import java.sql.Timestamp
+import lards.global.Now
 
 
 
-trait Dao {
+trait Dao extends Dao_overrideable {
 
 
-  def get_all: Dtos = {
+  /**
+  returns for all ids the first record at/before the given timestamp
+  */
+  def get_all(timestamp: Timestamp = Now.timestamp): Dtos = {
     val session = DbSessionProvider.factory.openSession()
     try{
-      return _get_all(session)
+      return _get_all(session, timestamp)
     }finally {
       session.close
     }
@@ -20,78 +37,137 @@ trait Dao {
   }
 
 
-  def _get_all(session: SqlSession): Dtos
-
-
-  def get(id: Long): Option[Dto] = {
+  /**
+  returns for the given id the first record at/before the given timestamp
+  */
+  def get(id: Long, timestamp: Timestamp = Now.timestamp): Option[Dto] = {
     println("get(" + id + ")")
-    //@TODO: introduce a factory for this to let derived class create it's type-instance
-    //if(id == -1) Some(new derived_dto()) else get_from_db(id)
-    if(id == -1) None else get_from_db(id)
+
+    if(id == -1) {
+      None
+    } else {
+
+      val session = DbSessionProvider.factory.openSession()
+      try{
+        _get(session, id, timestamp)
+      }finally {
+        session.close
+      }
+
+      None
+    }
+
   }
+  
+  
+  /*
+  returns for all ids all records at/before the given timestamp.
+  @TODO: the result-set is reduced by given filters (id-range, time-range).
+  */
+  def get_all_history(timestamp: Timestamp = Now.timestamp, 
+    filter_begin: Dto, filter_end: Dto): Dtos = {
 
-
-  private def get_from_db(id: Long): Option[Dto] = {
     val session = DbSessionProvider.factory.openSession()
     try{
-      _get(session, id)
+      return _get_all_history(session, timestamp, filter_begin, filter_end)
     }finally {
       session.close
     }
-    None
+    new Dtos
   }
-  
-  
-  def _get(session: SqlSession, id: Long): Option[Dto]
 
 
+  /**
+  returns for the given id all records at/before the given timestamp
+  */
+  def get_history(id: Long, timestamp: Timestamp = Now.timestamp): Option[Dto] = {
+    println("get_history(" + id + ")")
+
+    if(id == -1) {
+      None
+    } else {
+
+      val session = DbSessionProvider.factory.openSession()
+      try{
+        _get_history(session, id, timestamp)
+      }finally {
+        session.close
+      }
+
+      None
+    }
+
+  }
+
+
+  /**
+  returns for the given id the timestamp of all modifications
+  starting at the given time.
+  */
+  def get_modifications(id: Long, timestamp: Timestamp): Option[Dtos] = {
+    //@TODO
+    return Some(new Dtos)
+  }
+
+
+  /*
+  saves record either under a new id (and current timestamp) or, 
+  if id already exists, under same id and current timestamp.
+
+  mybatis+postgresql note: if id is omited in sql-insert, postgresql serial generates new id.
+  */
   def save(record: Dto) = {
-    if(record.id == -1)
-      save_new(record)
-    else
-      save_existing(record)
-  }
-
-
-  def save_new(record: Dto) {
     val session = DbSessionProvider.factory.openSession()
 
+    // this is important, because it practically 
+    // implements a new (modified) version of the same record.
+    //record.timestamp = Now.timestamp
+
     try {
-      println("saving new " + record)
-      _save_new(session, record)
+      println("saving " + record)
+      _save(session, record)
       session.commit
-      on_success_insert()
+      on_success_save()
     } finally {
       session.close
     }
   }
 
 
-  def _save_new(session: SqlSession, record: Dto)
-
-
-  def save_existing(record: Dto) {
+  /*
+  this updates a record (identified by id and timestamp).
+  in n:n, the join-table is updated, too.
+  this effectively modifies data-history.
+  this does not generate modification-history.
+  this is not inteded to be used by standard-users.
+  */
+  def overwrite(record: Dto) {
     val session = DbSessionProvider.factory.openSession()
 
     try {
-      println("saving existing " + record)
-      _save_existing(session, record)
+      println("overwriting " + record)
+      _overwrite(session, record)
       session.commit
-      on_success_update()
+      on_success_overwrite()
     } finally {
       session.close
     }
   }
 
 
-  def _save_existing(session: SqlSession, record: Dto)
-
-
+  /*
+  this deletes one or more records.
+  @TODO:
+  if an id is given and no timestamp, all records with that id are deleted, effectively erasing their complete modification-history.
+  if an id and a timestamp is given, only that one record is deleted, effectively modifying the modification-history.
+  this does not generate modification-history.
+  this is not inteded to be used by standard-users.
+  */
   def delete(record: Dtos) {
     val session = DbSessionProvider.factory.openSession()
 
     try {
-      println("deleting record with id=" + record.get.get)
+      println("deleting records: " + record.get.get)
       _delete(session, record)
       session.commit
       on_success_delete()
@@ -99,17 +175,5 @@ trait Dao {
       session.close
     }
   }
-
-
-  def _delete(session: SqlSession, record: Dtos)
-
-
-  def on_success_delete()
-
-
-  def on_success_update()
- 
- 
-  def on_success_insert()
 
 }
