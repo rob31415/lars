@@ -19,6 +19,6 @@ class Location(val pid: java.lang.Long = -1,
   override def is_same_type(other: lards.model.dto.Dto): Boolean = 
     other.isInstanceOf[Location]
 
-  override def toString: String = description + " USER=" + user
+  override def toString: String = description //+ " USER=" + user
 
 }

@@ -1,10 +1,12 @@
 package lards.model.dto
 
+import scala.reflect.BeanProperty
 import java.sql.Timestamp
+import lards.global.Now
 
 
 abstract class Dto(var id: java.lang.Long = -1,
-  var timestamp: Timestamp = new Timestamp(0)) {
+  var timestamp: java.sql.Timestamp = Now.timestamp) {
 
 
   // returns whether the given type the same as the type of the class overriding this

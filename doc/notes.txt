@@ -1,12 +1,18 @@
 
 datenhistorie
-  konzept
-  stored procedure parametrisierbar mit table name?
-  ist das möglich: s.p. ruft eine andere auf und macht "typ-konversion" für mybatis?
-  n:m mechanismus für alle kardinalitäten benutzen
+  ok konzept
+  ok stored procedure parametrisierbar mit table name?
+  ok ist das möglich: s.p. ruft eine andere auf und macht "typ-konversion" für mybatis?
+    nicht nötig!
   n:m mit historie zum laufen bringen
+    ok read
+    ok save
+  n:m mechanismus für alle kardinalitäten benutzen
+    1:n mit association
+      read
+      save
+  history gui konzept
   was ist unterschied "timestamp without time zone" und anderen?
-
 
 
 

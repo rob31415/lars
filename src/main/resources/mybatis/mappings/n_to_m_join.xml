@@ -3,10 +3,18 @@
 
 <mapper namespace="lars.model.mybatis.mapper.n_to_m_join">
 
-  <resultMap id="Result" type="lards.model.dto.N_to_m_join">
+  <!-- resultMap id="Result" type="lards.model.dto.N_to_m_join">
     <id column="a_id" javaType="java.lang.Long"/>
     <id column="b_id" javaType="java.lang.Long"/>
     <id column="timestamp" javaType="java.sql.Timestamp"/>
-  </resultMap>
+    <id column="table_name" javaType="String"/>
+  </resultMap -->
+
+  <insert id="insert" parameterType="lards.model.dto.N_to_m_join">
+    INSERT INTO "user2location"
+    (id_a, timestamp_a, id_b, timestamp_b) 
+    VALUES
+    (#{id_a}, #{timestamp_a}, #{id_b}, #{timestamp_b})
+  </insert>
 
 </mapper>

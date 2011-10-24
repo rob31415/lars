@@ -102,7 +102,7 @@ class Main(var parent: Window) extends Panel with View {
     var submenu2: MenuBar#MenuItem = menu.addItem("Benutzer", null, new Menu_Command('user))
       submenu2.addItem("Angestelltenverhältnisse", new Menu_Command('todo))
       submenu2.addItem("Qualifikationen", new Menu_Command('todo))
-    menu.addItem("Rollen", new Menu_Command('role))
+    menu.addItem("Session-Systemzeit", new Menu_Command('sys_time))
 
     menu_bar
   }

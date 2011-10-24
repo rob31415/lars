@@ -74,6 +74,7 @@ class Main extends Application with HttpServletRequestListener {
     new lards.presenter.Role( new lards.view.Role(window), model_role )
     new lards.presenter.Location( new lards.view.Location(window), model_location )
     new lards.presenter.User( new lards.view.User(window), new lards.model.service.User(), model_role, model_location )
+    new lards.presenter.Sys_time( new lards.view.Sys_time(window) )
   }
 
 

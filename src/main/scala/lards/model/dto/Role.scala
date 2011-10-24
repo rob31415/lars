@@ -6,7 +6,7 @@ import lards.global.Now
 
 
 class Role(val pid: java.lang.Long = -1, 
-  val ptimestamp: Timestamp = Now.timestamp,
+  val ptimestamp: java.sql.Timestamp = Now.timestamp,
   @BeanProperty var description: String = "")
   extends Dto(pid, ptimestamp) {
 

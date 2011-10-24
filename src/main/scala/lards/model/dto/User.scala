@@ -26,7 +26,7 @@ class User(val pid: java.lang.Long = -1,
 
   override def toString: String = {
     //firstname + ", " + lastname + ", " + id + ", " + super.toString + "; role=" + role.toString
-    firstname //+ " location=" + location
+    firstname + " location=" + location
   }
   
 }

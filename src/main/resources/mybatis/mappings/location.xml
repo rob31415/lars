@@ -15,19 +15,15 @@
 
   <select id="get_all" parameterType="java.sql.Timestamp" resultMap="lars.model.mybatis.mapper.location.Result">
   <![CDATA[
-    SELECT * FROM get_all('location', #{timestamp,jdbcType=TIMESTAMP,mode=IN}) AS
+    SELECT * FROM get('location', -1, #{timestamp,jdbcType=TIMESTAMP,mode=IN}) AS
     tmp_schema(id bigint, description character varying, "timestamp" timestamp without time zone, trequest timestamp without time zone)
   ]]>
   </select>
 
   <select id="get" parameterType="map" resultMap="lars.model.mybatis.mapper.location.Result">
   <![CDATA[
-    SELECT location.* FROM location INNER JOIN(
-      SELECT id,MAX(timestamp) AS timestamp FROM
-        (SELECT * FROM location WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long} )
-        AS nested2
-      GROUP BY id) AS nested1
-    ON location.id = nested1.id AND location.timestamp = nested1.timestamp
+    SELECT * FROM get('location', #{1,javaType=Long}, #{2,jdbcType=TIMESTAMP,mode=IN}) AS
+    tmp_schema(id bigint, description character varying, "timestamp" timestamp without time zone, trequest timestamp without time zone)
   ]]>
   </select>
 

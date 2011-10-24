@@ -17,7 +17,7 @@ import lards.model.dto.N_to_m_join
 class User extends Dao {
 
   def _get_all(session: SqlSession, timestamp: Timestamp): Dtos = {
-    val data = session.selectList("lars.model.mybatis.mapper.user.get_all", new java.sql.Timestamp(77,5,9,5,1,0,0)).asInstanceOf[java.util.ArrayList[Dto]]
+    val data = session.selectList("lars.model.mybatis.mapper.user.get_all", timestamp).asInstanceOf[java.util.ArrayList[Dto]]
     println("******************* USR" + data)
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
@@ -29,6 +29,7 @@ class User extends Dao {
 
 
   def _get_all_history(session: SqlSession, timestamp: Timestamp, filter_begin: Dto, filter_end: Dto): Dtos = {
+    //@TODO: not implemented
     val data = session.selectList("lars.model.mybatis.mapper.user.get_all_history", timestamp).asInstanceOf[java.util.ArrayList[Dto]]
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
@@ -47,14 +48,16 @@ class User extends Dao {
 
 
   def save_location(session: SqlSession, user: Dto_user) {
-    //@TODO: if no locations insert "emtpy" user2location record
-    user.location.foreach(
-      (location) => {
-        location.timestamp = user.timestamp
-        session.insert("lars.model.mybatis.mapper.location.insert", location)
-        session.insert("lars.model.mybatis.mapper.user2location.insert", new N_to_m_join(user, location))
-      }
-    )
+    if(user.location.isEmpty()) {
+      session.insert("lars.model.mybatis.mapper.n_to_m_join.insert", new N_to_m_join("user2location", user.id, user.timestamp))
+    } else {
+      user.location.foreach(
+        (location) => {
+          //session.insert("lars.model.mybatis.mapper.location.insert", location)
+          session.insert("lars.model.mybatis.mapper.n_to_m_join.insert", new N_to_m_join("user2location", user, location))
+        }
+      )
+    }
   }
 
 

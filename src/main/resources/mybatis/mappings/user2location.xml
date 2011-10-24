@@ -17,11 +17,4 @@
   ]]>
   </select>
 
-  <insert id="insert" parameterType="lards.model.dto.N_to_m_join">
-    INSERT INTO user_location 
-    (id_user, id_location, timestamp) 
-    VALUES
-    (#{a_id}, #{b_id}, #{timestamp})
-  </insert>
-
 </mapper>

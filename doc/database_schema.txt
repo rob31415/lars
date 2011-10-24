@@ -257,28 +257,40 @@ tmp_schema(id integer, t timestamp without time zone, "user" character varying, 
 
 
 
-
-CREATE OR REPLACE FUNCTION get_all(tablename IN character varying, p_trequest IN timestamp without time zone)
-  RETURNS setof record AS
-  $$
+/*
+if given id < 0, returns for all ids the first N rows to/before the given time.
+otherwise, returns for given id the first N rows to/before the given time.
+"the first N rows..." might as well volitionally just be one row.
+*/
+CREATE OR REPLACE FUNCTION get(p_tablename character varying, p_id bigint, p_timestamp timestamp without time zone)
+  RETURNS SETOF record AS
+$BODY$
   DECLARE
-    rec  record;
+    id_constraint character varying := '';
   BEGIN 
+  
+    IF p_id >= 0 THEN
+      id_constraint =  ' AND id = ' || quote_literal(p_id);
+    END IF;
+  
+  
     RETURN QUERY EXECUTE
 
-    'SELECT ' || quote_ident(tablename) || '.*, CAST(' || quote_literal(p_trequest) || ' AS timestamp without time zone) AS trequest FROM ' || quote_ident(tablename) || ' INNER JOIN(
+    'SELECT ' || quote_ident(p_tablename) || '.*, CAST(' || quote_literal(p_timestamp) || ' AS timestamp without time zone) AS trequest FROM ' || quote_ident(p_tablename) || ' INNER JOIN(
       SELECT id,MAX(timestamp) AS timestamp FROM
-        (SELECT * FROM ' || quote_ident(tablename) || ' WHERE timestamp <= ' || quote_literal(p_trequest) || ')
+        (SELECT * FROM ' || quote_ident(p_tablename) || ' WHERE timestamp <= ' || quote_literal(p_timestamp) || id_constraint || ')
         AS nested2
       GROUP BY id) AS nested1
-    ON ' || quote_ident(tablename) || '.id = nested1.id AND ' || quote_ident(tablename) || '.timestamp = nested1.timestamp'
+    ON ' || quote_ident(p_tablename) || '.id = nested1.id AND ' || quote_ident(p_tablename) || '.timestamp = nested1.timestamp'
 
-    USING p_timestamp, tablename;
+    USING p_timestamp, p_tablename, id_constraint;
     RETURN;
   END;
-  $$
-  LANGUAGE plpgsql;
-ALTER FUNCTION get_all(tablename IN character varying, p_timestamp IN timestamp without time zone) OWNER TO rob;
+  $BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get(p_tablename character varying, p_id bigint, p_timestamp timestamp without time zone) OWNER TO rob;
 
 select * from get_all('A', '2011-09-09 04:00:00') AS 
 tmp_schema(id integer, t timestamp without time zone, "user" character varying, data character varying, trequest timestamp without time zone);
@@ -310,7 +322,6 @@ CREATE OR REPLACE FUNCTION get_all_assoc(
   RETURNS setof record AS
   $$
   DECLARE
-    rec     record;
     tablename_join character varying := p_tablename_a || '2' || p_tablename_b;
     tablename_1    character varying;
     tablename_2    character varying;
@@ -455,3 +466,5 @@ user.xml
     ON J3.id = J2.id_location AND J3.timestamp = J2.timestamp_location;
   ]]>
   </select>
+
+
