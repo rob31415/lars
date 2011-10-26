@@ -468,3 +468,9 @@ user.xml
   </select>
 
 
+    SELECT "user".*, CAST(#{2,jdbcType=TIMESTAMP} AS timestamp) AS trequest 
+    FROM "user" 
+    WHERE timestamp <= #{2,jdbcType=TIMESTAMP} AND id = #{1,javaType=Long}
+
+
+    SELECT "user".*, CAST('2011-01-01 00:00:00' AS timestamp) AS trequest FROM "user" WHERE id = 21

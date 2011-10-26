@@ -12,6 +12,7 @@ import com.vaadin.data.Property
 import lards.global.Applocal
 import java.sql.Timestamp
 import java.util.Date
+import lards.global.Now
 
 
 
@@ -47,6 +48,7 @@ class Sys_time(val parent: Window) extends View {
     window.setPositionY(40)
 
 
+    checkbox.setValue(!Now.override_active)
     checkbox.setImmediate(true)
     checkbox.addListener(new Property.ValueChangeListener() {
       def valueChange(event: Property.ValueChangeEvent) {
@@ -55,14 +57,13 @@ class Sys_time(val parent: Window) extends View {
           button.setEnabled(false)
           Applocal.broadcaster.publish(new lards.view.event.Sys_time('use_os_time))
         } else {
-          datefield.setValue(new java.util.Date())
+          //datefield.setValue(new java.util.Date())
           datefield.setEnabled(true)
           button.setEnabled(true)
         }
       }
     })
 
-    
     button.addListener(new Button.ClickListener() { 
       def buttonClick(event: Button#ClickEvent) {
         parent.showNotification("Zeit wird gesetzt...")
@@ -72,12 +73,14 @@ class Sys_time(val parent: Window) extends View {
         Applocal.broadcaster.publish(new lards.view.event.Sys_time('set_time, timestamp))
       }
     })
+    button.setEnabled(Now.override_active)
 
+    datefield.setEnabled(Now.override_active)
+    datefield.setValue(new java.util.Date(Now.timestamp.getTime))
 
     window.addComponent(checkbox)    
     window.addComponent(datefield)
     window.addComponent(button)
-
 
     window.getContent.setSizeFull
 

@@ -18,13 +18,13 @@ class User extends Dao {
 
   def _get_all(session: SqlSession, timestamp: Timestamp): Dtos = {
     val data = session.selectList("lars.model.mybatis.mapper.user.get_all", timestamp).asInstanceOf[java.util.ArrayList[Dto]]
-    println("******************* USR" + data)
+    //println("******************* USR" + data)
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
 
 
   def _get(session: SqlSession, id: Long, timestamp: Timestamp): Option[Dto_user] = {
-    return Some( session.selectOne("lars.model.mybatis.mapper.user.get", new HashMap[Long, Timestamp](1).put(id, timestamp)).asInstanceOf[Dto_user] )
+    return Some( session.selectOne("lars.model.mybatis.mapper.user.get", create_parameter_map(id, timestamp)).asInstanceOf[Dto_user] )
   }
 
 
@@ -35,8 +35,10 @@ class User extends Dao {
   }
 
 
-  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Option[Dto_user] = {
-    return Some( session.selectOne("lars.model.mybatis.mapper.user.get_history", new HashMap[Long, Timestamp](1).put(id, timestamp)).asInstanceOf[Dto_user] )
+  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Dtos = {
+    val data = session.selectList("lars.model.mybatis.mapper.user.get_history", create_parameter_map(id, timestamp)).asInstanceOf[java.util.ArrayList[Dto]]
+    //println("******************* USR" + data)
+    return new Dtos(Some( new HashSet[Dto](data) ))
   }
 
 

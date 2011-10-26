@@ -17,6 +17,7 @@ import lards.model.dto.Dto
 import lards.model.dto.Dtos
 import java.sql.Timestamp
 import lards.global.Now
+import java.util._
 
 
 
@@ -27,6 +28,7 @@ trait Dao extends Dao_overrideable {
   returns for all ids the first record at/before the given timestamp
   */
   def get_all(timestamp: Timestamp = Now.timestamp): Dtos = {
+    println("Dao.get_all()")
     val session = DbSessionProvider.factory.openSession()
     try{
       return _get_all(session, timestamp)
@@ -49,7 +51,7 @@ trait Dao extends Dao_overrideable {
 
       val session = DbSessionProvider.factory.openSession()
       try{
-        _get(session, id, timestamp)
+        return _get(session, id, timestamp)
       }finally {
         session.close
       }
@@ -80,8 +82,8 @@ trait Dao extends Dao_overrideable {
   /**
   returns for the given id all records at/before the given timestamp
   */
-  def get_history(id: Long, timestamp: Timestamp = Now.timestamp): Option[Dto] = {
-    println("get_history(" + id + ")")
+  def get_history(id: Long, timestamp: Timestamp = Now.timestamp): Option[Dtos] = {
+    println("Dao.get_history(" + id + ")")
 
     if(id == -1) {
       None
@@ -89,7 +91,7 @@ trait Dao extends Dao_overrideable {
 
       val session = DbSessionProvider.factory.openSession()
       try{
-        _get_history(session, id, timestamp)
+        return Some(_get_history(session, id, timestamp))
       }finally {
         session.close
       }
@@ -106,7 +108,7 @@ trait Dao extends Dao_overrideable {
   */
   def get_modifications(id: Long, timestamp: Timestamp): Option[Dtos] = {
     //@TODO
-    return Some(new Dtos)
+    return None
   }
 
 
@@ -174,6 +176,14 @@ trait Dao extends Dao_overrideable {
     } finally {
       session.close
     }
+  }
+  
+  
+  def create_parameter_map(id: Long, timestamp: Timestamp) = {
+    val param = new HashMap[String, String](2)
+    param.put("id", id.toString)
+    param.put("timestamp", timestamp.toString)
+    param
   }
 
 }

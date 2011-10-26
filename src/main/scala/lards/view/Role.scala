@@ -14,7 +14,7 @@ import lards.model.dto.Dtos
 class Role(override val parent: Window)
   extends Editwindow(
   parent, 
-  "Bearbeitungsfenster: Einstellungen / Rollen",
+  "Systemeinstellungen > Rollen",
   Map("description" -> "Bezeichnung"),
   List("description"),
   {() => new Dto()},

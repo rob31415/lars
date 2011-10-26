@@ -35,8 +35,9 @@ class Location extends Dao {
   }
 
 
-  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Option[Dto_location] = {
-    return Some( session.selectOne("lars.model.mybatis.mapper.location.get_history", new HashMap[Long, Timestamp](1).put(id, timestamp)).asInstanceOf[Dto_location] )
+  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Dtos = {
+    //@TODO
+    return new Dtos(None)
   }
 
 

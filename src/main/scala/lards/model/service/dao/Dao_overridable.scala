@@ -24,7 +24,7 @@ abstract class Dao_overrideable {
 
   def _get_all_history(session: SqlSession, timestamp: Timestamp, filter_begin: Dto, filter_end: Dto): Dtos
 
-  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Option[Dto]
+  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Dtos
 
   def _save(session: SqlSession, record: Dto)
   def on_success_save()

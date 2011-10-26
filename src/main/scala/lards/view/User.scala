@@ -75,6 +75,9 @@ class Factory(roles: Dtos, locations: Dtos) extends FormFieldFactory {
   
         select
       }
+      
+      
+      case "timestamp" => null
 
     }
   }
@@ -85,7 +88,7 @@ class Factory(roles: Dtos, locations: Dtos) extends FormFieldFactory {
 class User(override val parent: Window)
   extends Editwindow(
   parent, 
-  "Bearbeitungsfenster: Einstellungen / Benutzer",
+  "Systemeinstellungen > Benutzer",
   Map("firstname" -> "Vorname", "lastname" -> "Nachname", "role" -> "Rolle"),
   List("firstname", "lastname", "location", "role"),
   {() => new Dto()},

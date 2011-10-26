@@ -41,14 +41,16 @@
 
   <select id="get_history" parameterType="map" resultMap="lars.model.mybatis.mapper.user.Result">
   <![CDATA[
-    SELECT * from "user" WHERE timestamp <= #{2,javaType=java.sql.Timestamp} AND id = #{1,javaType=Long}
+    SELECT "user".*, CAST(#{timestamp} AS timestamp) AS trequest 
+    FROM "user" 
+    WHERE timestamp <= CAST(#{timestamp} AS timestamp) AND id = CAST(#{id} AS bigint)
   ]]>
   </select>
 
 
   <insert id="insert" parameterType="lards.model.dto.User">
 	    INSERT INTO "user" (<if test="id != -1">id,</if>timestamp,firstname,lastname,role_id) 
-	    values (<if test="id != -1">#{id},</if>#{timestamp},#{firstname},#{lastname},#{role.id})
+	    VALUES (<if test="id != -1">#{id},</if>#{timestamp},#{firstname},#{lastname},#{role.id})
   </insert>
 
 

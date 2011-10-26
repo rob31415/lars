@@ -11,8 +11,22 @@ datenhistorie
     1:n mit association
       read
       save
+    1:1 mit association
+      read
+      save
   history gui konzept
+    überlegen, wie die darstellung wäre für:
+      op-tabelle
+      transportbericht/tags
+  überlegen, wie regeln für tags explizit gemacht werden können
+  überlegen, wie auswirkungen/bedeutung/definition der tags explizit gemacht werden können
+  überlegen, wie - bei aktuellem datenmodell - die abfragen aufgebaut wären für:
+    soll-liste
+    uebli
+    giro-liste
+    änderungsliste
   was ist unterschied "timestamp without time zone" und anderen?
+  
 
 
 

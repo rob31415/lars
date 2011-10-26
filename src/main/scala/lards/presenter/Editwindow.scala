@@ -73,7 +73,9 @@ abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: 
             //selection in table changed
             case 'select => {
               if(event.dtos.get.get.size == 1) {
-                view.set_data(data.get.get.find({e => e.id == event.dtos.get.get.iterator.next.id}).get)
+                val data_edit = data.get.get.find({e => e.id == event.dtos.get.get.iterator.next.id}).get
+                val data_history = model.get_history(data_edit.id).get
+                view.set_data(data_edit, data_history)
               }
               view.set_number_of_selected_display(data.get.get.size, event.dtos.get.get.size)
             }

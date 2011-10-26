@@ -6,7 +6,7 @@ import lards.global.Now
 
 
 abstract class Dto(var id: java.lang.Long = -1,
-  var timestamp: java.sql.Timestamp = Now.timestamp) {
+  @BeanProperty var timestamp: java.sql.Timestamp = Now.timestamp) {
 
 
   // returns whether the given type the same as the type of the class overriding this
@@ -20,7 +20,7 @@ abstract class Dto(var id: java.lang.Long = -1,
     {
       val other_casted = other.asInstanceOf[lards.model.dto.Dto]
       if(is_same_type(other_casted)) {
-        retVal = other_casted.id == id
+        retVal = other_casted.id == id && other_casted.timestamp == timestamp
       } else {
         retVal = false
       }

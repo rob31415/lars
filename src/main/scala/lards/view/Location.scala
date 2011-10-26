@@ -14,7 +14,7 @@ import lards.model.dto.Dtos
 class Location(override val parent: Window)
   extends Editwindow(
   parent, 
-  "Bearbeitungsfenster: Einstellungen / Locations",
+  "Erfassungen > Orte",
   Map("description" -> "Bezeichnung"),
   List("description"),
   {() => new Dto()},

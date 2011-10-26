@@ -49,9 +49,11 @@ abstract class Editwindow
 
   private var window: Window = null
 
-  private var accordion: TabSheet = null
+  private var select_primary: TabSheet = null
+  private var select_secondary: Accordion = null
 
   private var table: Table = null
+  private var table_history: Table = null
 
   //@TODO: just 1 form for both, edit and new? 
   //no, i don't see a benefit (rg/aug/11).
@@ -100,7 +102,7 @@ abstract class Editwindow
     window.setHeight(400)
     window.setPositionX(10)
     window.setPositionY(40)
-    window.addComponent(create_accordion)
+    window.addComponent(create_select_primary)
     window.getContent.setSizeFull
     window.addListener(new Window.CloseListener() {
       def windowClose(event: Window#CloseEvent) {
@@ -111,30 +113,29 @@ abstract class Editwindow
   }
 
 
-  private def create_accordion(): TabSheet = {
-    val accordion = new TabSheet()
+  private def create_select_primary(): TabSheet = {
+    val select_primary = new TabSheet()
 
-    accordion.addTab(create_panel_table, "Übersicht", null)
-    accordion.addTab(new Label("TODO"), "Historie", null)
-    accordion.addTab(create_panel_edit, "Bearbeiten", null)
-    accordion.addTab(create_panel_new, "Neu anlegen", null)
-    accordion.addTab(create_panel_delete, "Löschen", null)
-    accordion.addTab(new Label("TODO"), "Zeilenfilter einstellen", null)
-    accordion.addTab(new Label("TODO"), "Spaltenaufbau einstellen", null)
-    accordion.addTab(new Label("TODO"), "Sortierung einstellen", null)
+    select_primary.addTab(create_select_secondary, "Übersicht", null)
+    select_primary.addTab(create_panel_edit, "Bearbeiten", null)
+    select_primary.addTab(create_panel_new, "Neu anlegen", null)
+    create_panel_delete
+    //@TODO select_primary.addTab(create_panel_delete, "Löschen", null)
+    //select_primary.addTab(new Label("TODO"), "Zeilenfilter einstellen", null)
+    //select_primary.addTab(new Label("TODO"), "Spaltenaufbau einstellen", null)
+    //select_primary.addTab(new Label("TODO"), "Sortierung einstellen", null)
 
 
-    accordion.addListener(new TabSheet.SelectedTabChangeListener() {
+    select_primary.addListener(new TabSheet.SelectedTabChangeListener() {
       def selectedTabChange(event: TabSheet#SelectedTabChangeEvent) {
         
         //@TODO: how to get case to work here? this code is smelly!
 
-        val edit_tab = event.getTabSheet.getTab(2).getComponent()
-        val new_tab = event.getTabSheet.getTab(3).getComponent()
+        val edit_tab = event.getTabSheet.getTab(1).getComponent()
+        val new_tab = event.getTabSheet.getTab(2).getComponent()
 
         if(event.getTabSheet.getSelectedTab == edit_tab) {
-          //@TODO: just out of curiosity:
-          // why is this null in println but obviously really isn't?
+          // println says this is null. @TODO: learn why (what's different inside a closure/anonymous class than outside. is there a pitfall?)
           println("form_new inside selectedTabChange closure="+form_new)
 
           Applocal.broadcaster.publish(event_factory('start_modify, new Dtos))
@@ -151,31 +152,79 @@ abstract class Editwindow
     })
 
 
-    accordion.setSizeFull
+    select_primary.setSizeFull
+    //initially: no edit because nothing is selected in the table
+    select_primary.getTab(1).setEnabled(false)
+    this.select_primary = select_primary
+    select_primary
+  }
 
-    //because initially nothing is selected in the table
-    accordion.getTab(1).setEnabled(false)
-    accordion.getTab(2).setEnabled(false)
 
-    this.accordion = accordion
-    accordion
+  private def create_select_secondary = {
+    val select_secondary = new Accordion()
+
+    select_secondary.addTab(create_panel_table, "Übersicht", null)
+    select_secondary.addTab(create_panel_table_history, "Historie", null)
+
+    select_secondary.setSizeFull
+    //initially: no history because nothing is selected in the table
+    select_secondary.getTab(1).setEnabled(false)
+
+
+    select_secondary.addListener(new TabSheet.SelectedTabChangeListener() {
+      def selectedTabChange(event: TabSheet#SelectedTabChangeEvent) {
+        
+        val history_tab = event.getTabSheet.getTab(1).getComponent()
+
+        if(event.getTabSheet.getSelectedTab == history_tab) {
+          // no edit when in history tab
+          select_primary.getTab(1).setEnabled(false)
+        } else {
+          // depends on selection in table
+          select_primary.getTab(1).setEnabled(get_selected.get.get.size == 1)
+        }
+
+      }
+    })    
+    
+    this.select_secondary = select_secondary
+    select_secondary
   }
 
 
   private def create_panel_table = {
+    val splitpanel = new VerticalSplitPanel()
+    splitpanel.setFirstComponent(create_toolbar)
+    splitpanel.setSecondComponent(create_table)
+    splitpanel.setSplitPosition(0, com.vaadin.terminal.Sizeable.UNITS_PIXELS)
+    splitpanel.setSizeFull
+
+    splitpanel
+  }
+
+  
+  private def create_panel_table_history = {
+    val splitpanel = new VerticalSplitPanel()
+    splitpanel.setFirstComponent(create_toolbar)
+    splitpanel.setSecondComponent(create_table_history)
+    splitpanel.setSplitPosition(0, com.vaadin.terminal.Sizeable.UNITS_PIXELS)
+    splitpanel.setSizeFull
+
+    splitpanel
+  }
+
+
+  private def create_toolbar = {
     val layout = new HorizontalLayout()
     layout.addComponent(create_row_filter_select())
     layout.addComponent(create_col_setup_select())
     layout.addComponent(create_sorting_select())
-
-    val splitpanel = new VerticalSplitPanel()
-    splitpanel.setFirstComponent(layout)
-    splitpanel.setSecondComponent(create_table)
-    //@TODO: get rid of magik-nr. should be height of layout
-    splitpanel.setSplitPosition(50, com.vaadin.terminal.Sizeable.UNITS_PIXELS)
-    splitpanel.setSizeFull
-
-    splitpanel
+    layout.addComponent(new CheckBox("Nur markierte anzeigen"))
+    layout.addComponent(new Button("Alle selektieren"))
+    layout.addComponent(new Button("Alle deselektieren"))
+    layout.addComponent(new Button("Einstellungen"))
+    layout.setWidth("100%")
+    layout
   }
 
 
@@ -207,7 +256,7 @@ abstract class Editwindow
 
 
   private def create_table(): com.vaadin.ui.Table = {
-    val table = new com.vaadin.ui.Table("Datensätze")
+    val table = new com.vaadin.ui.Table("")
 
     table.setSizeFull
     table.setSelectable(true)
@@ -221,8 +270,8 @@ abstract class Editwindow
       def valueChange(event: Property.ValueChangeEvent) {
         println("table selection changed " + table.getValue().getClass())
         val selected = get_selected
-        accordion.getTab(1).setEnabled(selected.get.get.size == 1)
-        accordion.getTab(2).setEnabled(selected.get.get.size == 1)
+        select_primary.getTab(1).setEnabled(selected.get.get.size == 1)
+        select_secondary.getTab(1).setEnabled(selected.get.get.size == 1)
         Applocal.broadcaster.publish(event_factory('select, selected))
       }
     })
@@ -234,6 +283,28 @@ abstract class Editwindow
 
   private def get_selected: Dtos = {
     new Dtos(Some(table.getValue.asInstanceOf[java.util.Set[Dto]]))
+  }
+
+
+  private def create_table_history(): com.vaadin.ui.Table = {
+    val table = new com.vaadin.ui.Table("")
+
+    table.setSizeFull
+    table.setSelectable(true)
+    table.setImmediate(true)
+    table.setMultiSelect(false)
+    table.setColumnHeaderMode(Table.COLUMN_HEADER_MODE_EXPLICIT)
+
+    table.addListener(new Property.ValueChangeListener() {
+      def valueChange(event: Property.ValueChangeEvent) {
+        println("table_history selection changed")
+        //val selected = get_selected
+        //Applocal.broadcaster.publish(event_factory('select, selected))
+      }
+    })
+
+    this.table_history = table
+    table
   }
 
 
@@ -390,11 +461,23 @@ abstract class Editwindow
   def create_beanitem_container(dtos: Dtos): BeanItemContainer[_ <: Dto]
 
 
-  // for editing
-  def set_data(data: Dto) {
-    val bean_item = new BeanItem[Dto](data)
+  // for editing and history
+  def set_data(data_edit: Dto, data_history: Dtos) {
+    val bean_item = new BeanItem[Dto](data_edit)
     form_edit.setItemDataSource(bean_item)
     form_edit.setVisibleItemProperties(visible_fields_edit)
+
+    //@TODO: what's with this null ?
+    if(data_history != null) {
+      table_history.removeAllItems
+      table_history.setContainerDataSource(create_beanitem_container(data_history))
+
+      // add timestamp col
+      var visible_col_set = visible_fields_table.keySet + "timestamp"
+      table_history.setVisibleColumns(visible_col_set.toArray)
+      visible_fields_table.foreach((el) => table_history.setColumnHeader(el._1, el._2))
+      table_history.setColumnHeader("timestamp", "timestamp")
+    }
   }
 
 
@@ -413,7 +496,7 @@ abstract class Editwindow
   // restores to default
   // @TODO: invent system to store app-state
   def restore_view_state {
-    accordion.setSelectedTab(accordion.getTab(0).getComponent)
+    select_primary.setSelectedTab(select_primary.getTab(0).getComponent)
   }
 
 

@@ -31,8 +31,9 @@ class Role extends Dao {
   }
 
 
-  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Option[Dto_role] = {
-    return Some( session.selectOne("lars.model.mybatis.mapper.Role.get_history", new HashMap[Long, Timestamp](1).put(id, timestamp)).asInstanceOf[Dto_role] )
+  def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Dtos = {
+    //@TODO
+    return new Dtos(None)
   }
 
 

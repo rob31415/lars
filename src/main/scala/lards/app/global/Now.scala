@@ -29,5 +29,7 @@ object Now {
  
   
   def use_os_time = override_time = null
+  
+  def override_active = override_time != null
 
 }
