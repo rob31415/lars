@@ -19,15 +19,63 @@ datenhistorie
       op-tabelle
       transportbericht/tags
   überlegen, wie regeln für tags explizit gemacht werden können
-  überlegen, wie auswirkungen/bedeutung/definition der tags explizit gemacht werden können
+  überlegen, wie auswirkungen/bedeutung/definition der tags explizit gemacht/im code manifestiert werden können
+    automat, state-definitionen (z.b. state1=tag1,tag2 etc.), command-liste, state-transition-table (x=command, y=state), 
   überlegen, wie - bei aktuellem datenmodell - die abfragen aufgebaut wären für:
     soll-liste
     uebli
     giro-liste
     änderungsliste
   was ist unterschied "timestamp without time zone" und anderen?
-  
 
+
+tags / stati
+
+  Zielformulierung: Ein "unwissender Entwickler" muß in die Lage versetzt werden können, gezielte Änderungen im Verhalten des Systems durchführen zu können, ohne daß dabei unvorhergesehene Seiteneffekte/Nebenwirkungen entstehen.
+  Mittel zur Zielerreichung: Transparenz. Transparenz heißt, wie das System funktioniert, muß rein durch Lesen lückenlos verständlich gemacht sein.
+  
+  Prozess: Eine Programmaktivität (früher "Batch", "Skript", "a=b" etc.) die Tags liest, Tags setzt, Tags löscht, Daten liest, Daten schreibt.
+  Aspekt: Zustand eines Transportberichts bzgl. einer bestimmten Fragestellung. Eine "Aussage bzgl. eines Aspekts" ist gleich der "Existenz von bestimmten Tags" (früher Status, Verarb'status, Bearb'status, Rg-Status).
+  Verarbeitung: Durchführen von einem oder mehreren Prozessen hintereinander (z.B. Soll-stellung, irgendwelche Prüfungen).
+
+  Um die Zielformulierung umzusetzen, muß transparent gemacht werden:
+    Für jeden Prozess: Welche Tags werden gelesen, gesetzt, gelöscht? Welche Daten werden gelesen, welche geschrieben?
+    Für jeden Aspekt: Welcher Tag / Tag-Kombination hat bzgl. des Aspekts welche Bedeutung?
+    Einschränkungen/Regeln für Aspekte untereinander: Welche Aspekte können parallel Existieren, welche kombinieren zu einer Gesamtaussage, welche schliessen sich gegenseitig aus?
+    Für eine Verarbeitung: Wie ist die Reihenfolge der Prozesse für eine Bestimmte Verarbeitung.
+
+  Transparenz im Detail:
+    Woraus können/sollen die Antworten zu den oben gestellten Fragen hervorgehen?
+
+    Am Besten auf möglichst niedriger Ebene durchsetzen weil 
+    -im Code quasi automatische Prüfungen passieren können,
+    -es Disziplin erfordert, bei Codeänderungen Kommentare und Dokumentation up-to-date zu halten.
+    D.h. also, wenn möglich im Code, wenn nicht ausreichend, in Code-Kommentaren, wenn nicht ausreichend in der Dokumentation.
+
+    Der Entwickler muß wissen, wo er die nötigen Informationen findet.
+
+    Tags - im Code:
+      Es gibt eine hartcodierte (nicht in der Datenbank) Tag-Liste: hat id, kürzel, beschreibung.
+
+    Prozess - Codekommentar der Funktion:
+      Der Kommentar der implementierenden Funktion fasst zusammen: welche Tags gelesen, gesetzt, geschrieben werden und welche Daten gelesen und geschrieben werden.
+
+    Aspekt - im Code:
+      Ein Aspekt macht eine einzige, eindeutige ja/nein Aussage.
+      Es gibt ein "Aspekt-Manager"-Objekt, welches die Fragestellung codiert & beantwortet: "Ist der Aspekt X für diesen Transportbericht wahr?".
+      Der Aspekt-Manager antwortet mit ja, nein oder "nicht entscheidbar (weil nicht durch entsprechenden Prozess bearbeitet)".
+
+      Achtung:
+      Die Nicht-existenz eines Tags darf ausschliesslich bedeuten, daß keiner der zugehörigen Prozesse diesen Transportbericht bearbeitet hat.
+      Die Nicht-existenz darf keine Aussage bzgl. des Aspekts selbst machen!
+      Man kann sonst "nein" nicht von "nicht bearbeitet" unterscheiden und verliert dadurch ein "Sicherheitsnetz".
+      Dieses Sicherheitsnetz besteht darin, daß ein Prozess abbrechen kann, wenn ein vorhergehender und unbedingt benötigter Prozess - aus welchem Grund auch immer - nicht ausgeführt wurde.
+
+    Einschränkungen/Regeln für Aspekte - in der Dokumentation:
+      ?Wie können diese Zusammenhänge ausgedrückt werden?
+
+    Verarbeitung - im Code:
+      siehe "selbstdokumentierender Code".
 
 
 Systemeinstellungen
