@@ -68,6 +68,12 @@ class Main extends Application with HttpServletRequestListener {
 
   //@TODO: do we need DI yet?
   def wire_up {
+
+    //@TODO: probably put in global scope as static?
+    val model_tag = new lards.model.service.Tag
+    //@TODO: probably put in global scope as static?
+    val model_aspect = new lards.model.service.Aspect(model_tag)
+
     val model_role = new lards.model.service.Role
     val model_location = new lards.model.service.Location
     new lards.presenter.Login(new lards.view.Login(window), new lards.model.Login())
@@ -75,6 +81,7 @@ class Main extends Application with HttpServletRequestListener {
     new lards.presenter.Location( new lards.view.Location(window), model_location )
     new lards.presenter.User( new lards.view.User(window), new lards.model.service.User(), model_role, model_location )
     new lards.presenter.Sys_time( new lards.view.Sys_time(window) )
+    new lards.presenter.Aspect_tester(model_tag, model_aspect)
   }
 
 

@@ -103,6 +103,7 @@ class Main(var parent: Window) extends Panel with View {
       submenu2.addItem("Angestelltenverhältnisse", new Menu_Command('todo))
       submenu2.addItem("Qualifikationen", new Menu_Command('todo))
     menu.addItem("Session-Systemzeit", new Menu_Command('sys_time))
+    menu.addItem("Aspekt-Test ausführen", new Menu_Command('do_aspect_test))
 
     menu_bar
   }

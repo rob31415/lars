@@ -10,6 +10,9 @@ class Transport(val pid: java.lang.Long = -1,
   @BeanProperty var description: String = "")
   extends Dto(pid, ptimestamp) {
 
+  //@TODO: how to make this Dtos without much complexity?
+  @BeanProperty var tag = new java.util.HashSet[Tag]
+
 
   //mybatis wants this
   def this() = this(-1, Now.timestamp, "")
