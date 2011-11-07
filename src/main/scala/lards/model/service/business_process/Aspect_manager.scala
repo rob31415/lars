@@ -20,8 +20,8 @@ object Aspect_manager {
   // returns true if all of the aspect's imperative tags is attached to the transport
   // returns "None" if no prohibitive and not all imperative tags are attached.
   def is_true(aspect: Aspect, subject: Transport): Option[Boolean] = {
-    if( (aspect.tag_prohibitive.intersect(subject.tag)).size > 0 ) return Option(false);
-    if( (aspect.tag_imperative.intersect(subject.tag)).size == subject.tag.size ) return Option(true);
+    if( (aspect.tag_prohibitive.intersect(subject.tag)).size > 0 ) return Some(false);
+    if( (aspect.tag_imperative.intersect(subject.tag)).size == aspect.tag_imperative.size ) return Some(true);
     return None
   }
 

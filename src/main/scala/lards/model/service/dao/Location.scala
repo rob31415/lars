@@ -18,7 +18,7 @@ class Location extends Dao {
 
   def _get_all(session: SqlSession, timestamp: Timestamp): Dtos = {
     val data = session.selectList("lars.model.mybatis.mapper.location.get_all", timestamp).asInstanceOf[java.util.ArrayList[Dto]]
-    println("******************* LOC " + data)
+    //println("******************* LOC " + data)
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
 

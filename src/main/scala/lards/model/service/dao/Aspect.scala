@@ -29,8 +29,8 @@ class Aspect(model_tags: Tag) extends Dao {
 
   val aspects = new scala.collection.mutable.HashSet[Dto_aspect]
 
-  aspects += create_aspect(1, "Versichertenanteil Teilbezahlt", List('x0), List('x1))
-  aspects += create_aspect(2, "Versichertenanteil Nachberechnung", List('m0), List('m1))
+  aspects += create_aspect(1, "Versichertenanteil Teilbezahlt", List('x1), List('x0))
+  aspects += create_aspect(2, "Versichertenanteil Nachberechnung", List('m1), List('m0))
   aspects += create_aspect(3, "Transport berechenbar", List('rg), List('ru, 're))
 
 
@@ -52,7 +52,7 @@ class Aspect(model_tags: Tag) extends Dao {
   // arguments session and timestamp are irrelevant
   def _get(session: SqlSession, id: Long, timestamp: Timestamp): Option[Dto_aspect] = {
     val dto = aspects.find({e => e.id == id})
-    println("Aspect get: " + dto)
+    //println("Aspect get: " + dto)
     return dto
   }
 

@@ -94,7 +94,7 @@ class Tag extends Dao {
 
 
   def get(mnemonic: Symbol): Option[Dto_tag] = {
-    println("Tag get_by_mnemonic " + mnemonic)
+    //println("Tag get_by_mnemonic " + mnemonic)
     tags.find(el => el.mnemonic == mnemonic)
   }
 
