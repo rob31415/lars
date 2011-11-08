@@ -11,14 +11,15 @@ import lards.model.event.{User => Event}
 import java.sql.Timestamp
 import lards.global.Now
 import lards.model.dto.N_to_m_join
+import lards.global.Logger
 
 
 
-class User extends Dao {
+class User extends Dao with Logger {
 
   def _get_all(session: SqlSession, timestamp: Timestamp): Dtos = {
     val data = session.selectList("lars.model.mybatis.mapper.user.get_all", timestamp).asInstanceOf[java.util.ArrayList[Dto]]
-    //println("******************* USR" + data)
+    log_debug("_get_all(): " + data)
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
 
@@ -38,6 +39,7 @@ class User extends Dao {
   def _get_history(session: SqlSession, id: Long, timestamp: Timestamp): Dtos = {
     val data = session.selectList("lars.model.mybatis.mapper.user.get_history", create_parameter_map(id, timestamp)).asInstanceOf[java.util.ArrayList[Dto]]
     //println("******************* USR" + data)
+    log_debug("_get_history(): ")
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
 

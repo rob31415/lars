@@ -15,6 +15,7 @@ import javax.servlet.http._
 import lards.view._
 import lards.model._
 import lards.global.Applocal
+import lards.global.Logger
 
 
 object Main {
@@ -22,7 +23,10 @@ object Main {
 }
 
 
-class Main extends Application with HttpServletRequestListener { 
+class Main 
+  extends Application 
+  with HttpServletRequestListener 
+  with Logger { 
 
   /**
     as an exception to the mvp rules, this presenter
@@ -43,16 +47,17 @@ class Main extends Application with HttpServletRequestListener {
     the window has it's correct size
   */
   override def init {
-    println("presenter.Main init")
+    log_debug("init")
 
     Applocal.init(this)
     lards.presenter.Main.threadLocal.set(this)
 
     Applocal.broadcaster.subscribe(this)
 
-    setTheme("bree")
+    //setTheme("bree")
+    setTheme("runo")
     window = new Window("LARS - Das LeistungsAbrechnungssystem der RDS Saar")
-    println("presenter.Main init window=" + window)
+    log_debug("window=" + window)
 
     setMainWindow(window)
     window.getContent.setSizeFull
@@ -60,9 +65,9 @@ class Main extends Application with HttpServletRequestListener {
 
     wire_up
 
-    println("WINDOW MP GEO=" + window.getWidth() + ", " + window.getHeight())
+    log_debug("GEO=" + window.getWidth() + ", " + window.getHeight())
 
-    println("main init ok")
+    log_debug("init finished")
   }
 
 
@@ -81,26 +86,25 @@ class Main extends Application with HttpServletRequestListener {
     new lards.presenter.Location( new lards.view.Location(window), model_location )
     new lards.presenter.User( new lards.view.User(window), new lards.model.service.User(), model_role, model_location )
     new lards.presenter.Sys_time( new lards.view.Sys_time(window) )
-    new lards.presenter.Aspect_tester(model_tag, model_aspect)
   }
 
 
   override def onRequestStart(request: HttpServletRequest, response: HttpServletResponse ) {
     if(lards.presenter.Main.threadLocal.get == null)
       lards.presenter.Main.threadLocal.set(this)
-    println("OnRequestStart:" + request.getQueryString() + ", " + request.getPathInfo())
-    setTheme("bree")
+    log_debug("OnRequestStart(" + request.getQueryString() + ", " + request.getPathInfo() + ")")
+    //setTheme("bree")
   }
 
 
   override def onRequestEnd(request: HttpServletRequest, response: HttpServletResponse ) {
     lards.presenter.Main.threadLocal.remove()
-    println("OnRequestEnd")
+    log_debug("OnRequestEnd")
   }
 
 
   def notify(event: Any) {
-    println("main-presenter got event " + event)
+    log_debug("notify(" + event + ")")
 
     event match {
 
@@ -108,7 +112,7 @@ class Main extends Application with HttpServletRequestListener {
       case event: lards.view.event.Main => {    
           event.meaning match {
           case 'logout => {
-            println("logging out user")
+            log_debug("logging out user")
             //@TODO: yes/no dialog
             Applocal.broadcaster.publish(new lards.presenter.event.Main('shutdown))
             Applocal.set_user(null)

@@ -16,6 +16,7 @@ import org.apache.ibatis.session.SqlSession
 import collection.JavaConversions._
 import java.util._
 import lards.global.Applocal
+import lards.global.Logger
 import lards.model.dto.{Tag => Dto_tag}
 import lards.model.dto.Dto
 import lards.model.dto.Dtos
@@ -24,7 +25,7 @@ import lards.global.Now
 
 
 
-class Tag extends Dao {
+class Tag extends Dao with Logger {
 
   val tags = new scala.collection.mutable.HashSet[Dto_tag]
 
@@ -94,7 +95,7 @@ class Tag extends Dao {
 
 
   def get(mnemonic: Symbol): Option[Dto_tag] = {
-    //println("Tag get_by_mnemonic " + mnemonic)
+    log_debug("mnemonic=" + mnemonic)
     tags.find(el => el.mnemonic == mnemonic)
   }
 

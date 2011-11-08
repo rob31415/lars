@@ -7,19 +7,20 @@ import lards.global.Applocal
 import lards.presenter.Editwindow
 import lards.model.event.{Location => Model_event}
 import lards.view.event.{Location => View_event}
+import lards.global.Logger
 
 
 class Location(view: lards.view.Location, model: lards.model.service.Location)
-  extends Editwindow(view, model, 'location) {
+  extends Editwindow(view, model, 'location)
+  with Logger {
 
   override def notify(event: Any) {
-    println("presenter.Location got event " + event)
+    log_debug("notify(" + event + ")")
 
     event match {
 
       // database was queried
       case event: Model_event => {
-        println("presenter.Location reloading")
         reload
       }
 

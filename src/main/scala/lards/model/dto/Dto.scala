@@ -3,10 +3,12 @@ package lards.model.dto
 import scala.reflect.BeanProperty
 import java.sql.Timestamp
 import lards.global.Now
+import lards.global.Logger
 
 
 abstract class Dto(var id: java.lang.Long = -1,
-  @BeanProperty var timestamp: java.sql.Timestamp = Now.timestamp) {
+  @BeanProperty var timestamp: java.sql.Timestamp = Now.timestamp) 
+  extends Logger {
 
 
   // returns whether the given type the same as the type of the class overriding this
@@ -28,12 +30,10 @@ abstract class Dto(var id: java.lang.Long = -1,
       false
     }
 
-/*
     if(retVal)
-      println("Dto.equals: Dto(id=" + id + ") equals other")
+      log_debug("Dto equal to other: Dto(id=" + id + ")")
     else
-      println("Dto.equals: Dto(id=" + id + ") doesn't equal other")
-*/
+      log_debug("Dto not equal to other: Dto(id=" + id + ")")
 
     retVal
   }
@@ -43,7 +43,7 @@ abstract class Dto(var id: java.lang.Long = -1,
  
   override def hashCode(): Int = {
     val hash = 41 * id.hashCode
-    //println("Dto.hashCode="+hash)
+    log_debug("Dto(" + id + ").hashCode="+hash)
     hash
   }
 

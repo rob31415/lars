@@ -9,6 +9,7 @@ package lards.view
 import lards.view.event._
 import com.vaadin.ui._
 import lards.global.Applocal
+import lards.global.Logger
 import com.vaadin.data.Property
 import com.vaadin.data.util.BeanItemContainer
 import collection.JavaConversions._
@@ -38,7 +39,7 @@ abstract class Editwindow
   val dto_factory: () => Dto,
   val event_factory: (Symbol, Dtos) => Event
   )
-  extends View {
+  extends View with Logger {
 
   /*
   every var that's declared here is intentionally put into
@@ -72,13 +73,13 @@ abstract class Editwindow
 
 
   override def on_show {
-    println("Editwindow on_show " + parent + ", " + window)
+    log_debug("on_show() " + parent + ", " + window)
     parent.addWindow(window)
   }
 
 
   override def on_hide {
-    println("Editwindow on_hide " + parent + ", " + window)
+    log_debug("on_hide() " + parent + ", " + window)
     parent.removeWindow(window)
   }
 
@@ -95,9 +96,9 @@ abstract class Editwindow
   in class-instance-scope.
   */
   override def create_elements {
-    println("view.Editwindow creating")
+    log_debug("create_elements()")
     window = new Window(title)
-    println("view.Editwindow window=" + window)
+    log_debug("window=" + window)
     window.setWidth(400)
     window.setHeight(400)
     window.setPositionX(10)
@@ -109,7 +110,7 @@ abstract class Editwindow
         Applocal.broadcaster.publish(event_factory('close, new Dtos))
       }
     })
-    println("view.Editwindow creating finished")
+    log_debug("create_elements() finished")
   }
 
 
@@ -135,8 +136,8 @@ abstract class Editwindow
         val new_tab = event.getTabSheet.getTab(2).getComponent()
 
         if(event.getTabSheet.getSelectedTab == edit_tab) {
-          // println says this is null. @TODO: learn why (what's different inside a closure/anonymous class than outside. is there a pitfall?)
-          println("form_new inside selectedTabChange closure="+form_new)
+          // output says this is null. @TODO: learn why (what's different inside a closure/anonymous class than outside. is there a pitfall?)
+          log_debug("form_new inside selectedTabChange closure="+form_new)
 
           Applocal.broadcaster.publish(event_factory('start_modify, new Dtos))
         } else {
@@ -268,7 +269,7 @@ abstract class Editwindow
 
     table.addListener(new Property.ValueChangeListener() {
       def valueChange(event: Property.ValueChangeEvent) {
-        println("table selection changed " + table.getValue().getClass())
+        log_debug("table selection changed " + table.getValue().getClass())
         val selected = get_selected
         select_primary.getTab(1).setEnabled(selected.get.get.size == 1)
         select_secondary.getTab(1).setEnabled(selected.get.get.size == 1)
@@ -297,7 +298,7 @@ abstract class Editwindow
 
     table.addListener(new Property.ValueChangeListener() {
       def valueChange(event: Property.ValueChangeEvent) {
-        println("table_history selection changed")
+        log_debug("table_history selection changed")
         //val selected = get_selected
         //Applocal.broadcaster.publish(event_factory('select, selected))
       }
@@ -426,7 +427,7 @@ abstract class Editwindow
 
 
   def rebuild {
-    println("view.Editwindow.rebuild")
+    log_debug("view.Editwindow.rebuild")
 
     panel_new.removeComponent(form_new)
     panel_new.addComponent(create_form_new)
@@ -438,7 +439,7 @@ abstract class Editwindow
 
   // for the table
   def set_data(data: Dtos) {
-    println("view.Editwindow.set_data(" + data + ")")
+    log_debug("view.Editwindow.set_data(" + data + ")")
     
     //@TODO: what's with this null ?
     if(data != null) {

@@ -22,10 +22,11 @@ import lards.model.dto.Dtos
 import java.sql.Timestamp
 import lards.global.Now
 import scala.List
+import lards.global.Logger
 
 
 
-class Aspect(model_tags: Tag) extends Dao {
+class Aspect(model_tags: Tag) extends Dao with Logger {
 
   val aspects = new scala.collection.mutable.HashSet[Dto_aspect]
 
@@ -52,7 +53,7 @@ class Aspect(model_tags: Tag) extends Dao {
   // arguments session and timestamp are irrelevant
   def _get(session: SqlSession, id: Long, timestamp: Timestamp): Option[Dto_aspect] = {
     val dto = aspects.find({e => e.id == id})
-    //println("Aspect get: " + dto)
+    log_debug("_get(): " + dto)
     return dto
   }
 

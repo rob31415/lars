@@ -7,16 +7,31 @@ import lards.global.Applocal
 import lards.presenter.Editwindow
 import lards.model.event.{User => Model_event}
 import lards.view.event.{User => View_event}
+import lards.global.Logger
+import lards.global.Protocolar
+import lards.global.Now
 
 
 class User(view: lards.view.User, model: lards.model.service.User, model_role: lards.model.service.Role, model_location: lards.model.service.Location)
-  extends Editwindow(view, model, 'user) {
+  extends Editwindow(view, model, 'user)
+  with Logger
+  with Protocolar {
+
+  create_protocolar("protocol.test")
 
 
   override def notify(event: Any) {
     super.notify(event)
 
-    println("presenter.User got event " + event)
+    log_debug("notify(" + event + ")")
+
+    protocol("")
+    protocol("Protokoll vom: " + Now.timestamp + " (time override active=" + Now.override_active + ")")
+    protocol("Dies ist ein Protokoll-Test")
+    protocol("Rechnen wir mal etwas zusammen:")
+    protocol("Summe = 42")
+    protocol("Protokoll Ende.")
+    
 
     event match {
 

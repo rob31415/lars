@@ -7,19 +7,21 @@ package lards.presenter
 import lards.global.Applocal
 import lards.view.event.{Editwindow => View_event}
 import lards.global.Now
+import lards.global.Logger
 
 
 
-class Sys_time(view: lards.view.Sys_time) {
+class Sys_time(view: lards.view.Sys_time)
+  extends Logger {
 
   Applocal.broadcaster.subscribe(this)
 
-  println("creating Sys_time presenter")
+  log_debug("constructor")
 
 
 
   def notify(event: Any) {
-    println("presenter.Sys_time got event " + event)
+    log_debug("notify(" + event + ")")
 
     event match {
 
@@ -69,7 +71,7 @@ class Sys_time(view: lards.view.Sys_time) {
       case _ =>
     }
 
-    println("presenter.Editwindow processing of event " + event + " finished")
+    log_debug("notify() finished")
   }
   
 

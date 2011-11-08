@@ -8,12 +8,13 @@ import event._
 import event.Main
 import com.vaadin.ui._
 import lards.global.Applocal
+import lards.global.Logger
 
 
 /**
 @emits lards.view.event.Login
 */
-class Login(parent: Window) extends Panel with View {
+class Login(parent: Window) extends Panel with View with Logger {
 
   private var username: TextField = null
   private var password: TextField = null
@@ -25,7 +26,7 @@ class Login(parent: Window) extends Panel with View {
 
 
   override def on_show {
-    println("WINDOW S GEO=" + parent.getWidth() + ", " + parent.getHeight())
+    log_debug("on_show() GEO=" + parent.getWidth() + ", " + parent.getHeight())
     parent.setContent(this)
   }
 
@@ -63,7 +64,7 @@ class Login(parent: Window) extends Panel with View {
 */
 
     val layout = new AbsoluteLayout
-    println("WINDOW C GEO=" + parent.getWidth() + ", " + parent.getHeight())
+    log_debug("create_elements(): GEO=" + parent.getWidth() + ", " + parent.getHeight())
     layout.setSizeFull  //doesn't work  @TODO: fix size while in application.init problem
     layout.setWidth("800px")
     layout.setHeight("600px")
@@ -71,7 +72,7 @@ class Login(parent: Window) extends Panel with View {
 
     addComponent(layout)    
 
-    println("view.Login created")
+    log_debug("create_elements() finished")
   }
 
 

@@ -18,18 +18,19 @@ import lards.model.dto.Dtos
 import java.sql.Timestamp
 import lards.global.Now
 import java.util._
+import lards.global.Logger
 
 
 
-trait Dao extends Dao_overrideable {
+trait Dao extends Dao_overrideable with Logger {
 
 
   /**
   returns for all ids the first record at/before the given timestamp
   */
   def get_all(timestamp: Timestamp = Now.timestamp): Dtos = {
-    println("Dao.get_all()")
-    val session = DbSessionProvider.factory.openSession()
+    log_debug("get_all")
+    val session = Database_session.factory.openSession()
     try{
       return _get_all(session, timestamp)
     }finally {
@@ -43,13 +44,13 @@ trait Dao extends Dao_overrideable {
   returns for the given id the first record at/before the given timestamp
   */
   def get(id: Long, timestamp: Timestamp = Now.timestamp): Option[Dto] = {
-    println("get(" + id + ")")
+    log_debug("get(" + id + ")")
 
     if(id == -1) {
       None
     } else {
 
-      val session = DbSessionProvider.factory.openSession()
+      val session = Database_session.factory.openSession()
       try{
         return _get(session, id, timestamp)
       }finally {
@@ -69,7 +70,7 @@ trait Dao extends Dao_overrideable {
   def get_all_history(timestamp: Timestamp = Now.timestamp, 
     filter_begin: Dto, filter_end: Dto): Dtos = {
 
-    val session = DbSessionProvider.factory.openSession()
+    val session = Database_session.factory.openSession()
     try{
       return _get_all_history(session, timestamp, filter_begin, filter_end)
     }finally {
@@ -83,13 +84,13 @@ trait Dao extends Dao_overrideable {
   returns for the given id all records at/before the given timestamp
   */
   def get_history(id: Long, timestamp: Timestamp = Now.timestamp): Option[Dtos] = {
-    println("Dao.get_history(" + id + ")")
+    log_debug("Dao.get_history(" + id + ")")
 
     if(id == -1) {
       None
     } else {
 
-      val session = DbSessionProvider.factory.openSession()
+      val session = Database_session.factory.openSession()
       try{
         return Some(_get_history(session, id, timestamp))
       }finally {
@@ -119,14 +120,14 @@ trait Dao extends Dao_overrideable {
   mybatis+postgresql note: if id is omited in sql-insert, postgresql serial generates new id.
   */
   def save(record: Dto) = {
-    val session = DbSessionProvider.factory.openSession()
+    val session = Database_session.factory.openSession()
 
     // this is important, because it practically 
     // implements a new (modified) version of the same record.
     //record.timestamp = Now.timestamp
 
     try {
-      println("saving " + record)
+      log_debug("saving " + record)
       _save(session, record)
       session.commit
       on_success_save()
@@ -144,10 +145,10 @@ trait Dao extends Dao_overrideable {
   this is not inteded to be used by standard-users.
   */
   def overwrite(record: Dto) {
-    val session = DbSessionProvider.factory.openSession()
+    val session = Database_session.factory.openSession()
 
     try {
-      println("overwriting " + record)
+      log_debug("overwriting " + record)
       _overwrite(session, record)
       session.commit
       on_success_overwrite()
@@ -166,10 +167,10 @@ trait Dao extends Dao_overrideable {
   this is not inteded to be used by standard-users.
   */
   def delete(record: Dtos) {
-    val session = DbSessionProvider.factory.openSession()
+    val session = Database_session.factory.openSession()
 
     try {
-      println("deleting records: " + record.get.get)
+      log_debug("deleting records: " + record.get.get)
       _delete(session, record)
       session.commit
       on_success_delete()

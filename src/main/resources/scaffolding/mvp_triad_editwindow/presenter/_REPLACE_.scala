@@ -7,16 +7,17 @@ import lards.global.Applocal
 import lards.presenter.Editwindow
 import lards.model.event.{_REPLACE_ => Model_event}
 import lards.view.event.{_REPLACE_ => View_event}
+import lards.global.Logger
 
 
 class _REPLACE_(view: lards.view._REPLACE_, model: lards.model.service._REPLACE_, _REPLACE_)
-  extends Editwindow(view, model, '_REPLACE_) {
+  extends Editwindow(view, model, '_REPLACE_) with Logger {
 
 
   override def notify(event: Any) {
     super.notify(event)
 
-    println("presenter._REPLACE_ got event " + event)
+    debug("got event " + event)
 
     event match {
 

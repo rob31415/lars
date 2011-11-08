@@ -13,11 +13,12 @@ import lards.global.Applocal
 import java.sql.Timestamp
 import java.util.Date
 import lards.global.Now
+import lards.global.Logger
 
 
 
 
-class Sys_time(val parent: Window) extends View {
+class Sys_time(val parent: Window) extends View with Logger {
 
   val window = new Window("Systemeinstellungen / Applikationsweite Systemzeit")
   
@@ -41,7 +42,7 @@ class Sys_time(val parent: Window) extends View {
 
 
   override def create_elements {
-    println("view.Sys_time creating")
+    log_debug("create_elements()")
     window.setWidth(400)
     window.setHeight(250)
     window.setPositionX(10)
@@ -90,7 +91,7 @@ class Sys_time(val parent: Window) extends View {
       }
     })
 
-    println("view.Sys_time creating finished")
+    log_debug("create_elements() finished")
   }
 
 }

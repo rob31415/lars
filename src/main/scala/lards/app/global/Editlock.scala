@@ -23,8 +23,11 @@ responsibility of adding and removing the dtos here lies within the presenters.
 
 package lards.global
 
+import lards.global.Logger
 
-object Editlock {
+
+object Editlock
+  extends Logger {
 
   var dtos = Set[(lards.model.dto.Dto, lards.model.dto.User)]()
 
@@ -32,7 +35,7 @@ object Editlock {
   //adding is successful, if option is defined and element not already in set
   def add(dto: Option[lards.model.dto.Dto]): Boolean = {
     if(dto.isDefined && !contains(dto)) {
-      println("Editlock add " + dto.get)
+      log_debug("add(" + dto.get + ")")
       val set_entry = (dto.get, Applocal.get_user)
       dtos += set_entry
       return true
@@ -48,7 +51,7 @@ object Editlock {
   def remove(dto: Option[lards.model.dto.Dto]): Boolean = {
     val set_entry = dtos.find(o => o._1 == dto.get).getOrElse((null, null))
     if(contains(dto) && set_entry._2 == Applocal.get_user) {
-      println("Editlock remove " + dto.get)
+      log_debug("remove(" + dto.get + ")")
       dtos -= set_entry
       return true
     }
@@ -59,7 +62,7 @@ object Editlock {
   //true if option is defined and element is in set
   def contains(dto: Option[lards.model.dto.Dto]): Boolean = {
     val ret_val = dto.isDefined && dtos.find(o => o._1 == dto.get).isDefined
-    println("Editlock contains " + dto.getOrElse("nothing") + " = " + ret_val)
+    log_debug("contains(" + dto.getOrElse("nothing") + ") = " + ret_val)
     ret_val
   }
 

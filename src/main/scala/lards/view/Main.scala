@@ -8,12 +8,13 @@ import event._
 import com.vaadin.ui._
 import event.Main
 import lards.global.Applocal
+import lards.global.Logger
 
 
 /**
 @emits lards.view.event.Main
 */
-class Main(var parent: Window) extends Panel with View {
+class Main(var parent: Window) extends Panel with View with Logger {
 
   class Menu_Command(val meaning: Symbol) extends MenuBar.Command {
     def menuSelected(selectedItem: MenuBar#MenuItem) {
@@ -28,13 +29,13 @@ class Main(var parent: Window) extends Panel with View {
   
 
   override def create_elements {
-    println("WINDOW MAIN C GEO=" + parent.getWidth() + ", " + parent.getHeight())
+    log_debug("create_elements(): GEO=" + parent.getWidth() + ", " + parent.getHeight())
 
     addComponent(user_info)
     addComponent(create_menu())
     setSizeFull()
 
-    println("main_view created")
+    log_debug("create_elements() finished")
   }
 
 
@@ -110,7 +111,7 @@ class Main(var parent: Window) extends Panel with View {
 
 
   override def on_show {
-    println("WINDOW MAIN S GEO=" + parent.getWidth() + ", " + parent.getHeight())
+    log_debug("on_show(): GEO=" + parent.getWidth() + ", " + parent.getHeight())
     parent.setContent(this)
   }
 

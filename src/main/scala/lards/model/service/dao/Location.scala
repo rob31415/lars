@@ -11,14 +11,15 @@ import lards.model.event.{Location => Event}
 import java.sql.Timestamp
 import lards.global.Now
 import lards.model.dto.N_to_m_join
+import lards.global.Logger
 
 
 
-class Location extends Dao {
+class Location extends Dao with Logger {
 
   def _get_all(session: SqlSession, timestamp: Timestamp): Dtos = {
     val data = session.selectList("lars.model.mybatis.mapper.location.get_all", timestamp).asInstanceOf[java.util.ArrayList[Dto]]
-    //println("******************* LOC " + data)
+    log_debug("_get_all(): " + data)
     return new Dtos(Some( new HashSet[Dto](data) ))
   }
 

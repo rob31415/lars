@@ -25,32 +25,34 @@ package lards.presenter
 
 import lards.global.Applocal
 import collection.JavaConversions._
-
+import lards.global.Logger
 import lards.model.dto.Dto
 import lards.model.dto.Dtos
 import lards.view.event.{Editwindow => View_event}
 import lards.view.Editwindow
 import lards.model.service.Dao
+import lards.global.Logger
 
 
 
-abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) {
+abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: Symbol) 
+  extends Logger {
 
   Applocal.broadcaster.subscribe(this)
   var data: Dtos = _
 
-  println("creating Editwindow presenter listening to menu_id " + menu_id)
+  log_debug("creating, listening to menu_id " + menu_id)
 
 
   def notify(event: Any) {
-    println("presenter.Editwindow got event " + event)
+    log_debug("got event " + event)
 
     event match {
 
       // mainmenu-item selected
       
       case event: lards.view.event.Main => {
-        println("presenter.Editwindow M event-meaning= " + event.meaning)
+        log_debug("event-meaning= " + event.meaning)
         
         if(event.meaning == menu_id) {
           if(view.is_shown) {
@@ -67,7 +69,7 @@ abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: 
       case event: lards.view.event.Editwindow => {
 
         if(comes_from_associated_view(event)) {
-          println("presenter.Editwindow V event-meaning=" + event.meaning + " event=" + event + " type=" + event.asInstanceOf[View_event].getClass)
+          log_debug("event-meaning=" + event.meaning + " event=" + event + " type=" + event.asInstanceOf[View_event].getClass)
 
           event.meaning match {
             //selection in table changed
@@ -83,11 +85,11 @@ abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: 
             case 'save => {
               if(event.dtos.get.get.size == 1) {
                 val obj = event.dtos.get.get.iterator.next
-                println("saving " + obj)
+                log_debug("saving " + obj)
                 model.save(obj)
                 view.restore_view_state
               } else {
-                println("saving of more than 1 collectively not implemented")
+                log_debug("saving of more than 1 collectively not implemented")
               }
             }
             //delete button pressed
@@ -132,11 +134,12 @@ abstract class Editwindow(view: lards.view.Editwindow, model: Dao, val menu_id: 
       case _ =>
     }
 
-    println("presenter.Editwindow processing of event " + event + " finished")
+    log_debug("processing of event " + event + " finished")
   }
   
   
   def reload {
+    log_debug("reload")
     data = model.get_all()
     view.set_data(data) 
   }
