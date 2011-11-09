@@ -76,8 +76,6 @@ class Main
 
     //@TODO: probably put in global scope as static?
     val model_tag = new lards.model.service.Tag
-    //@TODO: probably put in global scope as static?
-    val model_aspect = new lards.model.service.Aspect(model_tag)
 
     val model_role = new lards.model.service.Role
     val model_location = new lards.model.service.Location

@@ -31,5 +31,9 @@ object Now {
   def use_os_time = override_time = null
   
   def override_active = override_time != null
+  
+  def default_time: Timestamp = {
+    new Timestamp(77,5,9,12,0,0,0)
+  }
 
 }
