@@ -21,6 +21,10 @@ vision: schlanke, für benutzer und entwickler klar verständliche software
 
   -bietet gewisse funktionalitätsumfang an
 
+  -ideen realisieren:
+    mit framework: evtl. nicht möglich, evtl. zusatzaufwand
+    eigenentwicklung: absolute freiheit & kontrolle; wie "elegant" realisiert, hängt von der fähigkeit des entwicklers ab
+
   Probleme
   -Verantwortlichkeiten: EDV macht buchungstechnische & auswertungstechnische Arbeiten
   -Software-Wartbarkeit: nur für 1 Person möglich
