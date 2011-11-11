@@ -1,13 +1,12 @@
 /**
-the dtos of this dao are not user-modifiable data but 
-represent correlations of the system-internal workings.
-
 the dtos of this dao are hardcoded and read-only.
 
-there is no database storage for dtos of this dao.
+they represent correlations of system-internal workings.
 
-this is because we want to use system-internal data
-in the same means as user-modified data.
+there is no database storage for dtos of this dao.
+but the join-table between tag and transports is stored in database.
+
+that's why tags are dtos and there is also a Dto for tags.
 */
 
 package lards.model.service

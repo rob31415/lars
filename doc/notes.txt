@@ -1,12 +1,46 @@
+vision: schlanke, für benutzer und entwickler klar verständliche software
+  einen entwickler nicht einschränkt und zu kompromisslösungen zwingt
+
+  "framework": rahmensystem. sammlung von werkzeugen, techniken und prozeduren.
+
+  komplexität
+  kapseln in komponenten
+  immer mit sicht: "was will ich von der koponente, wie wäre es denn am schönsten für den benutzer der komponente?"
+
+  rahmensystem gibt vor wie man etwas machen kann
+  unbenutzte funktionalität / code
+  beeinflusst immer auch funktionalität die benutzt wird
+  d.h. bei änderungen ist man gezwungen unbenutzte funkionalität zu berücksichtigen -> unnötige komplexität
+
+  franchise
+  lernzeit bzgl. rahmensystem = entwicklungszeit + X
+  man kennt es dann wenigstens
+  rahmensystem support kann verloren gehen
+  
+  lebenszeit der software?
+
+  -bietet gewisse funktionalitätsumfang an
+
+  Probleme
+  -Verantwortlichkeiten: EDV macht buchungstechnische & auswertungstechnische Arbeiten
+  -Software-Wartbarkeit: nur für 1 Person möglich
+  -Software-Wartbarkeit: Wartungsarbeiten haben unvorhergesehene Seiteneffekte
+  -Neue Features: 
+
+
+
+
+
 
 datenhistorie
   ok konzept
   ok stored procedure parametrisierbar mit table name?
   ok ist das möglich: s.p. ruft eine andere auf und macht "typ-konversion" für mybatis?
     nicht nötig!
-  n:m mit historie zum laufen bringen
+  ok n:m mit historie zum laufen bringen
     ok read
     ok save
+
   n:m mechanismus für alle kardinalitäten benutzen
     1:n mit association
       read
@@ -18,14 +52,16 @@ datenhistorie
     überlegen, wie die darstellung wäre für:
       op-tabelle
       transportbericht/tags
-  überlegen, wie regeln für tags explizit gemacht werden können
-  überlegen, wie auswirkungen/bedeutung/definition der tags explizit gemacht/im code manifestiert werden können
-    automat, state-definitionen (z.b. state1=tag1,tag2 etc.), command-liste, state-transition-table (x=command, y=state), 
+
+  ok  überlegen, wie regeln für tags explizit gemacht werden können
+  ok  überlegen, wie auswirkungen/bedeutung/definition der tags explizit gemacht/im code manifestiert werden können
+    ok  automat, state-definitionen (z.b. state1=tag1,tag2 etc.), command-liste, state-transition-table (x=command, y=state), 
   überlegen, wie - bei aktuellem datenmodell - die abfragen aufgebaut wären für:
     soll-liste
     uebli
     giro-liste
     änderungsliste
+  überlegen, wie tm1 ans neue datenmodell angekoppelt werden kann
   was ist unterschied "timestamp without time zone" und anderen?
 
 
@@ -108,6 +144,7 @@ ok-table initiale selection problem
 ok-neu anlegen leer problem
 -layout probleme?
   -app'start window-grosse problem
+  -editwindow toolbar
 -scaffolding updaten
 -fahrt anlegen
 -rg anlegen
@@ -154,6 +191,9 @@ idee
     user können profil erstellen, welches andere user sehen (zb. pseudonym, bild, telnr. etc.)
     während log-in neuigkeiten (vom system oder infos die alle betreffen) in einer liste anzeigen
       news-admin muß das editieren können
+  p2p chat-fkt (zb. "hey, gib mal den datensatz frei")
+    http://vaadin.com/forum/-/message_boards/view_message/290837
+    http://vaadin.com/web/henrik/wiki/-/wiki/Main/Simple%20Chat/
 
 ok 1-zu-n
   ui
@@ -197,7 +237,7 @@ ok n-zu-n
         -problem: unnötig komplexer kram. wohin mit der komplexität?
 
 
-daos ohne dbzugriff
+ok  daos ohne dbzugriff
   wie?
 
 
@@ -263,12 +303,13 @@ sourcecode management:
   development als tdd mit unit testing? (junit)
   ok scaffolding für table/edit triaden? -> jep!
 
-umgang mit/ops auf großen datenmengen/tabellenzeilen
+ok  umgang mit/ops auf großen datenmengen/tabellenzeilen
   nötig für was? nur für admin-mässige user? wie bequem?
   reicht es, daß user lediglich filter auswählt u. die anzahl angezeigt bekommt und keine table?
   und daß er dann eine bequeme "fadenkreuz" fkt. hat?
+  -> ich würde sagen, das soll kein normaler benuter machen müssen!
 
-alle "proto"'s werden zu log-ausgaben
+ok  alle "proto"'s werden zu log-ausgaben
   manche davon sind für user relevant und sollten als verarbeitungs-rückmeldung angezeigt werden
   protokolle parallel zu log? mit selbem logging mechanismus? welcher user soll die sehen können?
 
@@ -315,8 +356,8 @@ i18n
   was englisch, was deutsch?
   wo kommen die texte her? resource-system?
 
-db modeling
-  history
+ok  db modeling
+  ok  history
 
 eyecatcher infos
   zb. um den user zu motivieren ausstehende aufgaben zu erledigen (zb. offene rendevouzfälle)
@@ -324,9 +365,6 @@ eyecatcher infos
   broadcast infosystem zur verteilung interner neuigkeiten
     z.b. beim oder nach einloggen in einem panel
 
-p2p chat-fkt (zb. "hey, gib mal den datensatz frei")
-  http://vaadin.com/forum/-/message_boards/view_message/290837
-  http://vaadin.com/web/henrik/wiki/-/wiki/Main/Simple%20Chat/
 
 
 
@@ -421,7 +459,7 @@ pro jpa2 apress
 hibernate in action manning bauer
 yangdaoqi.info/jpa.html
 
-statefull vs stateless for database developers michael rosenblum dulcian
+stateful vs stateless for database developers michael rosenblum dulcian
 common data access issues
 using postgresql to decouple applications or oo meets sql marc balmer
 using pg_notify in postgresql trigger function

@@ -41,15 +41,16 @@ class Main(var parent: Window) extends Panel with View with Logger {
 
   def create_menu(): MenuBar = {
     val menu_bar = new MenuBar()
-    create_menu1(menu_bar)
-    create_menu2(menu_bar)
-    create_menu3(menu_bar)
-    create_menu4(menu_bar)
-    create_menu5(menu_bar)
+    create_menu_programm(menu_bar)
+    create_menu_erfassungen(menu_bar)
+    create_menu_verarbeitungen(menu_bar)
+    create_menu_auswertungen(menu_bar)
+    create_menu_einstellungen(menu_bar)
+    //create_menu_systemeinstellungen(menu_bar)
   }
 
 
-  def create_menu1(menu_bar: MenuBar): MenuBar = {
+  def create_menu_programm(menu_bar: MenuBar): MenuBar = {
     var menu: MenuBar#MenuItem = menu_bar.addItem("Programm", null, null)
 
     menu.addItem("Abmelden", new Menu_Command('logout))
@@ -59,8 +60,8 @@ class Main(var parent: Window) extends Panel with View with Logger {
   }
 
 
-  def create_menu2(menu_bar: MenuBar): MenuBar = {
-    var menu: MenuBar#MenuItem = menu_bar.addItem("Erfassungen", null, null)
+  def create_menu_erfassungen(menu_bar: MenuBar): MenuBar = {
+    var menu: MenuBar#MenuItem = menu_bar.addItem("Erfassungen/Auskunft", null, null)
 
     menu.addItem("Transporberichte", new Menu_Command('transport))
     menu.addItem("Orte", new Menu_Command('location))
@@ -71,7 +72,16 @@ class Main(var parent: Window) extends Panel with View with Logger {
   }
 
 
-  def create_menu3(menu_bar: MenuBar): MenuBar = {
+  def create_menu_verarbeitungen(menu_bar: MenuBar): MenuBar = {
+    var menu: MenuBar#MenuItem = menu_bar.addItem("Verarbeitungen", null, null)
+
+    menu.addItem("Dekadenverarbeitung", new Menu_Command('dekadenverarbeitung))
+
+    menu_bar
+  }
+
+
+  def create_menu_auswertungen(menu_bar: MenuBar): MenuBar = {
     var menu: MenuBar#MenuItem = menu_bar.addItem("Auswertungen", null, null)
 
     menu.addItem("Soll-Liste der aktuellen Dekade", new Menu_Command('logout))
@@ -81,7 +91,7 @@ class Main(var parent: Window) extends Panel with View with Logger {
     menu_bar
   }
 
-  def create_menu4(menu_bar: MenuBar): MenuBar = {
+  def create_menu_einstellungen(menu_bar: MenuBar): MenuBar = {
     var menu: MenuBar#MenuItem = menu_bar.addItem("Einstellungen", null, null)
 
     menu.addItem("Kostenträger", new Menu_Command('todo))
@@ -89,22 +99,16 @@ class Main(var parent: Window) extends Panel with View with Logger {
     menu.addItem("Konten", new Menu_Command('account))
     menu.addItem("Umlagen", new Menu_Command('todo))
     menu.addItem("Fahrzeuge", new Menu_Command('vehicle))
-
-    menu_bar
-  }
-
-
-  def create_menu5(menu_bar: MenuBar): MenuBar = {
-    var menu: MenuBar#MenuItem = menu_bar.addItem("Systemeinstellungen", null, null)
-
-    var submenu1: MenuBar#MenuItem = menu.addItem("Beauftragte", new Menu_Command('todo))
+    var submenu1: MenuBar#MenuItem = menu.addItem("Beauftragte", null, null)
+      submenu1.addItem("Beauftragte", new Menu_Command('todo))
       submenu1.addItem("Beauftragte-Typen", new Menu_Command('todo))
     menu.addItem("Einsatzarten", new Menu_Command('todo))
-    var submenu2: MenuBar#MenuItem = menu.addItem("Benutzer", null, new Menu_Command('user))
+    var submenu2: MenuBar#MenuItem = menu.addItem("Benutzer", null, null)
+      submenu2.addItem("Benutzer", new Menu_Command('user))
       submenu2.addItem("Angestelltenverhältnisse", new Menu_Command('todo))
       submenu2.addItem("Qualifikationen", new Menu_Command('todo))
-    menu.addItem("Session-Systemzeit", new Menu_Command('sys_time))
-    menu.addItem("Aspekt-Test ausführen", new Menu_Command('do_aspect_test))
+    var submenu3: MenuBar#MenuItem = menu.addItem("Systemeinstellungen", null)
+      submenu3.addItem("Systemzeit", new Menu_Command('sys_time))
 
     menu_bar
   }
