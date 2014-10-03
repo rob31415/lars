@@ -4,15 +4,15 @@
 <mapper namespace="lars.model.mybatis.mapper.user">
 
 
-  <resultMap id="Result" type="lards.model.dto.User">
+  <resultMap id="Result" type="lars.model.dto.User">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
       <idArg column="timestamp" javaType="java.sql.Timestamp"/>
       <arg column="firstname" javaType="String"/>
       <arg column="lastname" javaType="String"/>
     </constructor>
-    <!-- association property="role" column="{id_role=role_id,timestamp=timestamp}" javaType="lards.model.dto.Role" select="get_role"/ -->
-    <collection property="location" column="{id_assoc=id,trequest=trequest}" javaType="java.util.HashSet" ofType="lards.model.dto.Location" select="lars.model.mybatis.mapper.user2location.get_location"/>
+    <!-- association property="role" column="{id_role=role_id,timestamp=timestamp}" javaType="lars.model.dto.Role" select="get_role"/ -->
+    <collection property="location" column="{id_assoc=id,trequest=trequest}" javaType="java.util.HashSet" ofType="lars.model.dto.Location" select="lars.model.mybatis.mapper.user2location.get_location"/>
   </resultMap>
 
 
@@ -48,13 +48,13 @@
   </select>
 
 
-  <insert id="insert" parameterType="lards.model.dto.User">
+  <insert id="insert" parameterType="lars.model.dto.User">
 	    INSERT INTO "user" (<if test="id != -1">id,</if>timestamp,firstname,lastname,role_id) 
 	    VALUES (<if test="id != -1">#{id},</if>#{timestamp},#{firstname},#{lastname},#{role.id})
   </insert>
 
 
-	<update id="update" parameterType="lards.model.dto.User"> 
+	<update id="update" parameterType="lars.model.dto.User"> 
     UPDATE "user" SET
     firstname = #{firstname},
     lastname = #{lastname},
@@ -73,7 +73,7 @@
 	</delete>
 
 
-  <select id="get_role" parameterType="map" resultType="lards.model.dto.Role">
+  <select id="get_role" parameterType="map" resultType="lars.model.dto.Role">
   <![CDATA[
     SELECT role.* FROM role INNER JOIN(
       SELECT id,MAX(timestamp) AS timestamp FROM
@@ -84,9 +84,9 @@
   ]]>
   </select>
 
-	<insert id="location_insert" parameterType="lards.model.dto.User">
+	<insert id="location_insert" parameterType="lars.model.dto.User">
     <if test="location.size() > 0">
-      INSERT INTO "user_location" ("id_user", "id_location", "timestamp") VALUES 
+      INSERT INTO "user2location" ("id_user", "id_location", "timestamp") VALUES 
       <foreach collection="location" item="item" separator=",">
         (#{id}, #{item.id}, NOW())
       </foreach>
@@ -94,8 +94,8 @@
 	</insert>
 
 
-	<update id="location_update" parameterType="lards.model.dto.User">
-    UPDATE "user_location" SET
+	<update id="location_update" parameterType="lars.model.dto.User">
+    UPDATE "user2location" SET
     id_user = #{id},
     id_location = #{location.id},
     "timestamp" = NOW()
@@ -104,8 +104,8 @@
   </update>
 
 
-	<delete id="location_delete" parameterType="lards.model.dto.User">
-    DELETE FROM "user_location" WHERE id_user = #{id}
+	<delete id="location_delete" parameterType="lars.model.dto.User">
+    DELETE FROM "user2location" WHERE id_user = #{id}
 	</delete>
 
 

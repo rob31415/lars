@@ -3,15 +3,15 @@
 
 <mapper namespace="lars.model.mybatis.mapper._REPLACE_">
 
-  <resultMap id="Result" type="lards.model.dto._REPLACE_">
+  <resultMap id="Result" type="lars.model.dto._REPLACE_">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
       <arg column="_REPLACE_" javaType="_REPLACE_"/>
     </constructor>
     //@TODO: remove line if no 1:n is wanted
-    <association property="_REPLACE_" column="_REPLACE_" javaType="lards.model.dto._REPLACE_" select="_REPLACE_.get_by_id"/>
+    <association property="_REPLACE_" column="_REPLACE_" javaType="lars.model.dto._REPLACE_" select="_REPLACE_.get_by_id"/>
     //@TODO: remove line if no n:n is wanted
-    <collection property="_REPLACE_" column="id" javaType="java.util.HashSet" ofType="lards.model.dto._REPLACE_" select="_REPLACE__get_by_id"/>
+    <collection property="_REPLACE_" column="id" javaType="java.util.HashSet" ofType="lars.model.dto._REPLACE_" select="_REPLACE__get_by_id"/>
   </resultMap>
 
   <select id="get_by_id" parameterType="Long" resultMap="lars.model.mybatis.mapper._REPLACE_.Result">
@@ -22,13 +22,13 @@
     SELECT id, _REPLACE_ FROM _REPLACE_
   </select>
 
-	<update id="update" parameterType="lards.model.dto._REPLACE_"> 
+	<update id="update" parameterType="lars.model.dto._REPLACE_"> 
     UPDATE _REPLACE_ SET
     description = #{description}
     WHERE id = #{id}
 	</update>	
 
-  <insert id="insert" parameterType="lards.model.dto._REPLACE_">
+  <insert id="insert" parameterType="lars.model.dto._REPLACE_">
 	    INSERT INTO _REPLACE_ (_REPLACE_) 
 	    values (#{_REPLACE_})
   </insert>
@@ -44,18 +44,18 @@
   //@TODO: remove following tag if no 1:n is wanted
   <!-- read regarding 1:n -->
 
-  <select id="_REPLACE_.get_by_id" parameterType="Long" resultType="lards.model.dto._REPLACE_">
+  <select id="_REPLACE_.get_by_id" parameterType="Long" resultType="lars.model.dto._REPLACE_">
     SELECT * FROM "_REPLACE_" WHERE ID = #{value}
   </select>
 
   //@TODO: remove following tags if no n:n is wanted
   <!-- join table crud regarding n:n -->
 
-  <select id="_REPLACE__get_by_id" parameterType="Long" resultType="lards.model.dto._REPLACE_">
+  <select id="_REPLACE__get_by_id" parameterType="Long" resultType="lars.model.dto._REPLACE_">
     SELECT L.id,_REPLACE_ FROM _REPLACE_ A JOIN _REPLACE_ B ON A.id = B._REPLACE_ WHERE _REPLACE_ = #{id}
   </select>
 
-	<insert id="_REPLACE_" parameterType="lards.model.dto._REPLACE_">
+	<insert id="_REPLACE_" parameterType="lars.model.dto._REPLACE_">
     <if test="_REPLACE_.size() > 0">
       INSERT INTO "_REPLACE_" ("_REPLACE_", "_REPLACE_") VALUES 
       <foreach collection="_REPLACE_" item="item" separator=",">
@@ -64,7 +64,7 @@
     </if>
 	</insert>
 
-	<delete id="_REPLACE_" parameterType="lards.model.dto._REPLACE_">
+	<delete id="_REPLACE_" parameterType="lars.model.dto._REPLACE_">
     DELETE FROM "_REPLACE_" WHERE _REPLACE_ = #{id}
 	</delete>
 

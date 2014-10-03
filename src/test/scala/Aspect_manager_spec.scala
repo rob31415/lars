@@ -1,9 +1,9 @@
 import org.specs2.mutable._
 
-import lards.model.dto.Transport
-import lards.model.business_logic.Aspect_manager
-import lards.model.service.Tag
-import lards.model.service.Aspect
+import lars.model.dto.Transport
+import lars.model.business_logic.Aspect_manager
+import lars.model.service.Tag
+import lars.model.service.Aspect
 
 
 class Aspect_manager_spec extends Specification {
@@ -31,19 +31,19 @@ class Aspect_manager_spec extends Specification {
 
     "keinen 'Versichertenanteil Nachberechnung' haben" in {
        Aspect_manager.is_true(
-          model_aspect.get(2).get.asInstanceOf[lards.model.dto.Aspect], 
+          model_aspect.get(2).get.asInstanceOf[lars.model.dto.Aspect], 
           transport) mustEqual Some(false)
     }
 
     "'Versichertenanteil Teilbezahlt' haben" in {
         Aspect_manager.is_true(
-          model_aspect.get(1).get.asInstanceOf[lards.model.dto.Aspect], 
+          model_aspect.get(1).get.asInstanceOf[lars.model.dto.Aspect], 
           transport) mustEqual Some(true)
     }
 
     "darf keine Aussage bzgl. Abrechenbarkeit machen" in {
         Aspect_manager.is_true(
-          model_aspect.get(3).get.asInstanceOf[lards.model.dto.Aspect], 
+          model_aspect.get(3).get.asInstanceOf[lars.model.dto.Aspect], 
           transport) mustEqual None
     }
 

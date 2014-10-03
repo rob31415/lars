@@ -3,7 +3,7 @@
 
 <mapper namespace="lars.model.mybatis.mapper.Role">
 
-  <resultMap id="Result" type="lards.model.dto.Role">
+  <resultMap id="Result" type="lars.model.dto.Role">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
       <idArg column="timestamp" javaType="java.sql.Timestamp"/>
@@ -46,12 +46,12 @@
   ]]>
   </select>
 
-  <insert id="insert" parameterType="lards.model.dto.Role">
+  <insert id="insert" parameterType="lars.model.dto.Role">
 	    INSERT INTO role (<if test="id != -1">id,</if>timestamp,description) 
 	    values (<if test="id != -1">#{id},</if>NOW(),#{description})
   </insert>
 
-	<update id="update" parameterType="lards.model.dto.Role"> 
+	<update id="update" parameterType="lars.model.dto.Role"> 
     UPDATE role SET
     description = #{description}
     WHERE id = #{id}

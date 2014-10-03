@@ -3,14 +3,14 @@
 
 <mapper namespace="lars.model.mybatis.mapper.user2location">
 
-  <select id="get_location" parameterType="map" resultType="lards.model.dto.Location">
+  <select id="get_location" parameterType="map" resultType="lars.model.dto.Location">
   <![CDATA[
     select * from get_all_assoc(#{id_assoc,javaType=Long}, #{trequest,javaType=java.sql.Timestamp}, 'user', 'location', 'user2location', true) AS 
     tmp_schema(id bigint, description character varying, t timestamp without time zone);
   ]]>
   </select>
 
-  <select id="get_user" parameterType="map" resultType="lards.model.dto.User">
+  <select id="get_user" parameterType="map" resultType="lars.model.dto.User">
   <![CDATA[
     select * from get_all_assoc(#{id_assoc,javaType=Long}, #{trequest,javaType=java.sql.Timestamp}, 'user', 'location', 'user2location', false) AS 
     tmp_schema(id bigint, firstname character varying, lastname character varying, role bigint, "timestamp" timestamp without time zone);

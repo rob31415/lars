@@ -1,18 +1,18 @@
 /**
 standard-editwindow for _REPLACE_-crud.
 */
-package lards.view
+package lars.view
 
 import com.vaadin.ui._
 import com.vaadin.data.util.BeanItemContainer
 import collection.JavaConversions._
-import lards.model.dto.{_REPLACE_ => Dto}
-import lards.view.event.{_REPLACE_ => Event}
-import lards.model.dto.Dtos
+import lars.model.dto.{_REPLACE_ => Dto}
+import lars.view.event.{_REPLACE_ => Event}
+import lars.model.dto.Dtos
 //@TODO: remove line if no 1:n is wanted
-import lards.model.dto.{_REPLACE_ => _REPLACE_}
+import lars.model.dto.{_REPLACE_ => _REPLACE_}
 //@TODO: remove line if no n:n is wanted
-import lards.model.dto.{_REPLACE_ => _REPLACE_}
+import lars.model.dto.{_REPLACE_ => _REPLACE_}
 //@TODO: remove line if no 1:n and no n:n is wanted
 import com.vaadin.data.Item
 
@@ -55,7 +55,7 @@ class _REPLACE_(override val parent: Window)
   //@TODO: can usage of "null" be avoided?
   var factory: Option[Factory] = null
 
-  override def create_beanitem_container(data: Dtos): BeanItemContainer[_ <: lards.model.dto.Dto] = {
+  override def create_beanitem_container(data: Dtos): BeanItemContainer[_ <: lars.model.dto.Dto] = {
     new BeanItemContainer[Dto](classOf[Dto], data.get.get.asInstanceOf[scala.collection.Set[Dto]])
   }
 

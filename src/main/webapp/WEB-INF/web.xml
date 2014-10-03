@@ -5,16 +5,16 @@ PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
 <web-app>
 
   <servlet>
-    <servlet-name>lards</servlet-name>
+    <servlet-name>lars</servlet-name>
     <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
     <init-param>
       <param-name>application</param-name>
-      <param-value>lards.presenter.Main</param-value>
+      <param-value>lars.presenter.Main</param-value>
     </init-param>
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>lards</servlet-name>
+    <servlet-name>lars</servlet-name>
     <url-pattern>/*</url-pattern>
   </servlet-mapping>
 

@@ -1,0 +1,181 @@
+autor: rob
+date: 1.5.2013
+
+
+this is how you get this application setup and run:
+
+
+1. install scala, sbt, postgresql, mybatis-migrations
+
+
+1.1 install sbt
+
+at least version 0.11.3 - if neccessary from tarball if your distro has no package
+
+
+1.2 install postgresql
+
+install from package-manager
+
+prepare postgresql:
+nano /var/lib/pgsql/data/pg_hba.conf
+host  all postgres  127.0.0.1/32  md5 
+sudo su - postgres
+ALTER USER postgres PASSWORD 'postgres';
+ctrl-d
+
+create user named "rob"
+create database named "app_test2", owner, user and password are "rob"
+
+
+create by hand (because migrations don't work with dollar-quoted strings) two stored procedures in postgresql:
+
+
+/*
+if given id < 0, returns for all ids the first N rows to/before the given time.
+otherwise, returns for given id the first N rows to/before the given time.
+"the first N rows..." might as well volitionally just be one row.
+*/
+CREATE OR REPLACE FUNCTION get(p_tablename character varying, p_id bigint, p_timestamp timestamp without time zone)
+  RETURNS SETOF record AS
+$BODY$
+  DECLARE
+    id_constraint character varying := '';
+  BEGIN 
+  
+    IF p_id >= 0 THEN
+      id_constraint =  ' AND id = ' || quote_literal(p_id);
+    END IF;
+  
+  
+    RETURN QUERY EXECUTE
+
+    'SELECT ' || quote_ident(p_tablename) || '.*, CAST(' || quote_literal(p_timestamp) || ' AS timestamp without time zone) AS trequest FROM ' || quote_ident(p_tablename) || ' INNER JOIN(
+      SELECT id,MAX(timestamp) AS timestamp FROM
+        (SELECT * FROM ' || quote_ident(p_tablename) || ' WHERE timestamp <= ' || quote_literal(p_timestamp) || id_constraint || ')
+        AS nested2
+      GROUP BY id) AS nested1
+    ON ' || quote_ident(p_tablename) || '.id = nested1.id AND ' || quote_ident(p_tablename) || '.timestamp = nested1.timestamp'
+
+    USING p_timestamp, p_tablename, id_constraint;
+    RETURN;
+  END;
+  $BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100
+  ROWS 1000;
+ALTER FUNCTION get(p_tablename character varying, p_id bigint, p_timestamp timestamp without time zone) OWNER TO rob;
+
+
+
+/*
+let's say "table a" and "table b" are connected by a join-table "a2b".
+if direction_left_to_right is true, this function returns all "b's" belonging to an "a" which is given by it's id.
+if direction_left_to_right is false, this function returns all "a's" belonging to a "b" which is given by it's id.
+this function returns the data as it is/was at the given time.
+*/
+
+CREATE OR REPLACE FUNCTION get_all_assoc(
+  p_id IN bigint, 
+  p_trequest IN timestamp without time zone,
+  p_tablename_a IN character varying,
+  p_tablename_b IN character varying,
+  p_tablename_a2b IN character varying,
+  p_direction_left_to_right IN boolean)
+  RETURNS setof record AS
+  $$
+  DECLARE
+    tablename_join character varying := p_tablename_a || '2' || p_tablename_b;
+    tablename_1    character varying;
+    tablename_2    character varying;
+    id_col_1 character varying;
+    id_col_2 character varying;
+    timestamp_col_1 character varying;
+    timestamp_col_2 character varying;
+    
+  BEGIN 
+    IF p_direction_left_to_right = true THEN
+      tablename_1 = p_tablename_a;
+      tablename_2 = p_tablename_b;
+      id_col_1 = 'id_a';
+      id_col_2 = 'id_b';
+      timestamp_col_1 = 'timestamp_a';
+      timestamp_col_2 = 'timestamp_b';
+    ELSE
+      tablename_1 = p_tablename_b;
+      tablename_2 = p_tablename_a;
+      id_col_1 = 'id_b';
+      id_col_2 = 'id_a';
+      timestamp_col_1 = 'timestamp_b';
+      timestamp_col_2 = 'timestamp_a';
+    END IF;
+  
+  
+    RETURN QUERY EXECUTE
+
+      'SELECT J3.* FROM
+      (
+        SELECT J1.* FROM
+        (
+          SELECT T2.* FROM
+          (
+            SELECT ' || quote_ident(tablename_1) || '.id, ' || quote_ident(tablename_1) || '.timestamp FROM ' || quote_ident(tablename_1) || ' INNER JOIN(
+              SELECT id,MAX(timestamp) AS timestamp FROM
+                (SELECT * FROM ' || quote_ident(tablename_1) || ' WHERE timestamp <= ' || quote_literal(p_trequest) || ' AND id = ' || quote_literal(p_id) || ')
+                AS nested2
+              GROUP BY id) AS nested1
+            ON ' || quote_ident(tablename_1) || '.id = nested1.id AND ' || quote_ident(tablename_1) || '.timestamp = nested1.timestamp
+          ) AS S1
+          INNER JOIN
+          (
+            SELECT * FROM ' || quote_ident(tablename_join) || '
+          ) AS T2 
+          ON T2.' || quote_ident(id_col_1) || ' = S1.id AND T2.' || quote_ident(timestamp_col_1) || ' = S1.timestamp
+        ) AS J1
+        INNER JOIN
+        (
+          SELECT ' || quote_ident(tablename_join) || '.* FROM ' || quote_ident(tablename_join) || ' INNER JOIN(
+            SELECT ' || quote_ident(id_col_2) || ',MAX(' || quote_ident(timestamp_col_2) || ') AS ' || quote_ident(timestamp_col_2) || ' FROM
+              (SELECT * FROM ' || quote_ident(tablename_join) || ' WHERE ' || quote_ident(timestamp_col_2) || ' <= ' || quote_literal(p_trequest) || ')
+              AS nested2
+            GROUP BY ' || quote_ident(id_col_2) || ') AS nested1
+          ON ' || quote_ident(tablename_join) || '.' || quote_ident(id_col_2) || ' = nested1.' || quote_ident(id_col_2) || ' AND ' || quote_ident(tablename_join) || '.' || quote_ident(timestamp_col_2) || ' = nested1.' || quote_ident(timestamp_col_2) || '
+        ) AS S2
+        ON J1.id_a = S2.id_a AND J1.timestamp_a = S2.timestamp_a
+        AND J1.id_b = S2.id_b AND J1.timestamp_b = S2.timestamp_b
+      ) AS J2
+      INNER JOIN
+      (
+        SELECT * FROM ' || quote_ident(tablename_2) || '
+      ) AS J3
+      ON J3.id = J2.' || quote_ident(id_col_2) || ' AND J3.timestamp = J2.' || quote_ident(timestamp_col_2) || ';'
+
+    USING p_id, p_trequest, tablename_1, tablename_2, tablename_join, id_col_1, id_col_2;
+    RETURN;
+  END;
+  $$
+  LANGUAGE plpgsql;
+
+ALTER FUNCTION get_all_assoc(
+  p_id IN bigint, 
+  p_trequest IN timestamp without time zone,
+  p_tablename_a IN character varying,
+  p_tablename_b IN character varying,
+  p_tablename_a2b IN character varying,
+  p_direction_left_to_right IN boolean) OWNER TO rob;
+
+
+1.3 install mybatis migrations
+
+install it from wherever (tarball), put it in your environment for example as alias:
+alias migrate="/usr/local/mybatis-migrations-3.1.0/bin/migrate"
+
+then do:
+cd /lars/src/main/resources/mybatis
+migrate up
+
+
+2. compile and run
+
+start sbt (sbt -mem 512m if it complains about memory)
+say "reload", "compile", "container:start", then go to 127.0.0.1:8080

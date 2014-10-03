@@ -3,13 +3,13 @@
 
 <mapper namespace="lars.model.mybatis.mapper.location">
 
-  <resultMap id="Result" type="lards.model.dto.Location">
+  <resultMap id="Result" type="lars.model.dto.Location">
     <constructor>
       <idArg column="id" javaType="java.lang.Long"/>
       <idArg column="timestamp" javaType="java.sql.Timestamp"/>
       <arg column="description" javaType="String"/>
     </constructor>
-    <collection property="user" column="{id_assoc=id,trequest=trequest}" javaType="java.util.HashSet" ofType="lards.model.dto.User" select="lars.model.mybatis.mapper.user2location.get_user"/>
+    <collection property="user" column="{id_assoc=id,trequest=trequest}" javaType="java.util.HashSet" ofType="lars.model.dto.User" select="lars.model.mybatis.mapper.user2location.get_user"/>
   </resultMap>
 
 
@@ -39,12 +39,12 @@
   ]]>
   </select>
 
-  <insert id="insert" parameterType="lards.model.dto.Location">
+  <insert id="insert" parameterType="lars.model.dto.Location">
 	    INSERT INTO location (<if test="id != -1">id,</if>timestamp,description) 
 	    values (<if test="id != -1">#{id},</if>#{timestamp},#{description})
   </insert>
 
-	<update id="update" parameterType="lards.model.dto.Location"> 
+	<update id="update" parameterType="lars.model.dto.Location"> 
     UPDATE location SET
     description = #{description}
     WHERE id = #{id}

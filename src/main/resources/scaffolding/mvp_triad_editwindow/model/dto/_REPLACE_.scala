@@ -1,4 +1,4 @@
-package lards.model.dto
+package lars.model.dto
 
 import scala.reflect.BeanProperty
 //@TODO: remove next line if no 1:n or 1:n is wanted
@@ -17,7 +17,7 @@ class _REPLACE_(override val id: java.lang.Long = -1,
   @BeanProperty var _REPLACE_ = new java.util.HashSet[_REPLACE_]
 
 
-  override def is_same_type(other: lards.model.dto.Dto): Boolean = 
+  override def is_same_type(other: lars.model.dto.Dto): Boolean = 
     other.isInstanceOf[_REPLACE_]
 
 }

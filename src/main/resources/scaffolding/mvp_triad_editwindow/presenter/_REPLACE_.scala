@@ -1,16 +1,16 @@
 /**
 */
 
-package lards.presenter
+package lars.presenter
 
-import lards.global.Applocal
-import lards.presenter.Editwindow
-import lards.model.event.{_REPLACE_ => Model_event}
-import lards.view.event.{_REPLACE_ => View_event}
-import lards.global.Logger
+import lars.global.Applocal
+import lars.presenter.Editwindow
+import lars.model.event.{_REPLACE_ => Model_event}
+import lars.view.event.{_REPLACE_ => View_event}
+import lars.global.Logger
 
 
-class _REPLACE_(view: lards.view._REPLACE_, model: lards.model.service._REPLACE_, _REPLACE_)
+class _REPLACE_(view: lars.view._REPLACE_, model: lars.model.service._REPLACE_, _REPLACE_)
   extends Editwindow(view, model, '_REPLACE_) with Logger {
 
 
@@ -25,11 +25,11 @@ class _REPLACE_(view: lards.view._REPLACE_, model: lards.model.service._REPLACE_
 
       //@TODO: remove line if no 1:n is wanted
       // foreign model event
-      case event: lards.model.event._REPLACE_ => reload
+      case event: lars.model.event._REPLACE_ => reload
 
       //@TODO: remove line if no n:n is wanted
       // foreign model event
-      case event: lards.model.event._REPLACE_ => reload
+      case event: lars.model.event._REPLACE_ => reload
 
       case _ =>
     }
@@ -38,7 +38,7 @@ class _REPLACE_(view: lards.view._REPLACE_, model: lards.model.service._REPLACE_
   }
 
   
-  def comes_from_associated_view(event: lards.view.event.Editwindow): Boolean = {
+  def comes_from_associated_view(event: lars.view.event.Editwindow): Boolean = {
     event.isInstanceOf[View_event]
   }
 
