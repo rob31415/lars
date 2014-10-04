@@ -26,11 +26,6 @@ features
 - migrations for db-structure
 - suggests a versioning-/releaseconcept
 
-
-see also
-__________
-
-
 __________
 motivation
 
