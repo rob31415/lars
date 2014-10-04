@@ -14,9 +14,9 @@ a proof of concept implementation
 ## interested in details?
 
 you're invited to read:
-- doc/readme.txt (contains technical overview over the proof-of-concept implementation).
-- doc/lars-concept.odp (contains description of concept and the relevant ideas behind it).
+- [doc/lars-concept.odp](https://github.com/rob31415/lars/blob/master/doc/lars_the_hero_concept_v05-13.odp) (contains description of concept and the relevant ideas behind it).
+- [doc/readme.txt](https://github.com/rob31415/lars/blob/master/doc/readme.txt) (contains technical overview over the proof-of-concept implementation).
 
 ## even more interested?
 
-then you're invited to read doc/setup.txt, which describes what is to be done to get the proof-of-concept up and running.
+then you're invited to read [doc/setup.txt](https://github.com/rob31415/lars/blob/master/doc/setup.txt), which describes what is to be done to get the proof-of-concept implementation up and running.
