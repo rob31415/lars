@@ -17,6 +17,8 @@ you're invited to read:
 - [doc/lars-concept.odp](https://github.com/rob31415/lars/blob/master/doc/lars_the_hero_concept_v05-13.odp) (contains description of concept and the relevant ideas behind it).
 - [doc/readme.txt](https://github.com/rob31415/lars/blob/master/doc/readme.txt) (contains technical overview over the proof-of-concept implementation).
 
+or look at [some screenshots](https://github.com/rob31415/lars/tree/master/doc/screens)
+
 ## even more interested?
 
 then you're invited to read [doc/setup.txt](https://github.com/rob31415/lars/blob/master/doc/setup.txt), which describes what is to be done to get the proof-of-concept implementation up and running.
